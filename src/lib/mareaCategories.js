@@ -13,5 +13,5 @@ export const CATEGORY_LABELS = {
   all: "Ver todo",
 };
 
-export const INSTAGRAM_URL = "https://instagram.com/Marea.accesories";
-export const WHATSAPP_URL = "https://wa.me/?text=Hola%20MAREA%2C%20quiero%20ordenar";
+export const INSTAGRAM_URL = "https://instagram.com/mareaccesoriosmx";
+export const WHATSAPP_URL = "https://wa.me/526442600650?text=Hola%20MAREA%2C%20quiero%20ordenar";

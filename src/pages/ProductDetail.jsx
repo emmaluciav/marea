@@ -149,7 +149,7 @@ export default function ProductDetail() {
               rel="noopener noreferrer"
               className="inline-flex h-10 w-full max-w-[14rem] items-center justify-center rounded-sm bg-obsidian text-[11px] uppercase tracking-[0.16em] text-parchment"
             >
-              @Marea.accesories
+              @mareaccesoriosmx
             </a>
             <a
               href={WHATSAPP_URL}

@@ -19,7 +19,7 @@ export default function ContactSection({ variant = "bottom" }) {
         rel="noopener noreferrer"
         className="mt-1 inline-block font-heading text-lg text-gold underline-offset-4 hover:underline"
       >
-        @Marea.accesories
+        @mareaccesoriosmx
       </a>
 
       <div className="mt-7 flex flex-col items-center gap-3">
