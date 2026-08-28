@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductCard from "@/components/marea/ProductCard";
 import { useMarea } from "@/components/marea/MareaProvider";
-import { Loader2, Instagram, MessageCircle } from "lucide-react";
+import { Loader2, Instagram, MessageCircle, Send } from "lucide-react";
 import { BookmarkIcon } from "@/components/marea/icons";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -45,8 +45,10 @@ export default function Saved() {
 
   const selectedProducts = saved.filter((p) => validSelected.includes(p.id));
   const buildMessage = () => {
-    const lines = selectedProducts.map((p) => `• ${p.name}`).join("\n");
-    return `Hola! Estoy interesada en estos productos:\n${lines}`;
+    const lines = selectedProducts
+      .map((p) => `• ${p.name}\n${window.location.origin}/product/${p.id}`)
+      .join("\n");
+    return `Hola, estoy interesada en estos productos:\n${lines}`;
   };
 
   const sendWhatsApp = () => {
@@ -75,13 +77,22 @@ export default function Saved() {
   const hasSelection = selectedProducts.length > 0;
 
   return (
-    <div className={`pt-4 ${hasSelection ? "pb-28" : "pb-12"}`}>
+    <div className={`pt-4 ${hasSelection ? "pb-40" : "pb-12"}`}>
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-6 flex items-center gap-2">
           <BookmarkIcon filled className="h-5 w-5 text-obsidian" />
           <h1 className="font-heading text-2xl text-foreground">Guardados</h1>
           <span className="ml-1 text-sm text-slate">{saved.length}</span>
         </div>
+
+        {saved.length > 0 && (
+          <div className="mb-5 flex items-center gap-2.5 rounded-sm border border-border bg-secondary/40 px-3 py-2.5">
+            <Send className="h-4 w-4 shrink-0 text-gold" />
+            <p className="text-[12px] leading-snug text-slate">
+              Selecciona los productos que te interesan para enviarlos a MAREA.
+            </p>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-24">
@@ -115,26 +126,26 @@ export default function Saved() {
 
       {hasSelection && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-parchment/95 px-4 py-3 backdrop-blur-md">
-          <div className="mx-auto flex max-w-7xl items-center gap-3">
-            <span className="text-xs text-slate">
-              {selectedProducts.length} seleccionado{selectedProducts.length === 1 ? "" : "s"}
-            </span>
-            <div className="ml-auto flex gap-2">
+          <div className="mx-auto max-w-7xl">
+            <p className="mb-2 text-center text-xs text-slate">
+              {selectedProducts.length} producto{selectedProducts.length === 1 ? "" : "s"} seleccionado{selectedProducts.length === 1 ? "" : "s"}
+            </p>
+            <div className="flex flex-col gap-2">
               <button
                 type="button"
                 onClick={sendInstagram}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-[11px] uppercase tracking-wider text-foreground transition-colors hover:bg-secondary"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[11px] uppercase tracking-wider text-foreground transition-colors hover:bg-secondary"
               >
-                <Instagram className="h-3.5 w-3.5" />
-                Instagram
+                <Instagram className="h-4 w-4" />
+                Enviar productos por Instagram
               </button>
               <button
                 type="button"
                 onClick={sendWhatsApp}
-                className="inline-flex items-center gap-1.5 rounded-full bg-gold px-4 py-2 text-[11px] uppercase tracking-wider text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-[11px] uppercase tracking-wider text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
               >
-                <MessageCircle className="h-3.5 w-3.5" />
-                WhatsApp
+                <MessageCircle className="h-4 w-4" />
+                Enviar productos por WhatsApp
               </button>
             </div>
           </div>

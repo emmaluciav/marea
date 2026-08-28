@@ -163,8 +163,6 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
   const dispW = imgDim.w * scale;
   const dispH = imgDim.h * scale;
 
-  const handleSlider = (z) => applyZoom(z);
-
   const handleSave = () => {
     if (!imgDim.w || !scale || !imgRef.current) return;
     setSaving(true);
@@ -246,22 +244,8 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
       </div>
 
       <div className="px-6 pb-6 pt-2">
-        <div className="mb-2 flex items-center justify-between text-[11px] uppercase tracking-wider text-parchment/60">
-          <span>Zoom</span>
-          <span>{zoom.toFixed(2)}x</span>
-        </div>
-        <input
-          type="range"
-          min={1}
-          max={8}
-          step={0.01}
-          value={zoom}
-          onChange={(e) => handleSlider(parseFloat(e.target.value))}
-          disabled={saving}
-          className="w-full accent-gold"
-        />
-        <p className="mt-3 text-center text-[11px] text-parchment/50">
-          Arrastra para mover · pellizca para zoom
+        <p className="text-center text-[11px] text-parchment/50">
+          Arrastra para mover · pellizca para hacer zoom
         </p>
       </div>
     </div>
