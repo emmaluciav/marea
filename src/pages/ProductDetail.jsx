@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import SwipeGallery from "@/components/marea/SwipeGallery";
-import { HeartIcon } from "@/components/marea/icons";
+import ProductCard from "@/components/marea/ProductCard";
+import { BookmarkIcon } from "@/components/marea/icons";
 import { StatusBadge } from "@/components/marea/StatusBadge";
 import { useMarea } from "@/components/marea/MareaProvider";
 import { CATEGORY_LABELS, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
@@ -64,14 +65,24 @@ export default function ProductDetail() {
   const outOfStock = product.availability === "out_of_stock";
   const fromLabel = CATEGORY_LABELS[from] || "Ver todo";
 
-  // Recomendaciones: primero la misma categoría (excluyendo la actual),
-  // luego gradualmente las demás.
+  // Orden de recomendaciones según la categoría del producto actual.
+  const REC_ORDER = {
+    small_earrings: ["small_earrings", "large_earrings", "necklaces"],
+    large_earrings: ["large_earrings", "small_earrings", "necklaces"],
+    necklaces: ["necklaces", "large_earrings", "small_earrings"],
+  };
+  const order = REC_ORDER[product.category] || ["small_earrings", "large_earrings", "necklaces"];
   const recommendations = all
     .filter((p) => p.id !== product.id)
     .sort((a, b) => {
-      const aSame = a.category === product.category ? 0 : 1;
-      const bSame = b.category === product.category ? 0 : 1;
-      return aSame - bSame;
+      const ai = order.indexOf(a.category);
+      const bi = order.indexOf(b.category);
+      if (ai !== bi) return ai - bi;
+      // Dentro de la primera categoría, priorizar piezas más similares (por precio).
+      if (a.category === product.category) {
+        return Math.abs(Number(a.price) - Number(product.price)) - Math.abs(Number(b.price) - Number(product.price));
+      }
+      return 0;
     });
 
   const handleSave = () => {
@@ -101,7 +112,7 @@ export default function ProductDetail() {
         aria-label={saved ? "Quitar de guardados" : "Guardar producto"}
         className="fixed right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-parchment/85 shadow-sm backdrop-blur-md"
       >
-        <HeartIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/60"}`} />
+        <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/60"}`} />
       </button>
 
       <SwipeGallery images={images} aspect="4 / 5" className={outOfStock ? "opacity-90" : ""} />
@@ -109,20 +120,20 @@ export default function ProductDetail() {
       <div className="mx-auto max-w-md px-5 pt-6">
         <div className="flex items-start justify-between gap-4">
           <h1 className="font-heading text-2xl leading-tight text-foreground">{product.name}</h1>
-          <span className="mt-1 whitespace-nowrap font-heading text-xl text-foreground">
+          <span className="mt-1 whitespace-nowrap font-heading text-2xl text-foreground">
             ${Number(product.price).toFixed(0)}
           </span>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-          <StatusBadge product={product} />
+          <StatusBadge product={product} className="text-[13px]" />
           {product.availability === "limited" && product.units_remaining != null && (
-            <span className="text-xs text-slate">{product.units_remaining} piezas restantes</span>
+            <span className="text-sm text-slate">{product.units_remaining} piezas restantes</span>
           )}
         </div>
 
         {product.description ? (
-          <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+          <p className="mt-5 whitespace-pre-line text-base leading-relaxed text-foreground/80">
             {product.description}
           </p>
         ) : null}
@@ -154,29 +165,11 @@ export default function ProductDetail() {
 
       {/* Recomendados */}
       {recommendations.length > 0 && (
-        <section className="mt-12">
-          <h2 className="px-5 font-heading text-lg text-foreground">También te puede gustar</h2>
-          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto px-5 pb-6">
-            {recommendations.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => navigate(`/product/${r.id}?from=${from}`)}
-                className="w-36 flex-shrink-0 text-left"
-              >
-                <div className="relative overflow-hidden rounded-sm bg-secondary">
-                  <img
-                    src={r.images && r.images[0]}
-                    alt={r.name}
-                    className="aspect-[3/4] w-full object-cover"
-                  />
-                  {r.availability === "out_of_stock" && (
-                    <div className="absolute inset-0 bg-parchment/30" />
-                  )}
-                </div>
-                <p className="mt-1.5 truncate text-xs text-foreground">{r.name}</p>
-                <p className="text-xs text-slate">${Number(r.price).toFixed(0)}</p>
-              </button>
+        <section className="mt-12 px-3">
+          <h2 className="px-2 font-heading text-lg text-foreground">También te puede gustar</h2>
+          <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4">
+            {recommendations.map((r, i) => (
+              <ProductCard key={r.id} product={r} index={i} origin={from} />
             ))}
           </div>
         </section>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { HeartIcon } from "./icons";
+import { BookmarkIcon } from "./icons";
+import { ArrowLeft } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES } from "@/lib/mareaCategories";
@@ -16,6 +17,10 @@ export default function TopNav() {
   const [loginOpen, setLoginOpen] = useState(false);
 
   const isHome = location.pathname === "/";
+  const isSavedPage = location.pathname === "/saved";
+  const searchParams = new URLSearchParams(location.search);
+  const cat = searchParams.get("cat") || "all";
+  const from = searchParams.get("from") || "all";
 
   return (
     <>
@@ -44,19 +49,30 @@ export default function TopNav() {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => navigate("/saved")}
-            className="relative ml-9 flex items-center gap-1.5 text-foreground transition-opacity active:opacity-60"
-            aria-label="Productos guardados"
-          >
-            <HeartIcon filled={savedCount > 0} className={`h-5 w-5 ${savedCount > 0 ? "text-obsidian" : "text-obsidian/70"}`} />
-            {savedCount > 0 && (
-              <span className="text-[11px] font-medium tabular-nums text-foreground/70">
-                {savedCount}
-              </span>
-            )}
-          </button>
+          {isSavedPage ? (
+            <button
+              type="button"
+              onClick={() => navigate(from === "all" ? "/" : `/?cat=${from}`)}
+              className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
+              aria-label="Volver"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => navigate(`/saved?from=${cat}`)}
+              className="relative ml-9 flex items-center gap-1.5 text-foreground transition-opacity active:opacity-60"
+              aria-label="Productos guardados"
+            >
+              <BookmarkIcon filled={savedCount > 0} className={`h-5 w-5 ${savedCount > 0 ? "text-obsidian" : "text-obsidian/70"}`} />
+              {savedCount > 0 && (
+                <span className="text-[11px] font-medium tabular-nums text-foreground/70">
+                  {savedCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Right: hamburger */}

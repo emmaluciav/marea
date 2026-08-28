@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SwipeGallery from "./SwipeGallery";
-import { HeartIcon } from "./icons";
+import { BookmarkIcon } from "./icons";
 import { StatusBadge } from "./StatusBadge";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -62,7 +62,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
           aria-label={saved ? "Quitar de guardados" : "Guardar producto"}
           className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-parchment/70 backdrop-blur-sm transition-colors hover:bg-parchment/90"
         >
-          <HeartIcon
+          <BookmarkIcon
             filled={saved}
             pulsing={pulse}
             className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/50"}`}

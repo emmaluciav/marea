@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductCard from "@/components/marea/ProductCard";
 import { useMarea } from "@/components/marea/MareaProvider";
-import { Loader2, Heart } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { BookmarkIcon } from "@/components/marea/icons";
 
 export default function Saved() {
   const { savedIds } = useMarea();
@@ -31,7 +32,7 @@ export default function Saved() {
   return (
     <div className="px-4 pb-12 pt-4">
       <div className="mb-6 flex items-center gap-2">
-        <Heart className="h-5 w-5 text-obsidian" />
+        <BookmarkIcon filled className="h-5 w-5 text-obsidian" />
         <h1 className="font-heading text-2xl text-foreground">Guardados</h1>
         <span className="ml-1 text-sm text-slate">{saved.length}</span>
       </div>
