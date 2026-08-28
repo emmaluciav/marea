@@ -43,8 +43,8 @@ export default function Catalog() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="px-6 py-24 text-center">
-          <p className="font-heading text-lg text-foreground">Nothing here yet</p>
-          <p className="mt-1 text-sm text-slate">New pieces arrive soon.</p>
+          <p className="font-heading text-lg text-foreground">Aún no hay piezas</p>
+          <p className="mt-1 text-sm text-slate">Pronto llegarán nuevas piezas.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-x-2 gap-y-4 px-3 pb-12">

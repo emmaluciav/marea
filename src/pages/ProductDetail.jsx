@@ -53,8 +53,8 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-parchment px-6 text-center">
-        <p className="font-heading text-xl text-foreground">Piece not found</p>
-        <Link to="/" className="text-sm text-gold underline">Back to catalog</Link>
+        <p className="font-heading text-xl text-foreground">Pieza no encontrada</p>
+        <Link to="/" className="text-sm text-gold underline">Volver al catálogo</Link>
       </div>
     );
   }
@@ -62,9 +62,10 @@ export default function ProductDetail() {
   const saved = isSaved(product.id);
   const images = product.images && product.images.length ? product.images : [];
   const outOfStock = product.availability === "out_of_stock";
-  const fromLabel = CATEGORY_LABELS[from] || "All";
+  const fromLabel = CATEGORY_LABELS[from] || "Ver todo";
 
-  // Recommendations: same category first (excluding current), then the rest.
+  // Recomendaciones: primero la misma categoría (excluyendo la actual),
+  // luego gradualmente las demás.
   const recommendations = all
     .filter((p) => p.id !== product.id)
     .sort((a, b) => {
@@ -83,7 +84,7 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-parchment pb-28">
-      {/* Floating back pill */}
+      {/* Botón flotante de regreso */}
       <button
         type="button"
         onClick={() => navigate(from === "all" ? "/" : `/?cat=${from}`)}
@@ -93,11 +94,11 @@ export default function ProductDetail() {
         {fromLabel}
       </button>
 
-      {/* Save heart */}
+      {/* Corazón de guardar */}
       <button
         type="button"
         onClick={handleSave}
-        aria-label={saved ? "Remove from saved" : "Save product"}
+        aria-label={saved ? "Quitar de guardados" : "Guardar producto"}
         className="fixed right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-parchment/85 shadow-sm backdrop-blur-md"
       >
         <HeartIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/60"}`} />
@@ -116,7 +117,7 @@ export default function ProductDetail() {
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <StatusBadge product={product} />
           {product.availability === "limited" && product.units_remaining != null && (
-            <span className="text-xs text-slate">{product.units_remaining} units remaining</span>
+            <span className="text-xs text-slate">{product.units_remaining} piezas restantes</span>
           )}
         </div>
 
@@ -126,10 +127,10 @@ export default function ProductDetail() {
           </p>
         ) : null}
 
-        {/* Contact / ordering */}
+        {/* Contacto / orden */}
         <div className="mt-8 rounded-sm border border-border/70 bg-secondary/30 px-5 py-6 text-center">
-          <p className="font-heading text-base text-foreground">Want to order this piece?</p>
-          <p className="mt-1 text-xs text-slate">DM us on Instagram to reserve</p>
+          <p className="font-heading text-base text-foreground">¿Quieres ordenar esta pieza?</p>
+          <p className="mt-1 text-xs text-slate">Escríbenos por Instagram para reservar</p>
           <div className="mt-4 flex flex-col items-center gap-2.5">
             <a
               href={INSTAGRAM_URL}
@@ -151,10 +152,10 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Recommendations */}
+      {/* Recomendados */}
       {recommendations.length > 0 && (
         <section className="mt-12">
-          <h2 className="px-5 font-heading text-lg text-foreground">You may also like</h2>
+          <h2 className="px-5 font-heading text-lg text-foreground">También te puede gustar</h2>
           <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto px-5 pb-6">
             {recommendations.map((r) => (
               <button
@@ -181,7 +182,7 @@ export default function ProductDetail() {
         </section>
       )}
 
-      {/* Sticky contact bar */}
+      {/* Barra de contacto fija */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-parchment/95 px-5 py-3 backdrop-blur-md">
         <div className="mx-auto flex max-w-md items-center justify-between gap-3">
           <div>
@@ -194,7 +195,7 @@ export default function ProductDetail() {
             rel="noopener noreferrer"
             className="inline-flex h-10 items-center justify-center rounded-sm bg-obsidian px-6 text-[11px] uppercase tracking-[0.16em] text-parchment"
           >
-            Order via Instagram
+            Ordenar por Instagram
           </a>
         </div>
       </div>

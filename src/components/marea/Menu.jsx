@@ -26,7 +26,7 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close menu"
+          aria-label="Cerrar menú"
           className="flex h-10 w-10 items-center justify-center text-foreground"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.3}>
@@ -56,7 +56,7 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
             onClick={exitAdmin}
             className="text-xs uppercase tracking-[0.2em] text-slate underline-offset-4 hover:underline"
           >
-            Exit admin mode
+            Salir del modo administrador
           </button>
         ) : (
           <button
@@ -64,7 +64,7 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
             onClick={onLogin}
             className="text-[10px] uppercase tracking-[0.2em] text-slate/50 hover:text-slate"
           >
-            Enter as administrator
+            Entrar como administrador
           </button>
         )}
       </div>

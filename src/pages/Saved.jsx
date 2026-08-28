@@ -32,7 +32,7 @@ export default function Saved() {
     <div className="px-4 pb-12 pt-4">
       <div className="mb-6 flex items-center gap-2">
         <Heart className="h-5 w-5 text-obsidian" />
-        <h1 className="font-heading text-2xl text-foreground">Saved</h1>
+        <h1 className="font-heading text-2xl text-foreground">Guardados</h1>
         <span className="ml-1 text-sm text-slate">{saved.length}</span>
       </div>
 
@@ -42,8 +42,8 @@ export default function Saved() {
         </div>
       ) : saved.length === 0 ? (
         <div className="py-24 text-center">
-          <p className="font-heading text-lg text-foreground">Your archive is empty</p>
-          <p className="mt-1 text-sm text-slate">Tap the heart on any piece to save it here.</p>
+          <p className="font-heading text-lg text-foreground">Tu archivo está vacío</p>
+          <p className="mt-1 text-sm text-slate">Toca el corazón en cualquier pieza para guardarla aquí.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-6">

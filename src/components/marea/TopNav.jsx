@@ -34,7 +34,7 @@ export default function TopNav() {
           {isHome && isAdmin && (
             <button
               type="button"
-              aria-label="Add product"
+              aria-label="Agregar producto"
               onClick={() => navigate("/admin/add")}
               className="absolute left-0 top-0 flex h-9 w-9 items-center justify-center rounded-br-lg bg-gold text-parchment shadow-sm transition-transform active:scale-95"
             >
@@ -48,7 +48,7 @@ export default function TopNav() {
             type="button"
             onClick={() => navigate("/saved")}
             className="relative ml-9 flex items-center gap-1.5 text-foreground transition-opacity active:opacity-60"
-            aria-label="Saved products"
+            aria-label="Productos guardados"
           >
             <HeartIcon filled={savedCount > 0} className={`h-5 w-5 ${savedCount > 0 ? "text-obsidian" : "text-obsidian/70"}`} />
             {savedCount > 0 && (
@@ -64,7 +64,7 @@ export default function TopNav() {
           type="button"
           onClick={() => setMenuOpen(true)}
           className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
-          aria-label="Open menu"
+          aria-label="Abrir menú"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.4}>
             <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />

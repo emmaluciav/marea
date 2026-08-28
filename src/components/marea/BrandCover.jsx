@@ -57,7 +57,7 @@ export default function BrandCover() {
             disabled={uploading}
             className="inline-flex items-center gap-2 rounded-full bg-obsidian/80 px-4 py-2 text-[11px] uppercase tracking-[0.15em] text-parchment backdrop-blur-sm transition-opacity disabled:opacity-50"
           >
-            {uploading ? "Uploading…" : "Change cover"}
+            {uploading ? "Subiendo…" : "Cambiar portada"}
           </button>
         </div>
       )}

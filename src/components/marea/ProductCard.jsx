@@ -50,7 +50,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
         {outOfStock && (
           <div className="pointer-events-none absolute bottom-0 right-0">
             <div className="bg-obsidian px-2 py-1 text-[8px] font-medium uppercase tracking-[0.2em] text-parchment">
-              Archived
+              Agotado
             </div>
           </div>
         )}
@@ -59,7 +59,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
         <button
           type="button"
           onClick={handleSave}
-          aria-label={saved ? "Remove from saved" : "Save product"}
+          aria-label={saved ? "Quitar de guardados" : "Guardar producto"}
           className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-parchment/70 backdrop-blur-sm transition-colors hover:bg-parchment/90"
         >
           <HeartIcon
@@ -74,7 +74,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
           <button
             type="button"
             onClick={edit}
-            aria-label="Edit product"
+            aria-label="Editar producto"
             className="absolute left-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gold/90 text-parchment shadow-sm transition-transform hover:scale-105"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.6}>
@@ -87,7 +87,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
         {/* Draft badge for admin (unpublished) */}
         {isAdmin && product.published === false && (
           <div className="absolute bottom-2 left-2 z-10 rounded-sm bg-obsidian/80 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-parchment">
-            Draft
+            Borrador
           </div>
         )}
       </div>

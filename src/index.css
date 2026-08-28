@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 40 33% 96%;
+    --background: 0 0% 100%;
     --foreground: 240 4% 10%;
-    --card: 40 30% 97%;
+    --card: 0 0% 100%;
     --card-foreground: 240 4% 10%;
-    --popover: 40 33% 96%;
+    --popover: 0 0% 100%;
     --popover-foreground: 240 4% 10%;
     --primary: 33 26% 53%;
-    --primary-foreground: 40 33% 97%;
-    --secondary: 40 14% 92%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
     --secondary-foreground: 240 4% 14%;
-    --muted: 40 12% 91%;
-    --muted-foreground: 30 6% 45%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 45%;
     --accent: 33 26% 53%;
-    --accent-foreground: 40 33% 97%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 60% 45%;
-    --destructive-foreground: 40 33% 97%;
-    --border: 40 18% 88%;
-    --input: 40 18% 88%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
     --ring: 33 26% 53%;
     --chart-1: 33 26% 53%;
     --chart-2: 173 30% 39%;
@@ -31,11 +31,11 @@
     --radius: 0.25rem;
 
     /* MAREA tokens */
-    --parchment: 40 33% 96%;
+    --parchment: 0 0% 100%;
     --obsidian: 240 4% 10%;
     --gold: 33 26% 53%;
     --slate: 30 4% 44%;
-    --admin-dot: 45 16% 91%;
+    --admin-dot: 0 0% 93%;
     --admin-dot-hover: 33 26% 53%;
 
     --font-heading: 'Playfair Display', ui-serif, Georgia, serif;
