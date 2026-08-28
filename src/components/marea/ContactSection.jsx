@@ -47,7 +47,7 @@ export default function ContactSection({ variant = "bottom" }) {
         Ciudad Obregón, Sonora
       </p>
 
-      {!top && (
+      {top && (
         <Link
           to="/empaque"
           className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
