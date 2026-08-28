@@ -7,6 +7,17 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
+import Catalog from "@/pages/Catalog";
+import ProductDetail from "@/pages/ProductDetail";
+import Saved from "@/pages/Saved";
+import AdminProductForm from "@/pages/AdminProductForm";
+import MareaLayout from "@/components/marea/MareaLayout";
+import { MareaProvider } from "@/components/marea/MareaProvider";
+import AdminBorder from "@/components/marea/AdminBorder";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +45,17 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<MareaLayout />}>
+        <Route path="/" element={<Catalog />} />
+        <Route path="/saved" element={<Saved />} />
+      </Route>
+      <Route path="/product/:id" element={<ProductDetail />} />
+      <Route path="/admin/add" element={<AdminProductForm />} />
+      <Route path="/admin/edit/:id" element={<AdminProductForm />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -48,7 +69,10 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
-          <AuthenticatedApp />
+          <MareaProvider>
+            <AdminBorder />
+            <AuthenticatedApp />
+          </MareaProvider>
         </Router>
         <Toaster />
       </QueryClientProvider>
