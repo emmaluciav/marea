@@ -11,6 +11,9 @@ import Catalog from "@/pages/Catalog";
 import ProductDetail from "@/pages/ProductDetail";
 import Saved from "@/pages/Saved";
 import AdminProductForm from "@/pages/AdminProductForm";
+import Packagings from "@/pages/Packagings";
+import PackagingDetail from "@/pages/PackagingDetail";
+import AdminPackagingForm from "@/pages/AdminPackagingForm";
 import MareaLayout from "@/components/marea/MareaLayout";
 import { MareaProvider } from "@/components/marea/MareaProvider";
 import AdminBorder from "@/components/marea/AdminBorder";
@@ -52,6 +55,10 @@ const AuthenticatedApp = () => {
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/admin/add" element={<AdminProductForm />} />
       <Route path="/admin/edit/:id" element={<AdminProductForm />} />
+      <Route path="/empaque" element={<Packagings />} />
+      <Route path="/empaque/:id" element={<PackagingDetail />} />
+      <Route path="/admin/empaque/add" element={<AdminPackagingForm />} />
+      <Route path="/admin/empaque/edit/:id" element={<AdminPackagingForm />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

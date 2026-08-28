@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 
 // Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
@@ -19,7 +20,7 @@ export default function ContactSection({ variant = "bottom" }) {
         rel="noopener noreferrer"
         className="mt-1 inline-block font-heading text-lg text-gold underline-offset-4 hover:underline"
       >
-        @mareaccesoriosmx
+        @mareaaccesoriosmx
       </a>
 
       <div className="mt-7 flex flex-col items-center gap-3">
@@ -45,6 +46,15 @@ export default function ContactSection({ variant = "bottom" }) {
       <p className="mt-7 text-[11px] uppercase tracking-[0.2em] text-slate">
         Ciudad Obregón, Sonora
       </p>
+
+      {!top && (
+        <Link
+          to="/empaque"
+          className="mt-5 inline-block text-[11px] uppercase tracking-[0.2em] text-slate/60 underline-offset-4 transition-colors hover:text-slate hover:underline"
+        >
+          Ver Tipos de Empaque
+        </Link>
+      )}
     </section>
   );
 }
