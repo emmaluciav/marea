@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, ArrowLeft, Plus, Trash2, Pencil } from "lucide-react";
+import { Loader2, ArrowLeft, ArrowRight, Plus, Trash2, Pencil } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import PhotoCropper from "@/components/marea/PhotoCropper";
+import { isVideoFile, isVideoUrl } from "@/lib/media";
 
 // Pantalla de administración para agregar/editar opciones de empaque
 // (Tipos de Empaque). Solo administradores. Fotos ilimitadas con el mismo
@@ -97,6 +98,42 @@ export default function AdminPackagingForm() {
     }
   };
 
+  // Sube videos directamente (sin recortador). Las imágenes pasan por el cropper.
+  const uploadVideos = async (vids, replaceIdx) => {
+    setUploading(true);
+    for (let k = 0; k < vids.length; k++) {
+      try {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: vids[k] });
+        setImages((prev) => {
+          if (replaceIdx !== null && k === 0) {
+            return prev.map((u, i) => (i === replaceIdx ? file_url : u));
+          }
+          return [...prev, file_url];
+        });
+      } catch {
+        /* ignore single failure */
+      }
+    }
+    setUploading(false);
+  };
+
+  const handleFiles = (files, replaceIdx) => {
+    const vids = files.filter(isVideoFile);
+    const imgs = files.filter((f) => !isVideoFile(f));
+    if (vids.length) uploadVideos(vids, replaceIdx);
+    if (imgs.length) startCropping(imgs, replaceIdx);
+  };
+
+  const move = (from, dir) => {
+    const to = from + dir;
+    if (to < 0 || to >= images.length) return;
+    setImages((prev) => {
+      const arr = [...prev];
+      [arr[from], arr[to]] = [arr[to], arr[from]];
+      return arr;
+    });
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setError("");
@@ -172,7 +209,34 @@ export default function AdminPackagingForm() {
           <div className="grid grid-cols-3 gap-2">
             {images.map((url, i) => (
               <div key={i} className="group relative aspect-[3/4] overflow-hidden rounded-sm bg-secondary">
-                <img src={url} alt="" className="h-full w-full object-cover" />
+                {isVideoUrl(url) ? (
+                  <video src={url} muted playsInline className="h-full w-full object-cover" />
+                ) : (
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                )}
+                {isVideoUrl(url) && (
+                  <span className="absolute left-1 top-1 z-10 rounded-sm bg-obsidian/80 px-1 py-0.5 text-[8px] uppercase tracking-wider text-parchment">
+                    Video
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => move(i, -1)}
+                  disabled={i === 0}
+                  className="absolute bottom-1 left-1 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-parchment/80 text-obsidian disabled:opacity-20"
+                  title="Mover izquierda"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => move(i, 1)}
+                  disabled={i === images.length - 1}
+                  className="absolute bottom-1 right-1 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-parchment/80 text-obsidian disabled:opacity-20"
+                  title="Mover derecha"
+                >
+                  <ArrowRight className="h-3 w-3" />
+                </button>
                 <div className="absolute inset-0 flex items-center justify-center gap-1 bg-obsidian/0 opacity-0 transition-opacity group-hover:bg-obsidian/50 group-hover:opacity-100">
                   <button
                     type="button"
@@ -205,12 +269,12 @@ export default function AdminPackagingForm() {
           <input
             ref={fileRef}
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
             multiple
             className="hidden"
             onChange={(e) => {
               const files = Array.from(e.target.files || []);
-              if (files.length) startCropping(files, replaceIdx);
+              if (files.length) handleFiles(files, replaceIdx);
               setReplaceIdx(null);
               if (fileRef.current) fileRef.current.value = "";
             }}

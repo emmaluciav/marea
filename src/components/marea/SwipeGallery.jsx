@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Image } from "@/components/ui/image";
+import { isVideoUrl } from "@/lib/media";
 
 // Horizontal, snap-scrolling image gallery with a thin segmented progress bar.
 // A tap (no horizontal movement) fires onImageClick; a swipe does not.
@@ -49,7 +50,18 @@ export default function SwipeGallery({
             className={`relative w-full flex-shrink-0 snap-center ${imageClassName}`}
             style={{ aspectRatio: aspect }}
           >
-            <Image src={src} alt="" fittingType="fill" className="w-full h-full" />
+            {isVideoUrl(src) ? (
+              <video
+                src={src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="pointer-events-none h-full w-full object-cover"
+              />
+            ) : (
+              <Image src={src} alt="" fittingType="fill" className="w-full h-full" />
+            )}
           </button>
         ))}
       </div>
