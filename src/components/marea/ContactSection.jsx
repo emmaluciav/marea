@@ -50,7 +50,7 @@ export default function ContactSection({ variant = "bottom" }) {
       {!top && (
         <Link
           to="/empaque"
-          className="mt-5 inline-block text-[11px] uppercase tracking-[0.2em] text-slate/60 underline-offset-4 transition-colors hover:text-slate hover:underline"
+          className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
         >
           Ver Tipos de Empaque
         </Link>
