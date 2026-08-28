@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import SwipeGallery from "./SwipeGallery";
 import { BookmarkIcon } from "./icons";
 import { StatusBadge } from "./StatusBadge";
+import { Check } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
-export default function ProductCard({ product, index = 0, origin = "all" }) {
+export default function ProductCard({ product, index = 0, origin = "all", selectable = false, selected = false, onToggleSelect }) {
   const navigate = useNavigate();
   const { isSaved, toggleSave } = useMarea();
   const isAdmin = useIsAdmin();
@@ -69,13 +70,30 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
           />
         </button>
 
+        {/* Selection checkbox (Saved page only) */}
+        {selectable && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect && onToggleSelect();
+            }}
+            aria-label={selected ? "Quitar selección" : "Seleccionar producto"}
+            className={`absolute left-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full border-2 backdrop-blur-sm transition-colors ${
+              selected ? "border-gold bg-gold text-parchment" : "border-parchment bg-parchment/70 text-transparent"
+            }`}
+          >
+            <Check className="h-4 w-4" />
+          </button>
+        )}
+
         {/* Admin edit control (only visible to admin) */}
         {isAdmin && (
           <button
             type="button"
             onClick={edit}
             aria-label="Editar producto"
-            className="absolute left-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gold/90 text-parchment shadow-sm transition-transform hover:scale-105"
+            className={`absolute ${selectable ? "left-12" : "left-2"} top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gold/90 text-parchment shadow-sm transition-transform hover:scale-105`}
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.6}>
               <circle cx="12" cy="12" r="3" />

@@ -1,22 +1,37 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-// Posicionador de foto estilo Instagram: marco fijo + zoom (slider/pinch) +
-// arrastre/pan. La imagen NUNCA se deforma: el zoom escala la imagen original
-// de forma uniforme (mismo factor en X e Y), por lo que sus proporciones se
-// mantienen siempre. Si la foto no coincide con la proporción del marco, el
-// espacio sobrante se rellena en negro (letterbox) en lugar de estirar la imagen.
-// Al guardar, el marco visible se exporta a la resolución natural de la imagen.
+// Posicionador de foto estilo Instagram: marco FIJO + la imagen se mueve dentro.
+// - Zoom uniforme (mismo factor X/Y) => nunca deforma la imagen.
+// - Zoom mínimo = 1 (cover) => la imagen SIEMPRE cubre todo el marco, sin áreas
+//   negras ni vacías. No se puede alejar más allá del cover.
+// - Gestos: arrastrar para mover y pellizcar (pinch) para hacer zoom.
+// - El marco tiene touch-action: none => la página/grid nunca se mueve al editar.
+// - Al guardar se exporta exactamente lo que se ve dentro del marco.
 export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel }) {
   const [src, setSrc] = useState(null);
   const [imgDim, setImgDim] = useState({ w: 0, h: 0 });
-  const [zoom, setZoom] = useState(1); // 1 = cubrir el marco; >1 acerca; <1 aleja
+  const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [frame, setFrame] = useState({ w: 0, h: 0 });
   const [saving, setSaving] = useState(false);
+
   const frameRef = useRef(null);
   const imgRef = useRef(null);
+  const pointers = useRef(new Map());
+  const pinch = useRef({ initialDist: 0, initialZoom: 1 });
   const drag = useRef({ active: false, sx: 0, sy: 0, bx: 0, by: 0 });
 
+  // Refs espejo para usar dentro de los listeners de window sin cierres obsoletos.
+  const zoomRef = useRef(1);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const imgDimRef = useRef({ w: 0, h: 0 });
+  const frameSize = useRef({ w: 0, h: 0 });
+
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+  useEffect(() => { offsetRef.current = offset; }, [offset]);
+  useEffect(() => { imgDimRef.current = imgDim; }, [imgDim]);
+
+  // Carga la imagen y la ajusta a "cover" automáticamente.
   useEffect(() => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -24,17 +39,21 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
       setImgDim({ w: img.naturalWidth, h: img.naturalHeight });
       setSrc(url);
       setZoom(1);
+      zoomRef.current = 1;
       setOffset({ x: 0, y: 0 });
+      offsetRef.current = { x: 0, y: 0 };
     };
     img.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
+  // Mide el marco y mantiene la referencia de tamaño actualizada.
   useEffect(() => {
     const update = () => {
       if (frameRef.current) {
         const r = frameRef.current.getBoundingClientRect();
         setFrame({ w: r.width, h: r.height });
+        frameSize.current = { w: r.width, h: r.height };
       }
     };
     update();
@@ -46,47 +65,109 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
     };
   }, []);
 
-  // Escala base "cover": la imagen cubre todo el marco (recortando lo que sobre).
+  // Bloquea el scroll de la página mientras el editor está abierto.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  const getScale = () => {
+    const { w: fw, h: fh } = frameSize.current;
+    const { w: iw, h: ih } = imgDimRef.current;
+    if (!iw || !fw) return 1;
+    return Math.max(fw / iw, fh / ih) * zoomRef.current;
+  };
+
+  const clampOffset = (x, y, scale) => {
+    const { w: fw, h: fh } = frameSize.current;
+    const dispW = imgDimRef.current.w * scale;
+    const dispH = imgDimRef.current.h * scale;
+    const maxX = Math.max(0, (dispW - fw) / 2);
+    const maxY = Math.max(0, (dispH - fh) / 2);
+    return {
+      x: Math.max(-maxX, Math.min(maxX, x)),
+      y: Math.max(-maxY, Math.min(maxY, y)),
+    };
+  };
+
+  const applyZoom = (z) => {
+    const clamped = Math.max(1, Math.min(8, z));
+    zoomRef.current = clamped;
+    setZoom(clamped);
+    const scale = getScale();
+    const off = clampOffset(offsetRef.current.x, offsetRef.current.y, scale);
+    offsetRef.current = off;
+    setOffset(off);
+  };
+
+  const onPointerDown = (e) => {
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 1) {
+      drag.current = {
+        active: true,
+        sx: e.clientX,
+        sy: e.clientY,
+        bx: offsetRef.current.x,
+        by: offsetRef.current.y,
+      };
+    } else if (pointers.current.size === 2) {
+      const vals = [...pointers.current.values()];
+      pinch.current = {
+        initialDist: Math.hypot(vals[0].x - vals[1].x, vals[0].y - vals[1].y),
+        initialZoom: zoomRef.current,
+      };
+      drag.current.active = false;
+    }
+  };
+
+  // Listeners en window para no perder el gesto si el dedo sale del marco.
+  useEffect(() => {
+    const onMove = (e) => {
+      if (!pointers.current.has(e.pointerId)) return;
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.current.size >= 2) {
+        const vals = [...pointers.current.values()];
+        const d = Math.hypot(vals[0].x - vals[1].x, vals[0].y - vals[1].y);
+        if (pinch.current.initialDist > 0) {
+          applyZoom(pinch.current.initialZoom * (d / pinch.current.initialDist));
+        }
+      } else if (drag.current.active) {
+        const dx = e.clientX - drag.current.sx;
+        const dy = e.clientY - drag.current.sy;
+        const scale = getScale();
+        const off = clampOffset(drag.current.bx + dx, drag.current.by + dy, scale);
+        offsetRef.current = off;
+        setOffset(off);
+      }
+    };
+    const onUp = (e) => {
+      if (!pointers.current.has(e.pointerId)) return;
+      pointers.current.delete(e.pointerId);
+      if (pointers.current.size < 2) pinch.current.initialDist = 0;
+      if (pointers.current.size === 0) drag.current.active = false;
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+  }, []);
+
+  // Escala uniforme final (mismo factor en X e Y => sin deformación).
   const coverScale = frame.w && imgDim.w ? Math.max(frame.w / imgDim.w, frame.h / imgDim.h) : 1;
-  // Escala uniforme final: MISMO factor en X e Y => sin deformación.
   const scale = coverScale * zoom;
   const dispW = imgDim.w * scale;
   const dispH = imgDim.h * scale;
 
-  const clamp = useCallback(
-    (x, y) => {
-      if (!frame.w || !scale) return { x, y };
-      // Solo permite arrastrar dentro del desbordamiento real de la imagen.
-      const maxX = Math.max(0, (dispW - frame.w) / 2);
-      const maxY = Math.max(0, (dispH - frame.h) / 2);
-      return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) };
-    },
-    [frame, dispW, dispH, scale]
-  );
-
-  const onPointerDown = (e) => {
-    drag.current = { active: true, sx: e.clientX, sy: e.clientY, bx: offset.x, by: offset.y };
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-  };
-  const onPointerMove = (e) => {
-    if (!drag.current.active) return;
-    const dx = e.clientX - drag.current.sx;
-    const dy = e.clientY - drag.current.sy;
-    setOffset(clamp(drag.current.bx + dx, drag.current.by + dy));
-  };
-  const onPointerUp = () => {
-    drag.current.active = false;
-  };
-
-  const handleZoom = (z) => {
-    setZoom(z);
-    setOffset((o) => clamp(o.x, o.y));
-  };
+  const handleSlider = (z) => applyZoom(z);
 
   const handleSave = () => {
     if (!imgDim.w || !scale || !imgRef.current) return;
     setSaving(true);
-    // El canvas representa el marco a la resolución natural de la imagen.
     const canvasW = Math.max(1, Math.round(frame.w / scale));
     const canvasH = Math.max(1, Math.round(frame.h / scale));
     const drawX = ((frame.w - dispW) / 2 + offset.x) / scale;
@@ -95,9 +176,6 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
     canvas.width = canvasW;
     canvas.height = canvasH;
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, canvasW, canvasH);
-    // Dibuja la imagen a su tamaño natural (sin deformar) en su posición.
     ctx.drawImage(imgRef.current, drawX, drawY, imgDim.w, imgDim.h);
     canvas.toBlob(
       async (blob) => {
@@ -122,7 +200,7 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-obsidian">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-obsidian">
       <div className="flex items-center justify-between px-4 py-3 text-parchment">
         <button
           type="button"
@@ -147,9 +225,6 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
         <div
           ref={frameRef}
           onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
           className="relative touch-none overflow-hidden bg-black"
           style={{ width: "100%", maxWidth: `calc(60vh * ${aspect})`, aspectRatio: String(aspect) }}
         >
@@ -177,16 +252,16 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
         </div>
         <input
           type="range"
-          min={0.5}
-          max={4}
+          min={1}
+          max={8}
           step={0.01}
           value={zoom}
-          onChange={(e) => handleZoom(parseFloat(e.target.value))}
+          onChange={(e) => handleSlider(parseFloat(e.target.value))}
           disabled={saving}
           className="w-full accent-gold"
         />
         <p className="mt-3 text-center text-[11px] text-parchment/50">
-          Arrastra para mover la foto dentro del marco
+          Arrastra para mover · pellizca para zoom
         </p>
       </div>
     </div>

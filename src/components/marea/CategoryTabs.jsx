@@ -11,7 +11,7 @@ export default function CategoryTabs({ active = "all" }) {
   };
 
   return (
-    <div className="no-scrollbar sticky top-14 z-20 flex gap-5 overflow-x-auto border-b border-border/60 bg-parchment/85 px-4 py-3 backdrop-blur-md">
+    <div className="no-scrollbar sticky top-14 z-20 flex gap-3 overflow-x-auto border-b border-border/60 bg-parchment/85 px-4 py-3 backdrop-blur-md">
       {CATEGORIES.map((c) => {
         const isActive = active === c.id;
         return (
@@ -19,7 +19,7 @@ export default function CategoryTabs({ active = "all" }) {
             key={c.id}
             type="button"
             onClick={() => select(c.id)}
-            className={`whitespace-nowrap text-[11px] uppercase tracking-[0.18em] transition-colors ${
+            className={`whitespace-nowrap text-[10px] uppercase tracking-[0.1em] transition-colors ${
               isActive ? "text-foreground" : "text-slate"
             }`}
           >
