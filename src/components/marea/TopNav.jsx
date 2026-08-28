@@ -27,9 +27,9 @@ export default function TopNav() {
       <header className="fixed inset-x-0 top-0 z-30 border-b border-border/60 bg-parchment/85 backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4">
         <img
-          src="https://cdn.phototourl.com/free/2026-08-28-aafc3b10-71bd-4dd3-9d1e-eb1a811109ac.png?utm_source=chatgpt.com"
+          src="https://cdn.phototourl.com/free/2026-08-28-aafc3b10-71bd-4dd3-9d1e-eb1a811109ac.png"
           alt="MAREA"
-          className="pointer-events-none absolute left-1/2 hidden h-6 -translate-x-1/2 object-contain lg:block"
+          className="pointer-events-none absolute left-1/2 h-6 -translate-x-1/2 object-contain"
         />
         {/* Left: discreet admin entry (home only) OR saved heart */}
         <div className="flex items-center gap-3">
