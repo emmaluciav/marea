@@ -112,7 +112,7 @@ export default function ProductDetail() {
         aria-label={saved ? "Quitar de guardados" : "Guardar producto"}
         className="fixed right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-parchment/85 shadow-sm backdrop-blur-md"
       >
-        <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/60"}`} />
+        <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
 
       <SwipeGallery images={images} aspect="4 / 5" className={outOfStock ? "opacity-90" : ""} />

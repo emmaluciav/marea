@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowLeft, Plus, Trash2, Pencil } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/mareaCategories";
+import PhotoCropper from "@/components/marea/PhotoCropper";
 
 // Pantalla compartida para agregar/editar productos (solo administrador).
 // Se protege a sí misma: si el visitante no es administrador, regresa al catálogo.
@@ -31,6 +32,8 @@ export default function AdminProductForm() {
   const [published, setPublished] = useState(false);
   const [images, setImages] = useState([]);
   const [replaceIdx, setReplaceIdx] = useState(null);
+  const [cropQueue, setCropQueue] = useState([]);
+  const [cropIndex, setCropIndex] = useState(-1);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -63,32 +66,43 @@ export default function AdminProductForm() {
     };
   }, [id, editing, isAdmin, navigate]);
 
-  const addFiles = async (files) => {
-    if (!files || !files.length) return;
+  const removeImage = (idx) => setImages((prev) => prev.filter((_, i) => i !== idx));
+
+  // Encola las fotos seleccionadas para ajustarlas (recorte/zoom) antes de subirlas.
+  const startCropping = (files, idx) => {
+    const queue = files.map((f) => ({ file: f, replaceIdx: idx }));
+    setCropQueue(queue);
+    setCropIndex(0);
+  };
+
+  const onCropSave = async (croppedFile) => {
+    const item = cropQueue[cropIndex];
+    if (!item) return;
     setUploading(true);
     try {
-      const urls = [];
-      for (const file of files) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        urls.push(file_url);
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
+      if (item.replaceIdx !== null) {
+        setImages((prev) => prev.map((u, i) => (i === item.replaceIdx ? file_url : u)));
+      } else {
+        setImages((prev) => [...prev, file_url]);
       }
-      setImages((prev) => [...prev, ...urls]);
+    } catch (e) {
+      /* ignore single failure */
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
+      if (cropIndex + 1 < cropQueue.length) setCropIndex(cropIndex + 1);
+      else {
+        setCropIndex(-1);
+        setCropQueue([]);
+      }
     }
   };
 
-  const removeImage = (idx) => setImages((prev) => prev.filter((_, i) => i !== idx));
-
-  const replaceImage = async (idx, file) => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setImages((prev) => prev.map((u, i) => (i === idx ? file_url : u)));
-    } finally {
-      setUploading(false);
+  const onCropCancel = () => {
+    if (cropIndex + 1 < cropQueue.length) setCropIndex(cropIndex + 1);
+    else {
+      setCropIndex(-1);
+      setCropQueue([]);
     }
   };
 
@@ -210,12 +224,9 @@ export default function AdminProductForm() {
             className="hidden"
             onChange={(e) => {
               const files = Array.from(e.target.files || []);
-              if (replaceIdx !== null && files[0]) {
-                replaceImage(replaceIdx, files[0]);
-              } else {
-                addFiles(files);
-              }
+              if (files.length) startCropping(files, replaceIdx);
               setReplaceIdx(null);
+              if (fileRef.current) fileRef.current.value = "";
             }}
           />
           <p className="mt-2 text-[11px] text-slate">Fotos ilimitadas. Desliza entre ellas en la tarjeta.</p>
@@ -334,6 +345,16 @@ export default function AdminProductForm() {
           )}
         </div>
       </form>
+
+      {cropIndex >= 0 && cropQueue[cropIndex] && (
+        <PhotoCropper
+          key={cropIndex}
+          file={cropQueue[cropIndex].file}
+          aspect={4 / 5}
+          onSave={onCropSave}
+          onCancel={onCropCancel}
+        />
+      )}
     </div>
   );
 }

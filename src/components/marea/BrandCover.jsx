@@ -3,22 +3,27 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import PhotoCropper from "./PhotoCropper";
 
-// Full-bleed brand cover ("Cinematic Aperture"). In admin mode a small
-// configuration widget lets the admin replace the image.
+// Full-bleed brand cover. En modo administrador, al cambiar la portada se abre
+// primero el recortador de foto para ajustar zoom y posición antes de subir.
 export default function BrandCover() {
   const { brandCover, setBrandCover } = useMarea();
   const isAdmin = useIsAdmin();
   const fileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [cropFile, setCropFile] = useState(null);
 
-  const replace = async (e) => {
+  const onPick = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) setCropFile(file);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const saveCover = async (croppedFile) => {
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      // Persist to the Setting entity (admin-only write).
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
       const settings = await base44.entities.Setting.list();
       const existing = settings.find((s) => s.key === "brand_cover");
       if (existing) {
@@ -31,7 +36,7 @@ export default function BrandCover() {
       // ignore — keep current cover
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
+      setCropFile(null);
     }
   };
 
@@ -49,7 +54,7 @@ export default function BrandCover() {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={replace}
+            onChange={onPick}
           />
           <button
             type="button"
@@ -60,6 +65,10 @@ export default function BrandCover() {
             {uploading ? "Subiendo…" : "Cambiar portada"}
           </button>
         </div>
+      )}
+
+      {cropFile && (
+        <PhotoCropper file={cropFile} aspect={4 / 5} onSave={saveCover} onCancel={() => setCropFile(null)} />
       )}
     </div>
   );

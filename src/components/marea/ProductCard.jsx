@@ -65,7 +65,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
           <BookmarkIcon
             filled={saved}
             pulsing={pulse}
-            className={`h-4 w-4 ${saved ? "text-obsidian" : "text-obsidian/50"}`}
+            className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/50"}`}
           />
         </button>
 

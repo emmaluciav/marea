@@ -44,7 +44,11 @@ export default function Saved() {
       ) : saved.length === 0 ? (
         <div className="py-24 text-center">
           <p className="font-heading text-lg text-foreground">Tu archivo está vacío</p>
-          <p className="mt-1 text-sm text-slate">Toca el corazón en cualquier pieza para guardarla aquí.</p>
+          <p className="mt-1 text-sm text-slate">
+            Presiona el{" "}
+            <BookmarkIcon className="inline-block h-3.5 w-3.5 align-[-2px] text-obsidian/60" />{" "}
+            para guardar
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-6">
