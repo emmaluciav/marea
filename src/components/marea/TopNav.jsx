@@ -29,9 +29,9 @@ export default function TopNav() {
         <img
           src="https://cdn.phototourl.com/free/2026-08-28-aafc3b10-71bd-4dd3-9d1e-eb1a811109ac.png"
           alt="MAREA"
-          className="pointer-events-none absolute left-1/2 h-8 -translate-x-1/2 object-contain"
+          className="pointer-events-none absolute left-1/2 h-12 -translate-x-1/2 object-contain"
         />
-        {/* Left: discreet admin entry (home only) OR saved heart */}
+        {/* Left: discreet admin entry (home only) OR back arrow */}
         <div className="flex items-center gap-3">
           {isHome && !isAdmin && (
             <button
@@ -55,7 +55,7 @@ export default function TopNav() {
             </button>
           )}
 
-          {isSavedPage ? (
+          {isSavedPage && (
             <button
               type="button"
               onClick={() => navigate(from === "all" ? "/" : `/?cat=${from}`)}
@@ -64,34 +64,37 @@ export default function TopNav() {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-          ) : (
+          )}
+        </div>
+
+        {/* Right: saved + hamburger */}
+        <div className="flex items-center gap-2">
+          {!isSavedPage && (
             <button
               type="button"
               onClick={() => navigate(`/saved?from=${cat}`)}
-              className="relative ml-9 flex items-center gap-1.5 text-foreground transition-opacity active:opacity-60"
+              className="relative flex items-center gap-1.5 text-foreground transition-opacity active:opacity-60"
               aria-label="Productos guardados"
             >
-              <BookmarkIcon filled={savedCount > 0} className={`h-5 w-5 ${savedCount > 0 ? "text-obsidian" : "text-obsidian/70"}`} />
+              <BookmarkIcon filled={savedCount > 0} className={`h-6 w-6 ${savedCount > 0 ? "text-obsidian" : "text-obsidian/70"}`} />
               {savedCount > 0 && (
-                <span className="text-[11px] font-medium tabular-nums text-foreground/70">
+                <span className="text-xs font-medium tabular-nums text-foreground/70">
                   {savedCount}
                 </span>
               )}
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
+            aria-label="Abrir menú"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.4}>
+              <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
-
-        {/* Right: hamburger */}
-        <button
-          type="button"
-          onClick={() => setMenuOpen(true)}
-          className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
-          aria-label="Abrir menú"
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.4}>
-            <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
-          </svg>
-        </button>
         </div>
       </header>
 
