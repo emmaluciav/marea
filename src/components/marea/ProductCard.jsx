@@ -34,7 +34,7 @@ export default function ProductCard({ product, index = 0, origin = "all" }) {
 
   return (
     <div
-      className={`group reveal ${index % 2 === 0 ? "mt-5" : ""}`}
+      className={`group reveal ${index % 2 === 0 ? "mt-5 md:mt-0" : ""}`}
       onClick={open}
     >
       <div className="relative overflow-hidden rounded-sm bg-secondary">

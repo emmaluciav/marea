@@ -24,7 +24,9 @@ export default function TopNav() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-border/60 bg-parchment/85 px-4 backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/60 bg-parchment/85 backdrop-blur-md">
+        <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4">
+        <span className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 font-heading text-lg tracking-[0.25em] text-foreground lg:block">MAREA</span>
         {/* Left: discreet admin entry (home only) OR saved heart */}
         <div className="flex items-center gap-3">
           {isHome && !isAdmin && (
@@ -86,6 +88,7 @@ export default function TopNav() {
             <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
           </svg>
         </button>
+        </div>
       </header>
 
       {menuOpen && (

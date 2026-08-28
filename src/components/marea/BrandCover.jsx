@@ -41,7 +41,7 @@ export default function BrandCover() {
   };
 
   return (
-    <div className="relative w-full" style={{ aspectRatio: "4 / 5" }}>
+    <div className="relative mx-auto w-full max-w-7xl" style={{ aspectRatio: "21 / 9" }}>
       <Image src={brandCover} alt="MAREA" fittingType="fill" className="h-full w-full" />
 
       {/* Subtle vignette for editorial depth */}
@@ -68,7 +68,7 @@ export default function BrandCover() {
       )}
 
       {cropFile && (
-        <PhotoCropper file={cropFile} aspect={4 / 5} onSave={saveCover} onCancel={() => setCropFile(null)} />
+        <PhotoCropper file={cropFile} aspect={21 / 9} onSave={saveCover} onCancel={() => setCropFile(null)} />
       )}
     </div>
   );

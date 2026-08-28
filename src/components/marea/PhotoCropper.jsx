@@ -1,13 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 
-// Recortador de foto estilo Instagram. Muestra la imagen dentro de un marco
-// fijo con la proporción indicada; el usuario hace zoom y la desplaza para
-// elegir la región visible. Al guardar, esa región se renderiza en un canvas y
-// se devuelve como un File listo para subir.
+// Recortador/posicionador de foto estilo Instagram. La imagen nunca se
+// deforma: se puede hacer zoom in/out, arrastrar para reposicionar y, si la
+// foto tiene otra proporción, dejar áreas vacías (negras) en lugar de
+// estirarla. Al guardar, el marco visible se exporta respetando las
+// proporciones originales de la imagen.
 export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel }) {
   const [src, setSrc] = useState(null);
   const [imgDim, setImgDim] = useState({ w: 0, h: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(null); // 0..1 normalizado
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [frame, setFrame] = useState({ w: 0, h: 0 });
   const [saving, setSaving] = useState(false);
@@ -15,21 +16,19 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
   const imgRef = useRef(null);
   const drag = useRef({ active: false, sx: 0, sy: 0, bx: 0, by: 0 });
 
-  // Carga la imagen y lee sus dimensiones naturales.
   useEffect(() => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
       setImgDim({ w: img.naturalWidth, h: img.naturalHeight });
       setSrc(url);
-      setZoom(1);
+      setZoom(null);
       setOffset({ x: 0, y: 0 });
     };
     img.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  // Mide el marco visible.
   useEffect(() => {
     const update = () => {
       if (frameRef.current) {
@@ -47,15 +46,26 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
   }, []);
 
   const coverScale = frame.w && imgDim.w ? Math.max(frame.w / imgDim.w, frame.h / imgDim.h) : 1;
-  const scale = coverScale * zoom;
+  const containScale = frame.w && imgDim.w ? Math.min(frame.w / imgDim.w, frame.h / imgDim.h) : 1;
+  const minScale = containScale;
+  const maxScale = Math.max(coverScale, containScale) * 4;
+  const coverZoom = maxScale > minScale ? (coverScale - minScale) / (maxScale - minScale) : 0;
+  const safeZoom = zoom == null ? coverZoom : zoom;
+  const scale = minScale + (maxScale - minScale) * safeZoom;
+
+  // Inicializa el zoom en "cover" una vez listos imagen y marco.
+  useEffect(() => {
+    if (zoom == null && imgDim.w && frame.w) setZoom(coverZoom);
+  }, [zoom, imgDim, frame, coverZoom]);
+
   const dispW = imgDim.w * scale;
   const dispH = imgDim.h * scale;
 
   const clamp = useCallback(
     (x, y) => {
       if (!frame.w || !scale) return { x, y };
-      const maxX = Math.max(0, (imgDim.w * scale - frame.w) / 2);
-      const maxY = Math.max(0, (imgDim.h * scale - frame.h) / 2);
+      const maxX = Math.abs(imgDim.w * scale - frame.w) / 2;
+      const maxY = Math.abs(imgDim.h * scale - frame.h) / 2;
       return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) };
     },
     [frame, imgDim, scale]
@@ -83,19 +93,19 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
   const handleSave = () => {
     if (!imgDim.w || !scale || !imgRef.current) return;
     setSaving(true);
-    const imgLeft = (frame.w - dispW) / 2 + offset.x;
-    const imgTop = (frame.h - dispH) / 2 + offset.y;
-    let cropX = -imgLeft / scale;
-    let cropY = -imgTop / scale;
-    let cropW = frame.w / scale;
-    let cropH = frame.h / scale;
-    cropX = Math.max(0, Math.min(cropX, imgDim.w - cropW));
-    cropY = Math.max(0, Math.min(cropY, imgDim.h - cropH));
+    // El canvas representa el marco a la resolución natural de la imagen.
+    const canvasW = Math.round(frame.w / scale);
+    const canvasH = Math.round(frame.h / scale);
+    const drawX = ((frame.w - dispW) / 2 + offset.x) / scale;
+    const drawY = ((frame.h - dispH) / 2 + offset.y) / scale;
     const canvas = document.createElement("canvas");
-    canvas.width = Math.round(cropW);
-    canvas.height = Math.round(cropH);
+    canvas.width = canvasW;
+    canvas.height = canvasH;
     const ctx = canvas.getContext("2d");
-    ctx.drawImage(imgRef.current, cropX, cropY, cropW, cropH, 0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, canvasW, canvasH);
+    // Dibuja la imagen a su tamaño natural (sin deformar) en su posición.
+    ctx.drawImage(imgRef.current, drawX, drawY, imgDim.w, imgDim.h);
     canvas.toBlob(
       async (blob) => {
         if (!blob) {
@@ -171,14 +181,14 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
       <div className="px-6 pb-6 pt-2">
         <div className="mb-2 flex items-center justify-between text-[11px] uppercase tracking-wider text-parchment/60">
           <span>Zoom</span>
-          <span>{zoom.toFixed(1)}x</span>
+          <span>{coverScale ? (scale / coverScale).toFixed(1) : "1.0"}x</span>
         </div>
         <input
           type="range"
-          min={1}
-          max={3}
-          step={0.01}
-          value={zoom}
+          min={0}
+          max={1}
+          step={0.001}
+          value={safeZoom}
           onChange={(e) => handleZoom(parseFloat(e.target.value))}
           disabled={saving}
           className="w-full accent-gold"

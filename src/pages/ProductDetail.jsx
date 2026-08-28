@@ -115,7 +115,7 @@ export default function ProductDetail() {
         <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
 
-      <SwipeGallery images={images} aspect="4 / 5" className={outOfStock ? "opacity-90" : ""} />
+      <SwipeGallery images={images} aspect="4 / 5" className={`mx-auto max-w-xl ${outOfStock ? "opacity-90" : ""}`} />
 
       <div className="mx-auto max-w-md px-5 pt-6">
         <div className="flex items-start justify-between gap-4">
@@ -165,9 +165,9 @@ export default function ProductDetail() {
 
       {/* Recomendados */}
       {recommendations.length > 0 && (
-        <section className="mt-12 px-3">
+        <section className="mx-auto mt-12 max-w-7xl px-3 sm:px-4">
           <h2 className="px-2 font-heading text-lg text-foreground">También te puede gustar</h2>
-          <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4">
+          <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 lg:grid-cols-4">
             {recommendations.map((r, i) => (
               <ProductCard key={r.id} product={r} index={i} origin={from} />
             ))}

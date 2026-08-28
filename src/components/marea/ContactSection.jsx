@@ -1,10 +1,16 @@
 import React from "react";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 
-// Sección de contacto al final del catálogo y de Guardados.
-export default function ContactSection() {
+// Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
+// al final del catálogo. Incluye Instagram, WhatsApp y la ubicación.
+export default function ContactSection({ variant = "bottom" }) {
+  const top = variant === "top";
   return (
-    <section className="border-t border-border/60 bg-secondary/40 px-6 py-14 text-center">
+    <section
+      className={`px-6 text-center ${
+        top ? "py-10" : "border-t border-border/60 bg-secondary/40 py-14"
+      }`}
+    >
       <h2 className="font-heading text-2xl text-foreground">¿Quieres ordenar?</h2>
       <p className="mt-2 text-sm text-slate">Escríbenos por Instagram</p>
       <a
@@ -25,15 +31,20 @@ export default function ContactSection() {
         >
           Ir a Instagram
         </a>
+        <p className="text-xs text-slate">También puedes contactarnos por WhatsApp</p>
         <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-11 w-56 items-center justify-center rounded-sm border border-border text-[12px] uppercase tracking-[0.18em] text-foreground transition-colors hover:border-gold hover:text-gold"
         >
-          Mensaje por WhatsApp
+          Ir a WhatsApp
         </a>
       </div>
+
+      <p className="mt-7 text-[11px] uppercase tracking-[0.2em] text-slate">
+        Ciudad Obregón, Sonora
+      </p>
     </section>
   );
 }
