@@ -25,6 +25,7 @@ export default function AdminPackagingForm() {
   const [error, setError] = useState("");
 
   const [name, setName] = useState("");
+  const [price, setPrice] = useState("0");
   const [description, setDescription] = useState("");
   const [availability, setAvailability] = useState("available");
   const [units, setUnits] = useState("");
@@ -48,6 +49,7 @@ export default function AdminPackagingForm() {
         const p = await base44.entities.Packaging.get(id);
         if (!mounted) return;
         setName(p.name || "");
+        setPrice(p.price != null ? String(p.price) : "0");
         setDescription(p.description || "");
         setPublished(p.published ?? false);
         setAvailability(p.availability || "available");
@@ -149,6 +151,7 @@ export default function AdminPackagingForm() {
     setSaving(true);
     const payload = {
       name: name.trim(),
+      price: Number(price) || 0,
       description: description.trim(),
       images,
       availability,
@@ -295,6 +298,19 @@ export default function AdminPackagingForm() {
         <div className="mb-5 space-y-1.5">
           <Label className="text-xs uppercase tracking-wider text-slate">Nombre</Label>
           <Input value={name} onChange={(e) => setName(e.target.value)} className="h-11" placeholder="Caja regalo" />
+        </div>
+
+        {/* Precio */}
+        <div className="mb-5 space-y-1.5">
+          <Label className="text-xs uppercase tracking-wider text-slate">Precio</Label>
+          <Input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="h-11"
+            inputMode="numeric"
+            placeholder="0"
+          />
+          <p className="text-[11px] text-slate">Escribe 0 para mostrar "Gratis" en el catálogo.</p>
         </div>
 
         {/* Disponibilidad */}

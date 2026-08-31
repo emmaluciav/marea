@@ -70,7 +70,18 @@ export default function PackagingDetail() {
       <SwipeGallery images={images} aspect="4 / 5" className="mx-auto max-w-xl" />
 
       <div className="mx-auto max-w-md px-5 pt-6">
-        <h1 className="font-heading text-2xl leading-tight text-foreground">{item.name}</h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="font-heading text-2xl leading-tight text-foreground">{item.name}</h1>
+          {Number(item.price) > 0 ? (
+            <span className="mt-1 whitespace-nowrap font-heading text-2xl text-foreground">
+              ${Number(item.price).toFixed(0)}
+            </span>
+          ) : (
+            <span className="mt-2 whitespace-nowrap text-[11px] uppercase tracking-[0.15em] text-gold">
+              Gratis
+            </span>
+          )}
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <StatusBadge product={item} />
           {isAdmin && (

@@ -8,6 +8,10 @@
     "description": {
       "type": "string"
     },
+    "price": {
+      "type": "number",
+      "default": 0
+    },
     "images": {
       "type": "array",
       "items": {

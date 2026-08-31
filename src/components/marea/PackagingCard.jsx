@@ -54,7 +54,14 @@ export default function PackagingCard({ packaging, index = 0 }) {
         <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground">
           {packaging.name}
         </h3>
-        <div className="mt-1">
+        <div className="mt-1 flex items-center justify-between">
+          {Number(packaging.price) > 0 ? (
+            <span className="font-heading text-[13px] text-foreground">
+              ${Number(packaging.price).toFixed(0)}
+            </span>
+          ) : (
+            <span className="text-[11px] uppercase tracking-[0.15em] text-gold">Gratis</span>
+          )}
           <StatusBadge product={packaging} />
         </div>
       </div>
