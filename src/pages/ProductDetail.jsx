@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/marea/StatusBadge";
 import { useMarea } from "@/components/marea/MareaProvider";
 import { CATEGORY_LABELS, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 import { Loader2, ArrowLeft } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ProductDetail() {
   const [searchParams] = useSearchParams();
   const from = searchParams.get("from") || "all";
   const { isSaved, toggleSave } = useMarea();
+  const isAdmin = useIsAdmin();
 
   const [product, setProduct] = useState(null);
   const [all, setAll] = useState([]);
@@ -115,7 +117,7 @@ export default function ProductDetail() {
         <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
 
-      <SwipeGallery images={images} aspect="4 / 5" className={`mx-auto max-w-xl ${outOfStock ? "opacity-90" : ""}`} />
+      <SwipeGallery images={images} aspect="10 / 11" className={`mx-auto max-w-xl ${outOfStock ? "opacity-90" : ""}`} />
 
       <div className="mx-auto max-w-md px-5 pt-6">
         <div className="flex items-start justify-between gap-4">
@@ -129,6 +131,11 @@ export default function ProductDetail() {
           <StatusBadge product={product} className="text-[13px]" />
           {product.availability === "limited" && product.units_remaining != null && (
             <span className="text-sm text-slate">{product.units_remaining} piezas restantes</span>
+          )}
+          {isAdmin && (
+            <span className="inline-flex items-center rounded-full bg-gold px-2 py-0.5 text-[11px] font-medium text-parchment">
+              Inventario: {Number(product.inventory) || 0}
+            </span>
           )}
         </div>
 

@@ -4,8 +4,10 @@ import React, { useState, useRef, useEffect } from "react";
 // - Zoom uniforme (mismo factor X/Y) => nunca deforma la imagen.
 // - Zoom mínimo = 1 (cover) => la imagen SIEMPRE cubre todo el marco, sin áreas
 //   negras ni vacías. No se puede alejar más allá del cover.
-// - Gestos: arrastrar para mover y pellizcar (pinch) para hacer zoom.
-// - El marco tiene touch-action: none => la página/grid nunca se mueve al editar.
+// - Touch: un dedo arrastra, dos dedos pellizcan para zoom. (eventos nativos
+//   no-passive para poder cancelar el scroll del navegador).
+// - Mouse: arrastrar para mover (sin pinch en escritorio).
+// - touch-action: none en el marco => la página nunca se mueve al editar.
 // - Al guardar se exporta exactamente lo que se ve dentro del marco.
 export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel }) {
   const [src, setSrc] = useState(null);
@@ -17,11 +19,10 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
 
   const frameRef = useRef(null);
   const imgRef = useRef(null);
-  const pointers = useRef(new Map());
   const pinch = useRef({ initialDist: 0, initialZoom: 1 });
   const drag = useRef({ active: false, sx: 0, sy: 0, bx: 0, by: 0 });
 
-  // Refs espejo para usar dentro de los listeners de window sin cierres obsoletos.
+  // Refs espejo para leer estado dentro de los listeners sin cierres obsoletos.
   const zoomRef = useRef(1);
   const offsetRef = useRef({ x: 0, y: 0 });
   const imgDimRef = useRef({ w: 0, h: 0 });
@@ -101,52 +102,28 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
     setOffset(off);
   };
 
+  // ---- Mouse: arrastrar (pointer events, solo no-touch) ----
   const onPointerDown = (e) => {
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.current.size === 1) {
-      drag.current = {
-        active: true,
-        sx: e.clientX,
-        sy: e.clientY,
-        bx: offsetRef.current.x,
-        by: offsetRef.current.y,
-      };
-    } else if (pointers.current.size === 2) {
-      const vals = [...pointers.current.values()];
-      pinch.current = {
-        initialDist: Math.hypot(vals[0].x - vals[1].x, vals[0].y - vals[1].y),
-        initialZoom: zoomRef.current,
-      };
-      drag.current.active = false;
-    }
+    if (e.pointerType === "touch") return;
+    drag.current = {
+      active: true,
+      sx: e.clientX,
+      sy: e.clientY,
+      bx: offsetRef.current.x,
+      by: offsetRef.current.y,
+    };
   };
-
-  // Listeners en window para no perder el gesto si el dedo sale del marco.
   useEffect(() => {
     const onMove = (e) => {
-      if (!pointers.current.has(e.pointerId)) return;
-      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (pointers.current.size >= 2) {
-        const vals = [...pointers.current.values()];
-        const d = Math.hypot(vals[0].x - vals[1].x, vals[0].y - vals[1].y);
-        if (pinch.current.initialDist > 0) {
-          applyZoom(pinch.current.initialZoom * (d / pinch.current.initialDist));
-        }
-      } else if (drag.current.active) {
-        const dx = e.clientX - drag.current.sx;
-        const dy = e.clientY - drag.current.sy;
-        const scale = getScale();
-        const off = clampOffset(drag.current.bx + dx, drag.current.by + dy, scale);
-        offsetRef.current = off;
-        setOffset(off);
-      }
+      if (e.pointerType === "touch" || !drag.current.active) return;
+      const dx = e.clientX - drag.current.sx;
+      const dy = e.clientY - drag.current.sy;
+      const scale = getScale();
+      const off = clampOffset(drag.current.bx + dx, drag.current.by + dy, scale);
+      offsetRef.current = off;
+      setOffset(off);
     };
-    const onUp = (e) => {
-      if (!pointers.current.has(e.pointerId)) return;
-      pointers.current.delete(e.pointerId);
-      if (pointers.current.size < 2) pinch.current.initialDist = 0;
-      if (pointers.current.size === 0) drag.current.active = false;
-    };
+    const onUp = () => { drag.current.active = false; };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
     window.addEventListener("pointercancel", onUp);
@@ -154,6 +131,71 @@ export default function PhotoCropper({ file, aspect = 4 / 5, onSave, onCancel })
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
+    };
+  }, []);
+
+  // ---- Touch: pellizco (zoom) + arrastre (pan). Listeners nativos no-passive. ----
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+    const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+    const onStart = (e) => {
+      if (e.touches.length === 1) {
+        drag.current = {
+          active: true,
+          sx: e.touches[0].clientX,
+          sy: e.touches[0].clientY,
+          bx: offsetRef.current.x,
+          by: offsetRef.current.y,
+        };
+      } else if (e.touches.length === 2) {
+        pinch.current = {
+          initialDist: dist(e.touches[0], e.touches[1]),
+          initialZoom: zoomRef.current,
+        };
+        drag.current.active = false;
+      }
+    };
+    const onMove = (e) => {
+      if (e.touches.length >= 2 && pinch.current.initialDist > 0) {
+        const d = dist(e.touches[0], e.touches[1]);
+        applyZoom(pinch.current.initialZoom * (d / pinch.current.initialDist));
+        e.preventDefault();
+      } else if (e.touches.length === 1 && drag.current.active) {
+        const dx = e.touches[0].clientX - drag.current.sx;
+        const dy = e.touches[0].clientY - drag.current.sy;
+        const scale = getScale();
+        const off = clampOffset(drag.current.bx + dx, drag.current.by + dy, scale);
+        offsetRef.current = off;
+        setOffset(off);
+        e.preventDefault();
+      }
+    };
+    const onEnd = (e) => {
+      if (e.touches.length < 2) pinch.current.initialDist = 0;
+      if (e.touches.length === 0) {
+        drag.current.active = false;
+      } else if (e.touches.length === 1) {
+        drag.current = {
+          active: true,
+          sx: e.touches[0].clientX,
+          sy: e.touches[0].clientY,
+          bx: offsetRef.current.x,
+          by: offsetRef.current.y,
+        };
+      }
+    };
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd, { passive: false });
+    el.addEventListener("touchcancel", onEnd, { passive: false });
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
     };
   }, []);
 

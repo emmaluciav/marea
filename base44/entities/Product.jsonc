@@ -37,6 +37,10 @@
     "units_remaining": {
       "type": "number"
     },
+    "inventory": {
+      "type": "number",
+      "default": 0
+    },
     "published": {
       "type": "boolean",
       "default": false

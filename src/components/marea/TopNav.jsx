@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BookmarkIcon } from "./icons";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ClipboardList } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES } from "@/lib/mareaCategories";
@@ -32,7 +32,18 @@ export default function TopNav() {
           className="pointer-events-none absolute left-1/2 h-14 -translate-x-1/2 object-contain"
         />
         {/* Left: discreet admin entry (home only) OR back arrow */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => navigate("/admin/inventario")}
+              aria-label="Panel de administración"
+              title="Panel de administración"
+              className="flex h-9 w-9 items-center justify-center text-gold transition-opacity active:opacity-60"
+            >
+              <ClipboardList className="h-5 w-5" />
+            </button>
+          )}
           {isHome && !isAdmin && (
             <button
               type="button"
@@ -47,7 +58,7 @@ export default function TopNav() {
               type="button"
               aria-label="Agregar producto"
               onClick={() => navigate("/admin/add")}
-              className="absolute left-0 top-0 flex h-9 w-9 items-center justify-center rounded-br-lg bg-gold text-parchment shadow-sm transition-transform active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-br-lg bg-gold text-parchment shadow-sm transition-transform active:scale-95"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
                 <path d="M12 5v14M5 12h14" strokeLinecap="round" />

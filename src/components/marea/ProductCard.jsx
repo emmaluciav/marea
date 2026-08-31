@@ -41,7 +41,7 @@ export default function ProductCard({ product, index = 0, origin = "all", select
       <div className="relative overflow-hidden rounded-sm bg-secondary">
         <SwipeGallery
           images={images}
-          aspect="3 / 4"
+          aspect="10 / 11"
           onImageClick={() => open()}
           className={outOfStock ? "opacity-80" : ""}
           imageClassName={outOfStock ? "opacity-70 [&_img]:grayscale" : ""}

@@ -30,6 +30,7 @@ export default function AdminProductForm() {
   const [category, setCategory] = useState("large_earrings");
   const [availability, setAvailability] = useState("available");
   const [units, setUnits] = useState("");
+  const [inventory, setInventory] = useState("0");
   const [published, setPublished] = useState(false);
   const [images, setImages] = useState([]);
   const [replaceIdx, setReplaceIdx] = useState(null);
@@ -54,6 +55,7 @@ export default function AdminProductForm() {
         setCategory(p.category || "large_earrings");
         setAvailability(p.availability || "available");
         setUnits(p.units_remaining != null ? String(p.units_remaining) : "");
+        setInventory(p.inventory != null ? String(p.inventory) : "0");
         setPublished(p.published ?? false);
         setImages(p.images || []);
       } catch (e) {
@@ -159,6 +161,7 @@ export default function AdminProductForm() {
       category,
       availability,
       units_remaining: availability === "limited" ? Number(units) || 0 : undefined,
+      inventory: Number(inventory) || 0,
       published,
     };
     try {
@@ -222,7 +225,7 @@ export default function AdminProductForm() {
           <Label className="mb-2 block text-xs uppercase tracking-wider text-slate">Fotos</Label>
           <div className="grid grid-cols-3 gap-2">
             {images.map((url, i) => (
-              <div key={i} className="group relative aspect-[3/4] overflow-hidden rounded-sm bg-secondary">
+              <div key={i} className="group relative aspect-[10/11] overflow-hidden rounded-sm bg-secondary">
                 {isVideoUrl(url) ? (
                   <video src={url} muted playsInline className="h-full w-full object-cover" />
                 ) : (
@@ -274,7 +277,7 @@ export default function AdminProductForm() {
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="flex aspect-[3/4] flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-border text-slate hover:border-gold hover:text-gold"
+              className="flex aspect-[10/11] flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-border text-slate hover:border-gold hover:text-gold"
             >
               {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               <span className="text-[10px] uppercase tracking-wider">Agregar</span>
@@ -369,6 +372,19 @@ export default function AdminProductForm() {
           )}
         </div>
 
+        {/* Cantidad en inventario (privado) */}
+        <div className="mb-5 space-y-1.5">
+          <Label className="text-xs uppercase tracking-wider text-slate">Cantidad en inventario</Label>
+          <Input
+            value={inventory}
+            onChange={(e) => setInventory(e.target.value)}
+            className="h-11"
+            inputMode="numeric"
+            placeholder="0"
+          />
+          <p className="text-[11px] text-slate">Privado · solo visible para ti en el Panel de administración.</p>
+        </div>
+
         {/* Descripción */}
         <div className="mb-5 space-y-1.5">
           <Label className="text-xs uppercase tracking-wider text-slate">Descripción (opcional)</Label>
@@ -414,7 +430,7 @@ export default function AdminProductForm() {
         <PhotoCropper
           key={cropIndex}
           file={cropQueue[cropIndex].file}
-          aspect={4 / 5}
+          aspect={10 / 11}
           onSave={onCropSave}
           onCancel={onCropCancel}
         />
