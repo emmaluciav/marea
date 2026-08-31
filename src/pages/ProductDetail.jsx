@@ -67,7 +67,8 @@ export default function ProductDetail() {
   const saved = isSaved(product.id);
   const images = product.images && product.images.length ? product.images : [];
   const outOfStock = product.availability === "out_of_stock";
-  const fromLabel = CATEGORY_LABELS[from] || "Ver todo";
+  const fromSaved = from === "saved";
+  const fromLabel = fromSaved ? "Volver" : CATEGORY_LABELS[from] || "Ver todo";
 
   // Orden de recomendaciones según la categoría del producto actual.
   const REC_ORDER = {
@@ -104,7 +105,7 @@ export default function ProductDetail() {
       {/* Botón flotante de regreso */}
       <button
         type="button"
-        onClick={() => navigate(from === "all" ? "/" : `/?cat=${from}`)}
+        onClick={() => navigate(fromSaved ? "/saved" : from === "all" ? "/" : `/?cat=${from}`)}
         className="fixed left-3 top-3 z-30 flex items-center gap-1.5 rounded-full bg-parchment/85 px-3 py-1.5 text-[11px] uppercase tracking-[0.12em] text-foreground shadow-sm backdrop-blur-md"
       >
         <ArrowLeft className="h-3.5 w-3.5" />

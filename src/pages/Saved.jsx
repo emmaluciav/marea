@@ -136,7 +136,7 @@ export default function Saved() {
                 key={p.id}
                 product={p}
                 index={i}
-                origin="all"
+                origin="saved"
                 selectable
                 selected={validSelected.includes(p.id)}
                 onToggleSelect={() => toggleSelect(p.id)}
