@@ -19,7 +19,7 @@ export default function CategoryTabs({ active = "all" }) {
             key={c.id}
             type="button"
             onClick={() => select(c.id)}
-            className={`whitespace-nowrap text-[10px] uppercase tracking-[0.1em] transition-colors ${
+            className={`whitespace-nowrap text-[12px] uppercase tracking-[0.12em] transition-colors ${
               isActive ? "text-foreground" : "text-slate"
             }`}
           >
