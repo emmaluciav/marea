@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2 } from "lucide-react";
+import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2, Banknote } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,6 +46,7 @@ export default function AdminInventory() {
 
   // Vendidos
   const [sales, setSales] = useState([]);
+  const [vendidosView, setVendidosView] = useState("history"); // "history" | "summary"
   // Form (add/edit): mostrar selector de producto + panel inferior
   const [formMode, setFormMode] = useState(null); // null | "add" | "edit"
   const [editingId, setEditingId] = useState(null);
@@ -116,6 +117,38 @@ export default function AdminInventory() {
   products.forEach((p) => {
     productMap[p.id] = p;
   });
+  const packagingMap = {};
+  packaging.forEach((p) => {
+    packagingMap[p.id] = p;
+  });
+
+  // Resumen de ventas: totales y líneas tipo recibo, sin fotos.
+  // El precio se toma del catálogo actual (productos y empaques existentes).
+  const saleProductPrice = (s) => Number(productMap[s.product_id]?.price) || 0;
+  const salePackPrice = (s) => {
+    const pack = s.packaging_id ? packagingMap[s.packaging_id] : null;
+    return pack ? Number(pack.price) || 0 : 0;
+  };
+  const linesForSale = (s) => {
+    const out = [];
+    const pPrice = saleProductPrice(s);
+    const pp = salePackPrice(s);
+    const q = Number(s.quantity) || 0;
+    const pq = Number(s.packaging_quantity) || 0;
+    const n = Math.max(q, pp > 0 ? pq : 0);
+    for (let i = 0; i < n; i++) {
+      if (i < q) out.push({ name: s.product_name, amount: pPrice });
+      if (pp > 0 && i < pq) out.push({ name: s.packaging_name, amount: pp });
+    }
+    return out;
+  };
+  const totalMoney = sales.reduce((sum, s) => {
+    return (
+      sum +
+      saleProductPrice(s) * (Number(s.quantity) || 0) +
+      (salePackPrice(s) > 0 ? salePackPrice(s) * (Number(s.packaging_quantity) || 0) : 0)
+    );
+  }, 0);
 
   const saleProducts = products.filter((p) => {
     if (saleCat !== "all" && p.category !== saleCat) return false;
@@ -514,18 +547,72 @@ export default function AdminInventory() {
             </div>
           )}
         </div>
+      ) : vendidosView === "summary" ? (
+        <div className="mx-auto max-w-3xl px-4 py-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-heading text-sm text-foreground">Resumen de ventas</h2>
+            <button
+              type="button"
+              onClick={() => setVendidosView("history")}
+              className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
+              aria-label="Volver al historial"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="mb-6 rounded-sm border border-border/70 bg-secondary/30 px-4 py-5 text-center">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-slate">Total</p>
+            <p className="mt-1 font-heading text-3xl text-foreground">${totalMoney}</p>
+          </div>
+
+          {groupKeys.length === 0 ? (
+            <p className="py-16 text-center text-sm text-slate">Sin ventas registradas.</p>
+          ) : (
+            <div className="space-y-6">
+              {groupKeys.map((k) => {
+                const lines = groupsMap[k].flatMap(linesForSale);
+                return (
+                  <div key={k}>
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-slate">
+                      {formatDate(groupsMap[k][0].created_date)}
+                    </p>
+                    <ul className="divide-y divide-border rounded-sm border border-border/60">
+                      {lines.map((line, i) => (
+                        <li key={i} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                          <span className="truncate text-sm text-foreground">{line.name}</span>
+                          <span className="whitespace-nowrap text-sm text-foreground">${line.amount}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       ) : (
         <div className="mx-auto max-w-3xl px-4 py-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-heading text-sm text-foreground">Historial de ventas</h2>
-            <button
-              type="button"
-              onClick={startAdd}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95"
-              aria-label="Registrar venta"
-            >
-              <Plus className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setVendidosView("summary")}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-gold transition-colors hover:bg-secondary active:scale-95"
+                aria-label="Resumen de ventas"
+              >
+                <Banknote className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={startAdd}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95"
+                aria-label="Registrar venta"
+              >
+                <Plus className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           {groupKeys.length === 0 ? (
