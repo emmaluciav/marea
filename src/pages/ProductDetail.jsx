@@ -201,7 +201,7 @@ export default function ProductDetail() {
 
       {/* Recomendados */}
       {recommendations.length > 0 && (
-        <section className="mx-auto mt-12 split:mt-6 lg:mt-6 max-w-7xl px-3 sm:px-4">
+        <section className="mx-auto mt-12 split:mt-6 lg:mt-6 landscape-sm:mt-4 max-w-7xl px-3 sm:px-4">
           <h2 className="px-2 font-heading text-lg text-foreground">También te puede gustar</h2>
           <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 lg:grid-cols-4">
             {recommendations.map((r, i) => (

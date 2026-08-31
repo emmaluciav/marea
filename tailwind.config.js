@@ -8,8 +8,11 @@ module.exports = {
   			// Landscape orientation on any device (desktop, tablet horizontal, phone horizontal)
   			'split': { 'raw': '(orientation: landscape)' },
   			// Landscape AND a tall viewport — desktop / tablet-horizontal (excludes phones)
-  			'split-grid': { 'raw': '(orientation: landscape) and (min-height: 501px)' }
-  		},
+  			'split-grid': { 'raw': '(orientation: landscape) and (min-height: 501px)' },
+  			// Phone / tablet in landscape (narrower than desktop) — for tighter
+  			// spacing on the recommended-section gap on small landscape screens.
+  			'landscape-sm': { 'raw': '(orientation: landscape) and (max-width: 1023px)' }
+  			},
   		opacity: Object.fromEntries(Array.from({ length: 101 }, (_, i) => [i, `${i / 100}`])),
   		borderRadius: {
   			lg: 'var(--radius)',

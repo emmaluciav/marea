@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProductCard from "@/components/marea/ProductCard";
 import { useMarea } from "@/components/marea/MareaProvider";
-import { Loader2, Instagram, MessageCircle, Send } from "lucide-react";
+import { Loader2, Instagram, MessageCircle, Send, Copy } from "lucide-react";
 import { BookmarkIcon } from "@/components/marea/icons";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -48,8 +48,14 @@ export default function Saved() {
     const lines = selectedProducts
       .map((p) => `• ${p.name}\n${window.location.origin}/product/${p.id}`)
       .join("\n");
-    return `Hola, estoy interesada en estos productos:\n${lines}`;
+    return `Hola, me interesan estos productos:\n${lines}`;
   };
+
+  // Solo productos + enlaces, sin el saludo — para compartir donde quieran.
+  const buildProductsOnly = () =>
+    selectedProducts
+      .map((p) => `• ${p.name}\n${window.location.origin}/product/${p.id}`)
+      .join("\n");
 
   const sendWhatsApp = () => {
     if (!selectedProducts.length) return;
@@ -66,7 +72,7 @@ export default function Saved() {
       await navigator.clipboard.writeText(msg);
       toast({
         title: "Mensaje copiado",
-        description: "Pégalo en el chat de Instagram para enviarlo a MAREA.",
+        description: "Pégalo en el chat de Instagram para enviarlo a Marea.",
       });
     } catch {
       /* si el portapapeles falla, igual abrimos Instagram */
@@ -74,10 +80,26 @@ export default function Saved() {
     window.open(`https://ig.me/m/${IG_HANDLE}`, "_blank");
   };
 
+  const copyProducts = async () => {
+    if (!selectedProducts.length) return;
+    try {
+      await navigator.clipboard.writeText(buildProductsOnly());
+      toast({
+        title: "Productos copiados",
+        description: "Ya puedes pegarlos donde quieras.",
+      });
+    } catch {
+      toast({
+        title: "No se pudo copiar",
+        description: "Inténtalo de nuevo.",
+      });
+    }
+  };
+
   const hasSelection = selectedProducts.length > 0;
 
   return (
-    <div className={`pt-4 ${hasSelection ? "pb-40" : "pb-12"}`}>
+    <div className={`pt-4 ${hasSelection ? "pb-48" : "pb-12"}`}>
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-6 flex items-center gap-2">
           <BookmarkIcon filled className="h-5 w-5 text-obsidian" />
@@ -89,7 +111,7 @@ export default function Saved() {
           <div className="mb-5 flex items-center gap-2.5 rounded-sm border border-border bg-secondary/40 px-3 py-2.5">
             <Send className="h-4 w-4 shrink-0 text-gold" />
             <p className="text-[12px] leading-snug text-slate">
-              Selecciona los productos que te interesan para enviarlos a MAREA.
+              Selecciona los productos que te interesan para enviarlos a Marea.
             </p>
           </div>
         )}
@@ -137,7 +159,7 @@ export default function Saved() {
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[11px] uppercase tracking-wider text-foreground transition-colors hover:bg-secondary"
               >
                 <Instagram className="h-4 w-4" />
-                Enviar productos por Instagram
+                Copiar y pegar en Instagram
               </button>
               <button
                 type="button"
@@ -146,6 +168,14 @@ export default function Saved() {
               >
                 <MessageCircle className="h-4 w-4" />
                 Enviar productos por WhatsApp
+              </button>
+              <button
+                type="button"
+                onClick={copyProducts}
+                className="mx-auto mt-1.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] uppercase tracking-wider text-slate transition-colors hover:text-foreground"
+              >
+                <Copy className="h-3 w-3" />
+                Copiar productos
               </button>
             </div>
           </div>
