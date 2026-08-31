@@ -4,7 +4,7 @@ import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 
 // Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
 // al final del catálogo. Incluye Instagram, WhatsApp y la ubicación.
-export default function ContactSection({ variant = "bottom" }) {
+export default function ContactSection({ variant = "bottom", delivery = false }) {
   const top = variant === "top";
   return (
     <section
@@ -47,18 +47,18 @@ export default function ContactSection({ variant = "bottom" }) {
         Ciudad Obregón, Sonora
       </p>
 
+      {(top || delivery) && (
+        <p className="mt-2 text-[11px] text-slate/70">
+          Entrega inmediata en productos disponibles.
+        </p>
+      )}
       {top && (
-        <>
-          <p className="mt-2 text-[11px] text-slate/70">
-            Entrega inmediata en productos disponibles.
-          </p>
-          <Link
-            to="/empaque"
-            className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
-          >
-            Ver Tipos de Empaque
-          </Link>
-        </>
+        <Link
+          to="/empaque"
+          className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
+        >
+          Ver Tipos de Empaque
+        </Link>
       )}
     </section>
   );

@@ -121,8 +121,8 @@ export default function ProductDetail() {
         <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
 
-      <section className="split:mx-auto split:max-w-6xl split:px-4 split:py-6 lg:max-w-7xl lg:px-8 lg:py-8">
-        <div className="split:grid split:grid-cols-2 split:gap-8 lg:gap-12">
+      <section className="split:mx-auto split:max-w-6xl split:px-4 split:pt-16 split:pb-6 lg:max-w-7xl lg:px-8 lg:pt-20 lg:pb-8">
+        <div className="split:grid split:grid-cols-2 split:gap-4 lg:gap-6">
           {/* Columna de galería */}
           <div className={outOfStock ? "opacity-90" : ""}>
             {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal */}
@@ -201,7 +201,7 @@ export default function ProductDetail() {
 
       {/* Recomendados */}
       {recommendations.length > 0 && (
-        <section className="mx-auto mt-12 max-w-7xl px-3 sm:px-4">
+        <section className="mx-auto mt-12 split:mt-6 lg:mt-6 max-w-7xl px-3 sm:px-4">
           <h2 className="px-2 font-heading text-lg text-foreground">También te puede gustar</h2>
           <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 lg:grid-cols-4">
             {recommendations.map((r, i) => (
