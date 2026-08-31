@@ -489,46 +489,46 @@ export default function AdminInventory() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad vendida</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={saleQty}
+                    onChange={(e) => setSaleQty(e.target.value)}
+                    className="h-10"
+                    inputMode="numeric"
+                  />
+                </div>
+
+                <div className="grid grid-cols-[1fr_auto] gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad vendida</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={saleQty}
-                      onChange={(e) => setSaleQty(e.target.value)}
-                      className="h-10"
-                      inputMode="numeric"
-                    />
+                    <Label className="text-[11px] uppercase tracking-wider text-slate">Tipo de empaque</Label>
+                    <select
+                      value={packId}
+                      onChange={(e) => setPackId(e.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    >
+                      <option value="">Sin empaque</option>
+                      {packaging.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad utilizada</Label>
+                    <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad</Label>
                     <Input
                       type="number"
                       min="0"
                       value={packQty}
                       onChange={(e) => setPackQty(e.target.value)}
                       disabled={!packId}
-                      className="h-10"
+                      className="h-10 w-20"
                       inputMode="numeric"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] uppercase tracking-wider text-slate">Tipo de empaque</Label>
-                  <select
-                    value={packId}
-                    onChange={(e) => setPackId(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  >
-                    <option value="">Sin empaque</option>
-                    {packaging.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               </div>
             </div>
@@ -581,12 +581,12 @@ export default function AdminInventory() {
                             </span>
                           </div>
                           {showPack && (
-                            <div className="mt-0.5 flex items-center justify-between gap-3">
-                              <span className="truncate text-[11px] text-slate">
+                            <div className="mt-1 flex items-center justify-between gap-3">
+                              <span className="truncate text-xs text-slate">
                                 Empaque: {s.packaging_name}
                                 {pq > 1 ? ` ×${pq}` : ""}
                               </span>
-                              <span className="whitespace-nowrap text-[11px] text-slate">
+                              <span className="whitespace-nowrap text-xs text-slate">
                                 ${pp * pq}
                               </span>
                             </div>
