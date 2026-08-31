@@ -11,6 +11,16 @@
     "quantity": {
       "type": "number",
       "default": 1
+    },
+    "packaging_id": {
+      "type": "string"
+    },
+    "packaging_name": {
+      "type": "string"
+    },
+    "packaging_quantity": {
+      "type": "number",
+      "default": 0
     }
   },
   "required": [

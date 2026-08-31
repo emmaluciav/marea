@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X } from "lucide-react";
+import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { isVideoUrl } from "@/lib/media";
 import { CATEGORIES } from "@/lib/mareaCategories";
 
@@ -45,11 +46,15 @@ export default function AdminInventory() {
 
   // Vendidos
   const [sales, setSales] = useState([]);
-  const [adding, setAdding] = useState(false);
+  // Form (add/edit): mostrar selector de producto + panel inferior
+  const [formMode, setFormMode] = useState(null); // null | "add" | "edit"
+  const [editingId, setEditingId] = useState(null);
   const [saleCat, setSaleCat] = useState("all");
   const [saleQuery, setSaleQuery] = useState("");
   const [selected, setSelected] = useState(null);
   const [saleQty, setSaleQty] = useState("1");
+  const [packId, setPackId] = useState("");
+  const [packQty, setPackQty] = useState("0");
   const [savingSale, setSavingSale] = useState(false);
 
   useEffect(() => {
@@ -107,27 +112,82 @@ export default function AdminInventory() {
   });
 
   // ---- Vendidos ----
+  const productMap = {};
+  products.forEach((p) => {
+    productMap[p.id] = p;
+  });
+
   const saleProducts = products.filter((p) => {
     if (saleCat !== "all" && p.category !== saleCat) return false;
     return !saleQuery.trim() || (p.name || "").toLowerCase().includes(saleQuery.trim().toLowerCase());
   });
 
-  const saveSale = async () => {
+  const startAdd = () => {
+    setFormMode("add");
+    setEditingId(null);
+    setSelected(null);
+    setSaleQty("1");
+    setPackId("");
+    setPackQty("0");
+    setSaleQuery("");
+    setSaleCat("all");
+  };
+
+  const startEdit = (sale) => {
+    setFormMode("edit");
+    setEditingId(sale.id);
+    setSaleQty(String(sale.quantity || 1));
+    setPackId(sale.packaging_id || "");
+    setPackQty(String(sale.packaging_quantity || 0));
+    setSelected(productMap[sale.product_id] || { id: sale.product_id, name: sale.product_name, images: [] });
+    setSaleQuery("");
+    setSaleCat("all");
+  };
+
+  const closeForm = () => {
+    setFormMode(null);
+    setEditingId(null);
+    setSelected(null);
+  };
+
+  const saveForm = async () => {
     if (!selected) return;
     const qty = Math.max(1, Number(saleQty) || 1);
+    const pkQty = Math.max(0, Number(packQty) || 0);
+    const pack = packId ? packaging.find((p) => p.id === packId) : null;
+    const payload = {
+      product_id: selected.id,
+      product_name: selected.name,
+      quantity: qty,
+      packaging_id: pack ? pack.id : undefined,
+      packaging_name: pack ? pack.name : undefined,
+      packaging_quantity: pack ? pkQty : 0,
+    };
     setSavingSale(true);
     try {
-      const created = await base44.entities.Sale.create({
-        product_id: selected.id,
-        product_name: selected.name,
-        quantity: qty,
-      });
-      setSales((prev) => [created, ...prev]);
-      setAdding(false);
-      setSelected(null);
-      setSaleQty("1");
-      setSaleQuery("");
-      setSaleCat("all");
+      if (formMode === "edit" && editingId) {
+        const updated = await base44.entities.Sale.update(editingId, payload);
+        setSales((prev) => prev.map((s) => (s.id === editingId ? updated : s)));
+      } else {
+        const created = await base44.entities.Sale.create(payload);
+        setSales((prev) => [created, ...prev]);
+      }
+      closeForm();
+    } catch {
+      /* ignore */
+    } finally {
+      setSavingSale(false);
+    }
+  };
+
+  const deleteSale = async () => {
+    if (!editingId) return;
+    if (!window.confirm("¿Eliminar esta venta?")) return;
+    setSavingSale(true);
+    try {
+      await base44.entities.Sale.delete(editingId);
+      setSales((prev) => prev.filter((s) => s.id !== editingId));
+      closeForm();
     } catch {
       /* ignore */
     } finally {
@@ -201,6 +261,35 @@ export default function AdminInventory() {
           >
             <Plus className="h-4 w-4" />
           </button>
+        </div>
+      </li>
+    );
+  };
+
+  const renderSaleRow = (s) => {
+    const prod = productMap[s.product_id];
+    const img = prod && prod.images && prod.images[0];
+    return (
+      <li key={s.id} className="flex items-center gap-3 py-3">
+        <Thumb src={img} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-foreground">{s.product_name}</p>
+          <p className="text-[11px] text-slate">
+            {s.packaging_name ? `${s.packaging_name} · ${s.packaging_quantity} usados` : "Sin empaque"}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => startEdit(s)}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-gold transition-colors hover:bg-secondary active:scale-95"
+            aria-label="Editar venta"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+          <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
+            {s.quantity}
+          </span>
         </div>
       </li>
     );
@@ -281,16 +370,15 @@ export default function AdminInventory() {
             <ul className="divide-y divide-border">{invRows.map(renderInvRow)}</ul>
           )}
         </div>
-      ) : adding ? (
-        <div className="mx-auto max-w-3xl px-4 py-6 pb-32">
+      ) : formMode ? (
+        <div className="mx-auto max-w-3xl px-4 py-6 pb-56">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-heading text-sm text-foreground">Registrar venta</h2>
+            <h2 className="font-heading text-sm text-foreground">
+              {formMode === "edit" ? "Editar venta" : "Registrar venta"}
+            </h2>
             <button
               type="button"
-              onClick={() => {
-                setAdding(false);
-                setSelected(null);
-              }}
+              onClick={closeForm}
               className="flex h-9 w-9 items-center justify-center text-foreground transition-opacity active:opacity-60"
               aria-label="Cerrar"
             >
@@ -351,28 +439,77 @@ export default function AdminInventory() {
 
           {selected && (
             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-parchment/95 px-4 py-3 backdrop-blur-md">
-              <div className="mx-auto flex max-w-3xl items-center gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">{selected.name}</p>
-                  <p className="text-[11px] text-slate">Cantidad vendida</p>
+              <div className="mx-auto max-w-3xl space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] uppercase tracking-wider text-slate">Producto</p>
+                    <p className="truncate text-sm font-medium text-foreground">{selected.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {formMode === "edit" && (
+                      <button
+                        type="button"
+                        onClick={deleteSale}
+                        disabled={savingSale}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-destructive text-destructive transition-colors hover:bg-destructive/10 active:scale-95 disabled:opacity-50"
+                        aria-label="Eliminar venta"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={saveForm}
+                      disabled={savingSale}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95 disabled:opacity-50"
+                      aria-label="Guardar venta"
+                    >
+                      {savingSale ? <Loader2 className="h-5 w-5 animate-spin" /> : <Check className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </div>
-                <Input
-                  type="number"
-                  min="1"
-                  value={saleQty}
-                  onChange={(e) => setSaleQty(e.target.value)}
-                  className="h-10 w-20 text-center"
-                  inputMode="numeric"
-                />
-                <button
-                  type="button"
-                  onClick={saveSale}
-                  disabled={savingSale}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95 disabled:opacity-50"
-                  aria-label="Guardar venta"
-                >
-                  {savingSale ? <Loader2 className="h-5 w-5 animate-spin" /> : <Check className="h-5 w-5" />}
-                </button>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad vendida</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      value={saleQty}
+                      onChange={(e) => setSaleQty(e.target.value)}
+                      className="h-10"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad utilizada</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={packQty}
+                      onChange={(e) => setPackQty(e.target.value)}
+                      disabled={!packId}
+                      className="h-10"
+                      inputMode="numeric"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] uppercase tracking-wider text-slate">Tipo de empaque</Label>
+                  <select
+                    value={packId}
+                    onChange={(e) => setPackId(e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    <option value="">Sin empaque</option>
+                    {packaging.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           )}
@@ -383,7 +520,7 @@ export default function AdminInventory() {
             <h2 className="font-heading text-sm text-foreground">Historial de ventas</h2>
             <button
               type="button"
-              onClick={() => setAdding(true)}
+              onClick={startAdd}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95"
               aria-label="Registrar venta"
             >
@@ -400,16 +537,7 @@ export default function AdminInventory() {
                   <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-slate">
                     {formatDate(groupsMap[k][0].created_date)}
                   </p>
-                  <ul className="divide-y divide-border rounded-sm border border-border/60">
-                    {groupsMap[k].map((s) => (
-                      <li key={s.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
-                        <span className="truncate text-sm text-foreground">{s.product_name}</span>
-                        <span className="whitespace-nowrap text-[12px] font-medium text-gold">
-                          {s.quantity} vendido{s.quantity === 1 ? "" : "s"}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  <ul className="divide-y divide-border">{groupsMap[k].map(renderSaleRow)}</ul>
                 </div>
               ))}
             </div>
