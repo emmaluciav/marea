@@ -129,19 +129,6 @@ export default function AdminInventory() {
     const pack = s.packaging_id ? packagingMap[s.packaging_id] : null;
     return pack ? Number(pack.price) || 0 : 0;
   };
-  const linesForSale = (s) => {
-    const out = [];
-    const pPrice = saleProductPrice(s);
-    const pp = salePackPrice(s);
-    const q = Number(s.quantity) || 0;
-    const pq = Number(s.packaging_quantity) || 0;
-    const n = Math.max(q, pp > 0 ? pq : 0);
-    for (let i = 0; i < n; i++) {
-      if (i < q) out.push({ name: s.product_name, amount: pPrice });
-      if (pp > 0 && i < pq) out.push({ name: s.packaging_name, amount: pp });
-    }
-    return out;
-  };
   const totalMoney = sales.reduce((sum, s) => {
     return (
       sum +
@@ -570,24 +557,46 @@ export default function AdminInventory() {
             <p className="py-16 text-center text-sm text-slate">Sin ventas registradas.</p>
           ) : (
             <div className="space-y-6">
-              {groupKeys.map((k) => {
-                const lines = groupsMap[k].flatMap(linesForSale);
-                return (
-                  <div key={k}>
-                    <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-slate">
-                      {formatDate(groupsMap[k][0].created_date)}
-                    </p>
-                    <ul className="divide-y divide-border rounded-sm border border-border/60">
-                      {lines.map((line, i) => (
-                        <li key={i} className="flex items-center justify-between gap-3 px-3 py-2.5">
-                          <span className="truncate text-sm text-foreground">{line.name}</span>
-                          <span className="whitespace-nowrap text-sm text-foreground">${line.amount}</span>
+              {groupKeys.map((k) => (
+                <div key={k}>
+                  <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-slate">
+                    {formatDate(groupsMap[k][0].created_date)}
+                  </p>
+                  <ul className="divide-y divide-border/40 overflow-hidden rounded-sm border border-border/60">
+                    {groupsMap[k].map((s) => {
+                      const pPrice = saleProductPrice(s);
+                      const pp = salePackPrice(s);
+                      const q = Number(s.quantity) || 0;
+                      const pq = Number(s.packaging_quantity) || 0;
+                      const showPack = Boolean(s.packaging_id && s.packaging_name);
+                      return (
+                        <li key={s.id} className="px-3 py-2.5">
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="truncate text-sm text-foreground">
+                              {s.product_name}
+                              {q > 1 ? ` ×${q}` : ""}
+                            </span>
+                            <span className="whitespace-nowrap text-sm text-foreground">
+                              ${pPrice * q}
+                            </span>
+                          </div>
+                          {showPack && (
+                            <div className="mt-0.5 flex items-center justify-between gap-3">
+                              <span className="truncate text-[11px] text-slate">
+                                Empaque: {s.packaging_name}
+                                {pq > 1 ? ` ×${pq}` : ""}
+                              </span>
+                              <span className="whitespace-nowrap text-[11px] text-slate">
+                                ${pp * pq}
+                              </span>
+                            </div>
+                          )}
                         </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
             </div>
           )}
         </div>
