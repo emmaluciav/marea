@@ -563,36 +563,34 @@ export default function AdminInventory() {
                     {formatDate(groupsMap[k][0].created_date)}
                   </p>
                   <ul className="divide-y divide-border/40 overflow-hidden rounded-sm border border-border/60">
-                    {groupsMap[k].map((s) => {
+                    {groupsMap[k].flatMap((s) => {
                       const pPrice = saleProductPrice(s);
                       const pp = salePackPrice(s);
-                      const q = Number(s.quantity) || 0;
+                      const q = Math.max(Number(s.quantity) || 0, 1);
                       const pq = Number(s.packaging_quantity) || 0;
                       const showPack = Boolean(s.packaging_id && s.packaging_name);
-                      return (
-                        <li key={s.id} className="px-3 py-2.5">
+                      return Array.from({ length: q }).map((_, i) => (
+                        <li key={`${s.id}-${i}`} className="px-3 py-2.5">
                           <div className="flex items-center justify-between gap-3">
                             <span className="truncate text-sm text-foreground">
                               {s.product_name}
-                              {q > 1 ? ` ×${q}` : ""}
                             </span>
                             <span className="whitespace-nowrap text-sm text-foreground">
-                              ${pPrice * q}
+                              ${pPrice}
                             </span>
                           </div>
-                          {showPack && (
+                          {showPack && i < pq && (
                             <div className="mt-1 flex items-center justify-between gap-3">
                               <span className="truncate text-xs text-slate">
                                 Empaque: {s.packaging_name}
-                                {pq > 1 ? ` ×${pq}` : ""}
                               </span>
                               <span className="whitespace-nowrap text-xs text-slate">
-                                ${pp * pq}
+                                ${pp}
                               </span>
                             </div>
                           )}
                         </li>
-                      );
+                      ));
                     })}
                   </ul>
                 </div>
