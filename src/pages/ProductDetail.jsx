@@ -69,9 +69,11 @@ export default function ProductDetail() {
 
   // Orden de recomendaciones según la categoría del producto actual.
   const REC_ORDER = {
-    small_earrings: ["small_earrings", "large_earrings", "necklaces"],
-    large_earrings: ["large_earrings", "small_earrings", "necklaces"],
-    necklaces: ["necklaces", "large_earrings", "small_earrings"],
+    small_earrings: ["small_earrings", "large_earrings", "necklaces", "pulseras", "anillos"],
+    large_earrings: ["large_earrings", "small_earrings", "necklaces", "pulseras", "anillos"],
+    necklaces: ["necklaces", "large_earrings", "small_earrings", "pulseras", "anillos"],
+    pulseras: ["pulseras", "anillos", "necklaces", "large_earrings", "small_earrings"],
+    anillos: ["anillos", "pulseras", "necklaces", "large_earrings", "small_earrings"],
   };
   const order = REC_ORDER[product.category] || ["small_earrings", "large_earrings", "necklaces"];
   const recommendations = all

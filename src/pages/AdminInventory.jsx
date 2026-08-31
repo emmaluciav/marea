@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { Loader2, ArrowLeft, Minus, Plus } from "lucide-react";
+import { Loader2, ArrowLeft, Minus, Plus, Search } from "lucide-react";
 import { Image } from "@/components/ui/image";
+import { Input } from "@/components/ui/input";
 import { isVideoUrl } from "@/lib/media";
+import { CATEGORIES } from "@/lib/mareaCategories";
 
 // Panel de administración (solo admin): inventario interno de cada producto.
 // El número de inventario es privado y NO cambia el estado público de
@@ -15,6 +17,8 @@ export default function AdminInventory() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(null);
+  const [cat, setCat] = useState("all");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     if (!isAdmin) {
@@ -55,6 +59,13 @@ export default function AdminInventory() {
     }
   };
 
+  const filtered = products.filter((p) => {
+    const matchCat = cat === "all" || p.category === cat;
+    const matchQuery =
+      !query.trim() || (p.name || "").toLowerCase().includes(query.trim().toLowerCase());
+    return matchCat && matchQuery;
+  });
+
   if (!isAdmin) return null;
   if (loading) {
     return (
@@ -79,15 +90,43 @@ export default function AdminInventory() {
       </header>
 
       <div className="mx-auto max-w-3xl px-4 py-6">
-        <p className="mb-4 text-xs uppercase tracking-wider text-slate">
-          Inventario interno · {products.length} producto{products.length === 1 ? "" : "s"}
+        <p className="mb-3 text-xs uppercase tracking-wider text-slate">
+          Inventario interno · {filtered.length} producto{filtered.length === 1 ? "" : "s"}
         </p>
 
-        {products.length === 0 ? (
-          <p className="py-16 text-center text-sm text-slate">Aún no hay productos.</p>
+        {/* Buscador */}
+        <div className="relative mb-3">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar por nombre"
+            className="h-10 pl-9"
+          />
+        </div>
+
+        {/* Filtro por categoría */}
+        <div className="no-scrollbar mb-4 flex gap-3 overflow-x-auto pb-1">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setCat(c.id)}
+              className={`whitespace-nowrap text-[10px] uppercase tracking-[0.1em] transition-colors ${
+                cat === c.id ? "text-foreground" : "text-slate"
+              }`}
+            >
+              {c.label}
+              {cat === c.id && <span className="mt-1 block h-px w-full bg-gold" />}
+            </button>
+          ))}
+        </div>
+
+        {filtered.length === 0 ? (
+          <p className="py-16 text-center text-sm text-slate">No hay productos que coincidan.</p>
         ) : (
           <ul className="divide-y divide-border">
-            {products.map((p) => {
+            {filtered.map((p) => {
               const count = Number(p.inventory) || 0;
               const img = p.images && p.images[0];
               return (

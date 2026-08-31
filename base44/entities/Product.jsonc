@@ -22,7 +22,9 @@
       "enum": [
         "large_earrings",
         "small_earrings",
-        "necklaces"
+        "necklaces",
+        "pulseras",
+        "anillos"
       ]
     },
     "availability": {

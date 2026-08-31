@@ -4,12 +4,16 @@ export const CATEGORIES = [
   { id: "large_earrings", label: "Aretes grandes" },
   { id: "small_earrings", label: "Aretes pequeños" },
   { id: "necklaces", label: "Collares" },
+  { id: "pulseras", label: "Pulseras" },
+  { id: "anillos", label: "Anillos" },
 ];
 
 export const CATEGORY_LABELS = {
   large_earrings: "Aretes grandes",
   small_earrings: "Aretes pequeños",
   necklaces: "Collares",
+  pulseras: "Pulseras",
+  anillos: "Anillos",
   all: "Ver todo",
 };
 
