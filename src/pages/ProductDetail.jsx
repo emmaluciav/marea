@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import SwipeGallery from "@/components/marea/SwipeGallery";
+import { Image } from "@/components/ui/image";
+import { isVideoUrl } from "@/lib/media";
 import ProductCard from "@/components/marea/ProductCard";
 import { BookmarkIcon } from "@/components/marea/icons";
 import { StatusBadge } from "@/components/marea/StatusBadge";
@@ -119,9 +121,32 @@ export default function ProductDetail() {
         <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
 
-      <SwipeGallery images={images} aspect="10 / 11" className={`mx-auto max-w-xl ${outOfStock ? "opacity-90" : ""}`} />
+      <section className="split:mx-auto split:max-w-6xl split:px-4 split:py-6 lg:max-w-7xl lg:px-8 lg:py-8">
+        <div className="split:grid split:grid-cols-2 split:gap-8 lg:gap-12">
+          {/* Columna de galería */}
+          <div className={outOfStock ? "opacity-90" : ""}>
+            {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal */}
+            <div className="hidden split-grid:grid split-grid:grid-cols-2 split-grid:gap-2">
+              {images.map((src, i) =>
+                isVideoUrl(src) ? (
+                  <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "10 / 11" }}>
+                    <video src={src} autoPlay loop muted playsInline className="h-full w-full object-cover" />
+                  </div>
+                ) : (
+                  <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "10 / 11" }}>
+                    <Image src={src} alt={product.name} fittingType="fill" className="h-full w-full" />
+                  </div>
+                )
+              )}
+            </div>
+            {/* Swipe — móvil vertical y teléfono horizontal */}
+            <div className="split-grid:hidden">
+              <SwipeGallery images={images} aspect="10 / 11" className="mx-auto max-w-xl" />
+            </div>
+          </div>
 
-      <div className="mx-auto max-w-md px-5 pt-6">
+          {/* Columna de información */}
+          <div className="mx-auto max-w-md px-5 pt-6 split:mx-0 split:max-w-none split:px-0 split:pt-0 lg:max-w-xl lg:pt-2">
         <div className="flex items-start justify-between gap-4">
           <h1 className="font-heading text-2xl leading-tight text-foreground">{product.name}</h1>
           <span className="mt-1 whitespace-nowrap font-heading text-2xl text-foreground">
@@ -170,7 +195,9 @@ export default function ProductDetail() {
             </a>
           </div>
         </div>
-      </div>
+          </div>
+        </div>
+      </section>
 
       {/* Recomendados */}
       {recommendations.length > 0 && (

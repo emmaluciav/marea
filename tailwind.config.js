@@ -4,6 +4,12 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		screens: {
+  			// Landscape orientation on any device (desktop, tablet horizontal, phone horizontal)
+  			'split': { 'raw': '(orientation: landscape)' },
+  			// Landscape AND a tall viewport — desktop / tablet-horizontal (excludes phones)
+  			'split-grid': { 'raw': '(orientation: landscape) and (min-height: 501px)' }
+  		},
   		opacity: Object.fromEntries(Array.from({ length: 101 }, (_, i) => [i, `${i / 100}`])),
   		borderRadius: {
   			lg: 'var(--radius)',
