@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import SwipeGallery from "./SwipeGallery";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { StatusBadge } from "./StatusBadge";
 
 // Tarjeta de empaque para la grilla de "Tipos de Empaque". Misma estética que
 // ProductCard pero sin precio, disponibilidad ni guardado. Incluye el control
@@ -53,6 +54,9 @@ export default function PackagingCard({ packaging, index = 0 }) {
         <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground">
           {packaging.name}
         </h3>
+        <div className="mt-1">
+          <StatusBadge product={packaging} />
+        </div>
       </div>
     </div>
   );

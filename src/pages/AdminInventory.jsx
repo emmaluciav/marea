@@ -8,13 +8,16 @@ import { Input } from "@/components/ui/input";
 import { isVideoUrl } from "@/lib/media";
 import { CATEGORIES } from "@/lib/mareaCategories";
 
-// Panel de administración (solo admin): inventario interno de cada producto.
-// El número de inventario es privado y NO cambia el estado público de
-// disponibilidad; ese lo controla el admin manualmente al editar el producto.
+// Panel de administración (solo admin): inventario interno de productos y de
+// empaques. El número de inventario es privado y NO cambia el estado público
+// de disponibilidad; ese lo controla el admin manualmente al editar la pieza.
+const FILTERS = [...CATEGORIES, { id: "empaque", label: "Empaque" }];
+
 export default function AdminInventory() {
   const navigate = useNavigate();
   const isAdmin = useIsAdmin();
   const [products, setProducts] = useState([]);
+  const [packaging, setPackaging] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(null);
   const [cat, setCat] = useState("all");
@@ -28,8 +31,13 @@ export default function AdminInventory() {
     let mounted = true;
     (async () => {
       try {
-        const list = await base44.entities.Product.list("-created_date");
-        if (mounted) setProducts(list);
+        const [list, pack] = await Promise.all([
+          base44.entities.Product.list("-created_date"),
+          base44.entities.Packaging.list("-created_date"),
+        ]);
+        if (!mounted) return;
+        setProducts(list);
+        setPackaging(pack);
       } catch {
         /* ignore */
       } finally {
@@ -41,29 +49,33 @@ export default function AdminInventory() {
     };
   }, [isAdmin, navigate]);
 
-  const changeInventory = async (p, delta) => {
-    const current = Number(p.inventory) || 0;
+  const applyLocal = (setter, id, next) =>
+    setter((prev) => prev.map((x) => (x.id === id ? { ...x, inventory: next } : x)));
+
+  const changeInventory = async (item, delta, isPackaging) => {
+    const current = Number(item.inventory) || 0;
     const next = Math.max(0, current + delta);
-    setProducts((prev) =>
-      prev.map((x) => (x.id === p.id ? { ...x, inventory: next } : x))
-    );
-    setBusy(p.id);
+    const setter = isPackaging ? setPackaging : setProducts;
+    applyLocal(setter, item.id, next);
+    setBusy(item.id);
     try {
-      await base44.entities.Product.update(p.id, { inventory: next });
+      const entity = isPackaging ? base44.entities.Packaging : base44.entities.Product;
+      await entity.update(item.id, { inventory: next });
     } catch {
-      setProducts((prev) =>
-        prev.map((x) => (x.id === p.id ? { ...x, inventory: current } : x))
-      );
+      applyLocal(setter, item.id, current);
     } finally {
       setBusy(null);
     }
   };
 
-  const filtered = products.filter((p) => {
-    const matchCat = cat === "all" || p.category === cat;
+  const showEmpaque = cat === "empaque";
+  const source = showEmpaque ? packaging : products;
+
+  const rows = source.filter((p) => {
+    if (!showEmpaque && cat !== "all" && p.category !== cat) return false;
     const matchQuery =
       !query.trim() || (p.name || "").toLowerCase().includes(query.trim().toLowerCase());
-    return matchCat && matchQuery;
+    return matchQuery;
   });
 
   if (!isAdmin) return null;
@@ -74,6 +86,57 @@ export default function AdminInventory() {
       </div>
     );
   }
+
+  const renderRow = (item) => {
+    const count = Number(item.inventory) || 0;
+    const img = item.images && item.images[0];
+    return (
+      <li key={item.id} className="flex items-center gap-3 py-3">
+        <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm bg-secondary">
+          {img ? (
+            isVideoUrl(img) ? (
+              <video src={img} muted playsInline className="h-full w-full object-cover" />
+            ) : (
+              <Image src={img} alt="" fittingType="fill" className="h-full w-full" />
+            )
+          ) : (
+            <div className="h-full w-full" />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-foreground">{item.name}</p>
+          <p className="text-[11px] text-slate">
+            {showEmpaque
+              ? "Empaque"
+              : `$${Number(item.price).toFixed(0)} · ${item.published ? "Publicado" : "Borrador"}`}
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => changeInventory(item, -1, showEmpaque)}
+            disabled={busy === item.id}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+            aria-label="Restar uno"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
+            {count}
+          </span>
+          <button
+            type="button"
+            onClick={() => changeInventory(item, 1, showEmpaque)}
+            disabled={busy === item.id}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+            aria-label="Sumar uno"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </li>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-parchment">
@@ -91,7 +154,7 @@ export default function AdminInventory() {
 
       <div className="mx-auto max-w-3xl px-4 py-6">
         <p className="mb-3 text-xs uppercase tracking-wider text-slate">
-          Inventario interno · {filtered.length} producto{filtered.length === 1 ? "" : "s"}
+          Inventario interno · {rows.length} {showEmpaque ? "empaques" : "productos"}
         </p>
 
         {/* Buscador */}
@@ -107,7 +170,7 @@ export default function AdminInventory() {
 
         {/* Filtro por categoría */}
         <div className="no-scrollbar mb-4 flex gap-3 overflow-x-auto pb-1">
-          {CATEGORIES.map((c) => (
+          {FILTERS.map((c) => (
             <button
               key={c.id}
               type="button"
@@ -122,59 +185,10 @@ export default function AdminInventory() {
           ))}
         </div>
 
-        {filtered.length === 0 ? (
-          <p className="py-16 text-center text-sm text-slate">No hay productos que coincidan.</p>
+        {rows.length === 0 ? (
+          <p className="py-16 text-center text-sm text-slate">No hay elementos que coincidan.</p>
         ) : (
-          <ul className="divide-y divide-border">
-            {filtered.map((p) => {
-              const count = Number(p.inventory) || 0;
-              const img = p.images && p.images[0];
-              return (
-                <li key={p.id} className="flex items-center gap-3 py-3">
-                  <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm bg-secondary">
-                    {img ? (
-                      isVideoUrl(img) ? (
-                        <video src={img} muted playsInline className="h-full w-full object-cover" />
-                      ) : (
-                        <Image src={img} alt="" fittingType="fill" className="h-full w-full" />
-                      )
-                    ) : (
-                      <div className="h-full w-full" />
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">{p.name}</p>
-                    <p className="text-[11px] text-slate">
-                      ${Number(p.price).toFixed(0)} · {p.published ? "Publicado" : "Borrador"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => changeInventory(p, -1)}
-                      disabled={busy === p.id}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
-                      aria-label="Restar uno"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
-                      {count}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => changeInventory(p, 1)}
-                      disabled={busy === p.id}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
-                      aria-label="Sumar uno"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <ul className="divide-y divide-border">{rows.map(renderRow)}</ul>
         )}
       </div>
     </div>

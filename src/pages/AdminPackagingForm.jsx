@@ -26,6 +26,9 @@ export default function AdminPackagingForm() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [availability, setAvailability] = useState("available");
+  const [units, setUnits] = useState("");
+  const [inventory, setInventory] = useState("0");
   const [published, setPublished] = useState(false);
   const [images, setImages] = useState([]);
   const [replaceIdx, setReplaceIdx] = useState(null);
@@ -47,6 +50,9 @@ export default function AdminPackagingForm() {
         setName(p.name || "");
         setDescription(p.description || "");
         setPublished(p.published ?? false);
+        setAvailability(p.availability || "available");
+        setUnits(p.units_remaining != null ? String(p.units_remaining) : "");
+        setInventory(p.inventory != null ? String(p.inventory) : "0");
         setImages(p.images || []);
       } catch {
         setError("No se pudo cargar el empaque.");
@@ -145,6 +151,9 @@ export default function AdminPackagingForm() {
       name: name.trim(),
       description: description.trim(),
       images,
+      availability,
+      units_remaining: availability === "limited" ? Number(units) || 0 : undefined,
+      inventory: Number(inventory) || 0,
       published,
     };
     try {
@@ -286,6 +295,53 @@ export default function AdminPackagingForm() {
         <div className="mb-5 space-y-1.5">
           <Label className="text-xs uppercase tracking-wider text-slate">Nombre</Label>
           <Input value={name} onChange={(e) => setName(e.target.value)} className="h-11" placeholder="Caja regalo" />
+        </div>
+
+        {/* Disponibilidad */}
+        <div className="mb-5 space-y-1.5">
+          <Label className="text-xs uppercase tracking-wider text-slate">Disponibilidad</Label>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: "available", label: "Disponible" },
+              { id: "limited", label: "Quedan X" },
+              { id: "out_of_stock", label: "Agotado" },
+            ].map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => setAvailability(a.id)}
+                className={`rounded-sm border px-3 py-2 text-xs transition-colors ${
+                  availability === a.id
+                    ? "border-obsidian bg-obsidian text-parchment"
+                    : "border-border text-slate hover:border-gold"
+                }`}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+          {availability === "limited" && (
+            <Input
+              value={units}
+              onChange={(e) => setUnits(e.target.value)}
+              className="mt-2 h-11"
+              inputMode="numeric"
+              placeholder="Número de piezas restantes"
+            />
+          )}
+        </div>
+
+        {/* Cantidad en inventario (privado) */}
+        <div className="mb-5 space-y-1.5">
+          <Label className="text-xs uppercase tracking-wider text-slate">Cantidad en inventario</Label>
+          <Input
+            value={inventory}
+            onChange={(e) => setInventory(e.target.value)}
+            className="h-11"
+            inputMode="numeric"
+            placeholder="0"
+          />
+          <p className="text-[11px] text-slate">Privado · solo visible para ti en el Panel de administración.</p>
         </div>
 
         {/* Descripción */}

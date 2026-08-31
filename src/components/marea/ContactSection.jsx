@@ -48,12 +48,17 @@ export default function ContactSection({ variant = "bottom" }) {
       </p>
 
       {top && (
-        <Link
-          to="/empaque"
-          className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
-        >
-          Ver Tipos de Empaque
-        </Link>
+        <>
+          <p className="mt-2 text-[11px] text-slate/70">
+            Entrega inmediata en productos disponibles.
+          </p>
+          <Link
+            to="/empaque"
+            className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
+          >
+            Ver Tipos de Empaque
+          </Link>
+        </>
       )}
     </section>
   );

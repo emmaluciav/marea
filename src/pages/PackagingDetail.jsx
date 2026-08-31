@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import SwipeGallery from "@/components/marea/SwipeGallery";
 import { Loader2, ArrowLeft } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { StatusBadge } from "@/components/marea/StatusBadge";
 
 // Detalle de un tipo de empaque. Mismo estilo que las páginas de producto, pero
 // sin precio, disponibilidad, contacto ni recomendaciones. Solo fotos (swipe),
@@ -13,6 +15,7 @@ export default function PackagingDetail() {
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     let mounted = true;
@@ -68,6 +71,14 @@ export default function PackagingDetail() {
 
       <div className="mx-auto max-w-md px-5 pt-6">
         <h1 className="font-heading text-2xl leading-tight text-foreground">{item.name}</h1>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+          <StatusBadge product={item} />
+          {isAdmin && (
+            <span className="inline-flex items-center rounded-full bg-gold px-2 py-0.5 text-[11px] font-medium text-parchment">
+              Inventario: {Number(item.inventory) || 0}
+            </span>
+          )}
+        </div>
         {item.description ? (
           <p className="mt-5 whitespace-pre-line text-base leading-relaxed text-foreground/80">
             {item.description}
