@@ -268,7 +268,10 @@ export default function AdminInventory() {
     const payload = {
       product_id: selected.id,
       product_name: selected.name,
-      product_image: selected.images && selected.images[0] ? selected.images[0] : "",
+      product_image:
+        (selected.images && selected.images[0]) ||
+        (existing && existing.product_image) ||
+        "",
       product_price: Number(selected.price) || 0,
       color_id: colorFinal ? colorFinal.id : undefined,
       color_name: colorFinal ? colorFinal.name : undefined,
