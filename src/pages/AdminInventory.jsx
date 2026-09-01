@@ -243,6 +243,9 @@ export default function AdminInventory() {
     if (colors.length > 1) {
       if (!saleColorId) return;
       colorFinal = colors.find((c) => c.id === saleColorId) || null;
+    } else if (colors.length === 1) {
+      // Producto de un solo color: se registra con ese color también.
+      colorFinal = colors[0];
     } else if (existing && existing.color_id) {
       // Producto eliminado o sin colores visibles: conservar el color
       // histórico que ya tenía la venta.
@@ -397,6 +400,16 @@ export default function AdminInventory() {
               ? "Empaque"
               : `$${Number(item.price).toFixed(0)} · ${item.published ? "Publicado" : "Borrador"}`}
           </p>
+          {!showEmpaque && (item.colors || []).length > 0 && (
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              {(item.colors || []).map((c) => (
+                <span key={c.id} className="flex items-center gap-1">
+                  <ColorSwatch color={c} size="h-3 w-3" bare />
+                  <span className="text-[11px] text-slate">{c.name}</span>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           <button

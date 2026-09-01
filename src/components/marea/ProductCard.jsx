@@ -121,7 +121,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
         <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground">
           {product.name}
         </h3>
-        {colors.length > 1 && (
+        {colors.length > 0 && (
           <div className="mt-1 flex items-center gap-1">
             {colors.map((c) => (
               <ColorSwatch
