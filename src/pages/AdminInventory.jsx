@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isVideoUrl } from "@/lib/media";
 import { CATEGORIES } from "@/lib/mareaCategories";
+import { ColorSwatch } from "@/components/marea/ColorSwatch";
 
 // Panel de administración (solo admin). Dos pestañas:
 //  - Inventario interno: stock privado de productos y empaques (sin tocar el
@@ -57,6 +58,7 @@ export default function AdminInventory() {
   const [packId, setPackId] = useState("");
   const [packQty, setPackQty] = useState("0");
   const [savingSale, setSavingSale] = useState(false);
+  const [saleColorId, setSaleColorId] = useState("");
 
   useEffect(() => {
     if (!isAdmin) {
@@ -106,11 +108,58 @@ export default function AdminInventory() {
     }
   };
 
+  // Inventario por color: actualiza el campo `inventory` de un color
+  // específico dentro del arreglo `colors` del producto (sin tocar el
+  // inventario global del producto).
+  const changeColorInventory = async (product, color, delta) => {
+    const cols = (product.colors || []).map((c) => ({ ...c }));
+    const idx = cols.findIndex((c) => c.id === color.id);
+    if (idx < 0) return;
+    const current = Number(cols[idx].inventory) || 0;
+    const next = Math.max(0, current + delta);
+    const rowKey = `${product.id}:${color.id}`;
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === product.id
+          ? { ...p, colors: p.colors.map((c) => (c.id === color.id ? { ...c, inventory: next } : c)) }
+          : p
+      )
+    );
+    setBusy(rowKey);
+    try {
+      const updatedColors = cols.map((c) => (c.id === color.id ? { ...c, inventory: next } : c));
+      await base44.entities.Product.update(product.id, { colors: updatedColors });
+    } catch {
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === product.id
+            ? { ...p, colors: p.colors.map((c) => (c.id === color.id ? { ...c, inventory: current } : c)) }
+            : p
+        )
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const showEmpaque = cat === "empaque";
-  const invRows = (showEmpaque ? packaging : products).filter((p) => {
-    if (!showEmpaque && cat !== "all" && p.category !== cat) return false;
-    return !query.trim() || (p.name || "").toLowerCase().includes(query.trim().toLowerCase());
-  });
+  // Construye las filas de inventario. Los productos con varios colores se
+  // desglosan en una fila por color (con su propia foto asignada e
+  // inventario independiente). Los productos de un solo color o sin colores,
+  // y los empaques, siguen siendo una fila normal.
+  const invUnits = (() => {
+    const list = showEmpaque ? packaging : products;
+    const filtered = list.filter((p) => {
+      if (!showEmpaque && cat !== "all" && p.category !== cat) return false;
+      return !query.trim() || (p.name || "").toLowerCase().includes(query.trim().toLowerCase());
+    });
+    if (showEmpaque) return filtered.map((p) => ({ kind: "packaging", item: p }));
+    return filtered.flatMap((p) => {
+      const cols = p.colors || [];
+      if (cols.length > 1) return cols.map((c) => ({ kind: "color", product: p, color: c }));
+      return [{ kind: "product", item: p }];
+    });
+  })();
 
   // ---- Vendidos ----
   const productMap = {};
@@ -123,9 +172,13 @@ export default function AdminInventory() {
   });
 
   // Resumen de ventas: totales y líneas tipo recibo, sin fotos.
-  // El precio se toma del catálogo actual (productos y empaques existentes).
-  const saleProductPrice = (s) => Number(productMap[s.product_id]?.price) || 0;
+  // Precio histórico: usa el precio guardado en la venta al momento de
+  // registrarla; solo si no existe (ventas registradas antes de este cambio)
+  // cae al catálogo actual.
+  const saleProductPrice = (s) =>
+    s.product_price != null ? Number(s.product_price) || 0 : Number(productMap[s.product_id]?.price) || 0;
   const salePackPrice = (s) => {
+    if (s.packaging_price != null) return Number(s.packaging_price) || 0;
     const pack = s.packaging_id ? packagingMap[s.packaging_id] : null;
     return pack ? Number(pack.price) || 0 : 0;
   };
@@ -149,6 +202,7 @@ export default function AdminInventory() {
     setSaleQty("1");
     setPackId("");
     setPackQty("0");
+    setSaleColorId("");
     setSaleQuery("");
     setSaleCat("all");
   };
@@ -159,29 +213,70 @@ export default function AdminInventory() {
     setSaleQty(String(sale.quantity || 1));
     setPackId(sale.packaging_id || "");
     setPackQty(String(sale.packaging_quantity || 0));
+    setSaleColorId(sale.color_id || "");
     setSelected(productMap[sale.product_id] || { id: sale.product_id, name: sale.product_name, images: [] });
     setSaleQuery("");
     setSaleCat("all");
+  };
+
+  const onSelectProduct = (p) => {
+    setSelected(p);
+    setSaleColorId("");
   };
 
   const closeForm = () => {
     setFormMode(null);
     setEditingId(null);
     setSelected(null);
+    setSaleColorId("");
   };
 
   const saveForm = async () => {
     if (!selected) return;
+    const colors = selected.colors || [];
+    if (colors.length > 1 && !saleColorId) return;
     const qty = Math.max(1, Number(saleQty) || 1);
     const pkQty = Math.max(0, Number(packQty) || 0);
     const pack = packId ? packaging.find((p) => p.id === packId) : null;
+    const existing = formMode === "edit" ? sales.find((x) => x.id === editingId) : null;
+    let colorFinal = null;
+    if (colors.length > 1) {
+      if (!saleColorId) return;
+      colorFinal = colors.find((c) => c.id === saleColorId) || null;
+    } else if (existing && existing.color_id) {
+      // Producto eliminado o sin colores visibles: conservar el color
+      // histórico que ya tenía la venta.
+      colorFinal = {
+        id: existing.color_id,
+        name: existing.color_name,
+        hex: existing.color_hex,
+        is_multicolor: existing.color_is_multicolor,
+        photo_indices: [],
+        image: existing.color_image,
+      };
+    }
+    const colorPhotoFor = (c) => {
+      if (c?.image) return c.image;
+      const idx = Array.isArray(c?.photo_indices) && c.photo_indices.length ? c.photo_indices[0] : 0;
+      return (selected.images && selected.images[idx]) || (selected.images && selected.images[0]) || "";
+    };
+    // La venta se guarda como registro histórico independiente del
+    // catálogo: nombre, precio, color y foto asignada se conservan aquí.
     const payload = {
       product_id: selected.id,
       product_name: selected.name,
+      product_image: selected.images && selected.images[0] ? selected.images[0] : "",
+      product_price: Number(selected.price) || 0,
+      color_id: colorFinal ? colorFinal.id : undefined,
+      color_name: colorFinal ? colorFinal.name : undefined,
+      color_hex: colorFinal ? colorFinal.hex : undefined,
+      color_is_multicolor: colorFinal ? !!colorFinal.is_multicolor : undefined,
+      color_image: colorFinal ? colorPhotoFor(colorFinal) : undefined,
       quantity: qty,
       packaging_id: pack ? pack.id : undefined,
       packaging_name: pack ? pack.name : undefined,
       packaging_quantity: pack ? pkQty : 0,
+      packaging_price: pack ? Number(pack.price) || 0 : 0,
     };
     setSavingSale(true);
     try {
@@ -246,7 +341,51 @@ export default function AdminInventory() {
     </div>
   );
 
-  const renderInvRow = (item) => {
+  const renderInvRow = (row) => {
+    if (row.kind === "color") {
+      const { product, color } = row;
+      const rowKey = `${product.id}:${color.id}`;
+      const count = Number(color.inventory) || 0;
+      const photoIdx = Array.isArray(color.photo_indices) && color.photo_indices.length ? color.photo_indices[0] : 0;
+      const colorPhoto = (product.images && product.images[photoIdx]) || (product.images && product.images[0]);
+      return (
+        <li key={rowKey} className="flex items-center gap-3 py-3">
+          <Thumb src={colorPhoto} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">{product.name}</p>
+            <p className="flex items-center gap-1.5 text-[11px] text-slate">
+              <span>${Number(product.price).toFixed(0)} · {product.published ? "Publicado" : "Borrador"}</span>
+              <ColorSwatch color={color} size="h-3 w-3" bare />
+              <span>{color.name}</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => changeColorInventory(product, color, -1)}
+              disabled={busy === rowKey}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+              aria-label="Restar uno"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
+              {count}
+            </span>
+            <button
+              type="button"
+              onClick={() => changeColorInventory(product, color, 1)}
+              disabled={busy === rowKey}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+              aria-label="Sumar uno"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+        </li>
+      );
+    }
+    const item = row.item;
     const count = Number(item.inventory) || 0;
     return (
       <li key={item.id} className="flex items-center gap-3 py-3">
@@ -288,12 +427,22 @@ export default function AdminInventory() {
 
   const renderSaleRow = (s) => {
     const prod = productMap[s.product_id];
-    const img = prod && prod.images && prod.images[0];
+    const img = s.color_image || s.product_image || (prod && prod.images && prod.images[0]);
     return (
       <li key={s.id} className="flex items-center gap-3 py-3">
         <Thumb src={img} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-foreground">{s.product_name}</p>
+          {s.color_id && (
+            <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate">
+              <ColorSwatch
+                color={{ id: s.color_id, name: s.color_name, hex: s.color_hex, is_multicolor: s.color_is_multicolor }}
+                size="h-3 w-3"
+                bare
+              />
+              <span>{s.color_name}</span>
+            </p>
+          )}
           <p className="text-[11px] text-slate">
             {s.packaging_name ? `${s.packaging_name} · ${s.packaging_quantity} usados` : "Sin empaque"}
           </p>
@@ -355,7 +504,7 @@ export default function AdminInventory() {
       {tab === "inventario" ? (
         <div className="mx-auto max-w-3xl px-4 py-6 pb-20">
           <p className="mb-3 text-xs uppercase tracking-wider text-slate">
-            Inventario interno · {invRows.length} {showEmpaque ? "empaques" : "productos"}
+            Inventario interno · {invUnits.length} {showEmpaque ? "empaques" : "productos"}
           </p>
 
           <div className="relative mb-3">
@@ -384,10 +533,10 @@ export default function AdminInventory() {
             ))}
           </div>
 
-          {invRows.length === 0 ? (
+          {invUnits.length === 0 ? (
             <p className="py-16 text-center text-sm text-slate">No hay elementos que coincidan.</p>
           ) : (
-            <ul className="divide-y divide-border">{invRows.map(renderInvRow)}</ul>
+            <ul className="divide-y divide-border">{invUnits.map(renderInvRow)}</ul>
           )}
         </div>
       ) : formMode ? (
@@ -440,7 +589,7 @@ export default function AdminInventory() {
                 <li key={p.id}>
                   <button
                     type="button"
-                    onClick={() => setSelected(p)}
+                    onClick={() => onSelectProduct(p)}
                     className={`flex w-full items-center gap-3 py-3 text-left transition-colors ${
                       selected?.id === p.id ? "bg-secondary/50" : "hover:bg-secondary/30"
                     }`}
@@ -480,7 +629,7 @@ export default function AdminInventory() {
                     <button
                       type="button"
                       onClick={saveForm}
-                      disabled={savingSale}
+                      disabled={savingSale || ((selected.colors || []).length > 1 && !saleColorId)}
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-parchment shadow-sm transition-transform active:scale-95 disabled:opacity-50"
                       aria-label="Guardar venta"
                     >
@@ -488,6 +637,30 @@ export default function AdminInventory() {
                     </button>
                   </div>
                 </div>
+
+                {(selected.colors || []).length > 1 && (
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] uppercase tracking-wider text-slate">Color vendido</Label>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(selected.colors || []).map((c) => {
+                        const sel = c.id === saleColorId;
+                        return (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => setSaleColorId(c.id)}
+                            className={`flex items-center gap-1.5 rounded-sm border px-2.5 py-1.5 text-xs transition-colors ${
+                              sel ? "border-obsidian bg-obsidian text-parchment" : "border-border text-slate hover:border-gold"
+                            }`}
+                          >
+                            <ColorSwatch color={c} size="h-4 w-4" bare />
+                            {c.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-1.5">
                   <Label className="text-[11px] uppercase tracking-wider text-slate">Cantidad vendida</Label>
@@ -572,8 +745,15 @@ export default function AdminInventory() {
                       return Array.from({ length: q }).map((_, i) => (
                         <li key={`${s.id}-${i}`} className="px-3 py-2.5">
                           <div className="flex items-center justify-between gap-3">
-                            <span className="truncate text-sm text-foreground">
+                            <span className="flex min-w-0 items-center gap-1.5 truncate text-sm text-foreground">
                               {s.product_name}
+                              {s.color_id && (
+                                <ColorSwatch
+                                  color={{ id: s.color_id, name: s.color_name, hex: s.color_hex, is_multicolor: s.color_is_multicolor }}
+                                  size="h-3 w-3"
+                                  bare
+                                />
+                              )}
                             </span>
                             <span className="whitespace-nowrap text-sm text-foreground">
                               ${pPrice}
