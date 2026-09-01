@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowLeft, ArrowRight, Plus, Trash2, Pencil } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/mareaCategories";
+import AdminColorEditor from "@/components/marea/AdminColorEditor";
 import PhotoCropper from "@/components/marea/PhotoCropper";
 import { isVideoFile, isVideoUrl } from "@/lib/media";
 
@@ -33,6 +34,7 @@ export default function AdminProductForm() {
   const [inventory, setInventory] = useState("0");
   const [published, setPublished] = useState(false);
   const [images, setImages] = useState([]);
+  const [colors, setColors] = useState([]);
   const [replaceIdx, setReplaceIdx] = useState(null);
   const [cropQueue, setCropQueue] = useState([]);
   const [cropIndex, setCropIndex] = useState(-1);
@@ -58,6 +60,13 @@ export default function AdminProductForm() {
         setInventory(p.inventory != null ? String(p.inventory) : "0");
         setPublished(p.published ?? false);
         setImages(p.images || []);
+        setColors(
+          (p.colors || []).map((c) => ({
+            ...c,
+            photo_indices: c.photo_indices || [],
+            units_remaining: c.units_remaining != null ? String(c.units_remaining) : "",
+          }))
+        );
       } catch (e) {
         setError("No se pudo cargar el producto.");
       } finally {
@@ -163,6 +172,15 @@ export default function AdminProductForm() {
       units_remaining: availability === "limited" ? Number(units) || 0 : undefined,
       inventory: Number(inventory) || 0,
       published,
+      colors: colors.map((c) => ({
+        id: c.id,
+        name: c.name,
+        hex: c.hex || null,
+        is_multicolor: !!c.is_multicolor,
+        photo_indices: c.photo_indices || [],
+        availability: c.availability || "available",
+        units_remaining: c.availability === "limited" ? Number(c.units_remaining) || 0 : null,
+      })),
     };
     try {
       if (editing) await base44.entities.Product.update(id, payload);
@@ -371,6 +389,9 @@ export default function AdminProductForm() {
             />
           )}
         </div>
+
+        {/* Color */}
+        <AdminColorEditor colors={colors} setColors={setColors} images={images} onError={setError} />
 
         {/* Cantidad en inventario (privado) */}
         <div className="mb-5 space-y-1.5">

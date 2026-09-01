@@ -10,7 +10,7 @@ const IG_HANDLE = "mareaaccesoriosmx";
 const WA_NUMBER = "526442600650";
 
 export default function Saved() {
-  const { savedIds } = useMarea();
+  const { savedIds, getSavedColor } = useMarea();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState([]);
@@ -44,18 +44,25 @@ export default function Saved() {
   };
 
   const selectedProducts = saved.filter((p) => validSelected.includes(p.id));
-  const buildMessage = () => {
-    const lines = selectedProducts
-      .map((p) => `• ${p.name}\n${window.location.origin}/product/${p.id}`)
-      .join("\n");
-    return `Hola, me interesan estos productos:\n${lines}`;
+  // Construye el enlace de un producto abriendo con el color guardado activo.
+  const productLink = (p) => {
+    const colorId = getSavedColor(p.id);
+    if (!colorId) return `${window.location.origin}/product/${p.id}`;
+    return `${window.location.origin}/product/${p.id}?color=${encodeURIComponent(colorId)}`;
   };
 
+  // Línea por producto: nombre, color (si lo recuerda) y enlace con ese color.
+  const productLine = (p) => {
+    const colorId = getSavedColor(p.id);
+    const colorName = colorId ? (p.colors || []).find((c) => c.id === colorId)?.name : null;
+    return `• ${p.name}${colorName ? `\nColor: ${colorName}` : ""}\n${productLink(p)}`;
+  };
+
+  const buildMessage = () =>
+    `Hola, me interesan estos productos:\n${selectedProducts.map(productLine).join("\n")}`;
+
   // Solo productos + enlaces, sin el saludo — para compartir donde quieran.
-  const buildProductsOnly = () =>
-    selectedProducts
-      .map((p) => `• ${p.name}\n${window.location.origin}/product/${p.id}`)
-      .join("\n");
+  const buildProductsOnly = () => selectedProducts.map(productLine).join("\n");
 
   const sendWhatsApp = () => {
     if (!selectedProducts.length) return;
@@ -137,6 +144,7 @@ export default function Saved() {
                 product={p}
                 index={i}
                 origin="saved"
+                savedColor={getSavedColor(p.id)}
                 selectable
                 selected={validSelected.includes(p.id)}
                 onToggleSelect={() => toggleSelect(p.id)}

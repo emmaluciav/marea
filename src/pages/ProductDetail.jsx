@@ -8,8 +8,10 @@ import ProductCard from "@/components/marea/ProductCard";
 import { BookmarkIcon } from "@/components/marea/icons";
 import { StatusBadge } from "@/components/marea/StatusBadge";
 import { useMarea } from "@/components/marea/MareaProvider";
+import { ColorSwatch } from "@/components/marea/ColorSwatch";
 import { CATEGORY_LABELS, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 import { Loader2, ArrowLeft } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 export default function ProductDetail() {
@@ -17,13 +19,15 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const from = searchParams.get("from") || "all";
-  const { isSaved, toggleSave } = useMarea();
+  const { isSaved, toggleSave, setSavedColor, getSavedColor } = useMarea();
   const isAdmin = useIsAdmin();
+  const { toast } = useToast();
 
   const [product, setProduct] = useState(null);
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pulse, setPulse] = useState(false);
+  const [selectedColorId, setSelectedColorId] = useState(() => searchParams.get("color"));
 
   useEffect(() => {
     let mounted = true;
@@ -48,6 +52,21 @@ export default function ProductDetail() {
     };
   }, [id]);
 
+  // Restaura el color guardado o auto-selecciona si el producto tiene uno solo.
+  useEffect(() => {
+    if (!product) return;
+    const urlColor = searchParams.get("color");
+    if (urlColor) {
+      setSelectedColorId(urlColor);
+    } else if ((product.colors || []).length === 1) {
+      setSelectedColorId(product.colors[0].id);
+    } else if (isSaved(product.id)) {
+      const sc = getSavedColor(product.id);
+      if (sc) setSelectedColorId(sc);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-parchment">
@@ -65,10 +84,26 @@ export default function ProductDetail() {
   }
 
   const saved = isSaved(product.id);
-  const images = product.images && product.images.length ? product.images : [];
+  const allImages = product.images && product.images.length ? product.images : [];
+  const colors = product.colors || [];
+  const activeColor = selectedColorId ? colors.find((c) => c.id === selectedColorId) : null;
+  // La galería usa las fotos asignadas al color seleccionado; si no hay
+  // asignación, se muestran todas las fotos del producto.
+  const galleryImages =
+    activeColor && activeColor.photo_indices && activeColor.photo_indices.length
+      ? activeColor.photo_indices.map((i) => allImages[i]).filter(Boolean)
+      : allImages;
   const outOfStock = product.availability === "out_of_stock";
   const fromSaved = from === "saved";
   const fromLabel = fromSaved ? "Volver" : CATEGORY_LABELS[from] || "Ver todo";
+
+  // Estado mostrado: el del color seleccionado si hay uno; si no, el general.
+  const statusProduct = activeColor
+    ? { availability: activeColor.availability, units_remaining: activeColor.units_remaining }
+    : { availability: product.availability, units_remaining: product.units_remaining };
+  // Un color agotado se muestra como "No disponible"; el producto general
+  // sigue usando su etiqueta existente ("Agotado") cuando no hay color elegido.
+  const activeColorOut = !!(activeColor && activeColor.availability === "out_of_stock");
 
   // Orden de recomendaciones según la categoría del producto actual.
   const REC_ORDER = {
@@ -92,8 +127,17 @@ export default function ProductDetail() {
       return 0;
     });
 
+  const handleSelectColor = (colorId) => {
+    setSelectedColorId(colorId);
+    if (isSaved(product.id)) setSavedColor(product.id, colorId);
+  };
+
   const handleSave = () => {
-    toggleSave(product.id);
+    if (colors.length > 1 && !selectedColorId) {
+      toast({ title: "Selecciona un color", description: "Elige un color antes de guardar." });
+      return;
+    }
+    toggleSave(product.id, selectedColorId);
     if (!saved) {
       setPulse(true);
       setTimeout(() => setPulse(false), 450);
@@ -128,7 +172,7 @@ export default function ProductDetail() {
           <div className={outOfStock ? "opacity-90" : ""}>
             {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal */}
             <div className="hidden split-grid:grid split-grid:grid-cols-2 split-grid:gap-2">
-              {images.map((src, i) =>
+              {galleryImages.map((src, i) =>
                 isVideoUrl(src) ? (
                   <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "10 / 11" }}>
                     <video src={src} autoPlay loop muted playsInline className="h-full w-full object-cover" />
@@ -142,7 +186,7 @@ export default function ProductDetail() {
             </div>
             {/* Swipe — móvil vertical y teléfono horizontal */}
             <div className="split-grid:hidden">
-              <SwipeGallery images={images} aspect="10 / 11" className="mx-auto max-w-xl" />
+              <SwipeGallery images={galleryImages} aspect="10 / 11" className="mx-auto max-w-xl" />
             </div>
           </div>
 
@@ -156,9 +200,13 @@ export default function ProductDetail() {
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-          <StatusBadge product={product} className="text-[13px]" />
-          {product.availability === "limited" && product.units_remaining != null && (
-            <span className="text-sm text-slate">{product.units_remaining} piezas restantes</span>
+          {activeColorOut ? (
+            <span className="text-[13px] uppercase tracking-[0.15em] text-slate">No disponible</span>
+          ) : (
+            <StatusBadge product={statusProduct} className="text-[13px]" />
+          )}
+          {!activeColorOut && statusProduct.availability === "limited" && statusProduct.units_remaining != null && (
+            <span className="text-sm text-slate">{statusProduct.units_remaining} piezas restantes</span>
           )}
           {isAdmin && (
             <span className="inline-flex items-center rounded-full bg-gold px-2 py-0.5 text-[11px] font-medium text-parchment">
@@ -166,6 +214,30 @@ export default function ProductDetail() {
             </span>
           )}
         </div>
+
+        {/* Color */}
+        {colors.length > 0 && (
+          <div className="mt-3 flex items-center gap-3">
+            <span className="text-[13px] uppercase tracking-[0.15em] text-foreground/60">Color</span>
+            <div className="flex items-center gap-2">
+              {colors.map((c) => {
+                const isOut = c.availability === "out_of_stock";
+                const sel = c.id === selectedColorId;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => handleSelectColor(c.id)}
+                    aria-label={c.name}
+                    className="rounded-sm"
+                  >
+                    <ColorSwatch color={c} unavailable={isOut} selected={sel} />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {product.description ? (
           <p className="mt-5 whitespace-pre-line text-base leading-relaxed text-foreground/80">
@@ -217,7 +289,11 @@ export default function ProductDetail() {
         <div className="mx-auto flex max-w-md items-center justify-between gap-3">
           <div>
             <p className="font-heading text-base text-foreground">${Number(product.price).toFixed(0)}</p>
-            <StatusBadge product={product} />
+            {activeColorOut ? (
+              <span className="text-[11px] uppercase tracking-[0.15em] text-slate">No disponible</span>
+            ) : (
+              <StatusBadge product={statusProduct} />
+            )}
           </div>
           <a
             href={INSTAGRAM_URL}

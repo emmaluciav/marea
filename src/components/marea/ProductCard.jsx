@@ -7,7 +7,7 @@ import { Check } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
-export default function ProductCard({ product, index = 0, origin = "all", selectable = false, selected = false, onToggleSelect }) {
+export default function ProductCard({ product, index = 0, origin = "all", savedColor = null, selectable = false, selected = false, onToggleSelect }) {
   const navigate = useNavigate();
   const { isSaved, toggleSave } = useMarea();
   const isAdmin = useIsAdmin();
@@ -17,7 +17,12 @@ export default function ProductCard({ product, index = 0, origin = "all", select
   const outOfStock = product.availability === "out_of_stock";
   const images = product.images && product.images.length ? product.images : [];
 
-  const open = () => navigate(`/product/${product.id}?from=${origin}`);
+  const open = () => {
+    const params = new URLSearchParams();
+    params.set("from", origin);
+    if (savedColor) params.set("color", savedColor);
+    navigate(`/product/${product.id}?${params.toString()}`);
+  };
 
   const handleSave = (e) => {
     e.stopPropagation();

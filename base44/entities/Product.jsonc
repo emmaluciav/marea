@@ -50,6 +50,49 @@
     "order": {
       "type": "number",
       "default": 0
+    },
+    "colors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hex": {
+            "type": "string"
+          },
+          "is_multicolor": {
+            "type": "boolean",
+            "default": false
+          },
+          "photo_indices": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "available",
+              "out_of_stock",
+              "limited"
+            ],
+            "default": "available"
+          },
+          "units_remaining": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      }
     }
   },
   "required": [

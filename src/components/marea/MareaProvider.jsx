@@ -8,23 +8,35 @@ export const DEFAULT_COVER =
   "https://media.base44.com/images/public/6a9105ed8948a36bbe06a37f/62a751727_generated_f877364f.png";
 const SAVED_KEY = "marea_saved";
 
-export function MareaProvider({ children }) {
-  const [savedIds, setSavedIds] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
-    } catch {
-      return [];
+// Migra el formato viejo (arreglo de strings) al nuevo (arreglo de
+// { id, color }) de forma transparente.
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.map((x) =>
+        typeof x === "string" ? { id: x, color: null } : { id: x.id, color: x.color || null }
+      );
     }
-  });
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+export function MareaProvider({ children }) {
+  const [savedItems, setSavedItems] = useState(loadSaved);
   const [brandCover, setBrandCover] = useState(DEFAULT_COVER);
 
   useEffect(() => {
     try {
-      localStorage.setItem(SAVED_KEY, JSON.stringify(savedIds));
+      localStorage.setItem(SAVED_KEY, JSON.stringify(savedItems));
     } catch {
       /* ignore */
     }
-  }, [savedIds]);
+  }, [savedItems]);
 
   useEffect(() => {
     let mounted = true;
@@ -42,21 +54,41 @@ export function MareaProvider({ children }) {
     };
   }, []);
 
-  const toggleSave = useCallback((id) => {
-    setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  }, []);
+  const savedIds = savedItems.map((s) => s.id);
 
   const isSaved = useCallback((id) => savedIds.includes(id), [savedIds]);
+
+  // Guarda (o quita) un producto. El color seleccionado se recuerda junto con él.
+  const toggleSave = useCallback((id, color = null) => {
+    setSavedItems((prev) => {
+      if (prev.some((s) => s.id === id)) return prev.filter((s) => s.id !== id);
+      return [...prev, { id, color }];
+    });
+  }, []);
+
+  // Actualiza el color de un producto ya guardado (sin tocar el guardado en sí).
+  const setSavedColor = useCallback((id, color) => {
+    setSavedItems((prev) => (prev.some((s) => s.id === id) ? prev.map((s) => (s.id === id ? { ...s, color } : s)) : prev));
+  }, []);
+
+  const getSavedColor = useCallback(
+    (id) => {
+      const item = savedItems.find((s) => s.id === id);
+      return item ? item.color : null;
+    },
+    [savedItems]
+  );
 
   return (
     <MareaContext.Provider
       value={{
         savedIds,
-        toggleSave,
+        savedItems,
+        savedCount: savedItems.length,
         isSaved,
-        savedCount: savedIds.length,
+        toggleSave,
+        setSavedColor,
+        getSavedColor,
         brandCover,
         setBrandCover,
       }}
