@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2, Banknote } from "lucide-react";
+import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2, Banknote, ImageOff } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -339,7 +339,9 @@ export default function AdminInventory() {
           <Image src={src} alt="" fittingType="fill" className="h-full w-full" />
         )
       ) : (
-        <div className="h-full w-full" />
+        <div className="flex h-full w-full items-center justify-center text-slate/40">
+          <ImageOff className="h-5 w-5" />
+        </div>
       )}
     </div>
   );
@@ -440,12 +442,16 @@ export default function AdminInventory() {
 
   const renderSaleRow = (s) => {
     const prod = productMap[s.product_id];
+    const exists = Boolean(prod);
     const img = s.color_image || s.product_image || (prod && prod.images && prod.images[0]);
     return (
       <li key={s.id} className="flex items-center gap-3 py-3">
         <Thumb src={img} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-foreground">{s.product_name}</p>
+          {!exists && (
+            <p className="text-[10px] uppercase tracking-[0.15em] text-gold">Publicación eliminada</p>
+          )}
           {s.color_id && (
             <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate">
               <ColorSwatch
@@ -766,6 +772,9 @@ export default function AdminInventory() {
                                   size="h-3 w-3"
                                   bare
                                 />
+                              )}
+                              {!productMap[s.product_id] && (
+                                <span className="text-[10px] uppercase tracking-[0.15em] text-gold">Publicación eliminada</span>
                               )}
                             </span>
                             <span className="whitespace-nowrap text-sm text-foreground">
