@@ -84,15 +84,16 @@ export default function ProductDetail() {
   }
 
   const saved = isSaved(product.id);
-  const allImages = product.images && product.images.length ? product.images : [];
+  // La galería SIEMPRE conserva todas las fotos originales en su orden.
+  // Seleccionar un color solo "salta" a la primera foto asignada a ese color.
+  const galleryImages = product.images && product.images.length ? product.images : [];
   const colors = product.colors || [];
   const activeColor = selectedColorId ? colors.find((c) => c.id === selectedColorId) : null;
-  // La galería usa las fotos asignadas al color seleccionado; si no hay
-  // asignación, se muestran todas las fotos del producto.
-  const galleryImages =
+  // Índice de la primera foto asignada al color seleccionado (atajo a esa foto).
+  const colorTargetIndex =
     activeColor && activeColor.photo_indices && activeColor.photo_indices.length
-      ? activeColor.photo_indices.map((i) => allImages[i]).filter(Boolean)
-      : allImages;
+      ? activeColor.photo_indices[0]
+      : null;
   const outOfStock = product.availability === "out_of_stock";
   const fromSaved = from === "saved";
   const fromLabel = fromSaved ? "Volver" : CATEGORY_LABELS[from] || "Ver todo";
@@ -170,23 +171,26 @@ export default function ProductDetail() {
         <div className="split:grid split:grid-cols-2 split:gap-4 lg:gap-6">
           {/* Columna de galería */}
           <div className={outOfStock ? "opacity-90" : ""}>
-            {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal */}
+            {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal.
+                Todas las fotos se conservan; seleccionar un color solo resalta
+                la foto asignada como la "principal" de ese color. */}
             <div className="hidden split-grid:grid split-grid:grid-cols-2 split-grid:gap-2">
               {galleryImages.map((src, i) =>
                 isVideoUrl(src) ? (
-                  <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "10 / 11" }}>
+                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === colorTargetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
                     <video src={src} autoPlay loop muted playsInline className="h-full w-full object-cover" />
                   </div>
                 ) : (
-                  <div key={i} className="relative overflow-hidden" style={{ aspectRatio: "10 / 11" }}>
+                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === colorTargetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
                     <Image src={src} alt={product.name} fittingType="fill" className="h-full w-full" />
                   </div>
                 )
               )}
             </div>
-            {/* Swipe — móvil vertical y teléfono horizontal */}
+            {/* Swipe — móvil vertical y teléfono horizontal.
+                Seleccionar un color salta a la foto asignada sin filtrar. */}
             <div className="split-grid:hidden">
-              <SwipeGallery images={galleryImages} aspect="10 / 11" className="mx-auto max-w-xl" />
+              <SwipeGallery images={galleryImages} aspect="10 / 11" className="mx-auto max-w-xl" jumpTo={colorTargetIndex} />
             </div>
           </div>
 

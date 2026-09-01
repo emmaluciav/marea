@@ -1,9 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image } from "@/components/ui/image";
 import { isVideoUrl } from "@/lib/media";
 
 // Horizontal, snap-scrolling image gallery with a thin segmented progress bar.
 // A tap (no horizontal movement) fires onImageClick; a swipe does not.
+// `jumpTo` (opcional) lleva la galería a una foto específica SIN filtrar las
+// demás: solo desplaza el scroll, como si el usuario hubiera hecho swipe.
 export default function SwipeGallery({
   images = [],
   aspect = "3 / 4",
@@ -11,10 +13,22 @@ export default function SwipeGallery({
   className = "",
   imageClassName = "",
   showBar = true,
+  jumpTo = null,
 }) {
   const ref = useRef(null);
   const [active, setActive] = useState(0);
   const startX = useRef(0);
+
+  // Cuando llega un índice de salto externo, desplaza la galería a esa foto.
+  useEffect(() => {
+    if (jumpTo == null || !images.length) return;
+    const el = ref.current;
+    if (!el) return;
+    const idx = Math.min(Math.max(jumpTo, 0), images.length - 1);
+    el.scrollTo({ left: idx * el.clientWidth, behavior: "auto" });
+    setActive(idx);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jumpTo]);
 
   if (!images.length) return null;
 

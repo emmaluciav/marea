@@ -5,6 +5,7 @@ import { BookmarkIcon } from "./icons";
 import { StatusBadge } from "./StatusBadge";
 import { Check } from "lucide-react";
 import { useMarea } from "./MareaProvider";
+import { ColorSwatch } from "./ColorSwatch";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 export default function ProductCard({ product, index = 0, origin = "all", savedColor = null, selectable = false, selected = false, onToggleSelect }) {
@@ -16,6 +17,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
   const saved = isSaved(product.id);
   const outOfStock = product.availability === "out_of_stock";
   const images = product.images && product.images.length ? product.images : [];
+  const colors = product.colors || [];
 
   const open = () => {
     const params = new URLSearchParams();
@@ -119,6 +121,18 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
         <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground">
           {product.name}
         </h3>
+        {colors.length > 1 && (
+          <div className="mt-1 flex items-center gap-1">
+            {colors.map((c) => (
+              <ColorSwatch
+                key={c.id}
+                color={c}
+                size="h-3 w-3"
+                unavailable={c.availability === "out_of_stock"}
+              />
+            ))}
+          </div>
+        )}
         <div className="mt-1 flex items-center justify-between">
           <span className="font-heading text-[13px] text-foreground">
             ${Number(product.price).toFixed(0)}
