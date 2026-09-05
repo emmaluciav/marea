@@ -118,7 +118,9 @@ export default function Saved() {
           <div className="mb-5 flex items-center gap-2.5 rounded-sm border border-border bg-secondary/40 px-3 py-2.5">
             <Send className="h-4 w-4 shrink-0 text-gold" />
             <p className="text-[12px] leading-snug text-slate">
-              Selecciona los productos que te interesan para enviarlos a Marea.
+              Toca el{" "}
+              <span className="inline-block h-3 w-3 rounded-full border-2 border-gold align-middle" />{" "}
+              para seleccionar los productos que te interesan y enviarlos a Marea.
             </p>
           </div>
         )}

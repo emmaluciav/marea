@@ -87,7 +87,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
             }}
             aria-label={selected ? "Quitar selección" : "Seleccionar producto"}
             className={`absolute left-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full border-2 backdrop-blur-sm transition-colors ${
-              selected ? "border-gold bg-gold text-parchment" : "border-parchment bg-parchment/70 text-transparent"
+              selected ? "border-gold bg-gold text-parchment" : "border-gold bg-parchment/70 text-transparent"
             }`}
           >
             <Check className="h-4 w-4" />
