@@ -1,7 +1,7 @@
 import React from "react";
 import { RangeSlider } from "@/components/marea/RangeSlider";
 import { ColorSwatch } from "@/components/marea/ColorSwatch";
-import { ArrowUp, ArrowDown, X } from "lucide-react";
+import { ArrowUp, ArrowDown, X, Tag } from "lucide-react";
 
 // Panel de filtro global del catálogo (precio + orden + color).
 // Es visualmente minimalista y consistente con MAREA. El estado lo controla
@@ -17,6 +17,8 @@ export default function CatalogFilter({
   onToggleColor,
   onClear,
   activeCount,
+  onlyDiscount,
+  onToggleOnlyDiscount,
 }) {
   const [bMin, bMax] = priceBounds;
   const [min, max] = priceRange;
@@ -38,8 +40,19 @@ export default function CatalogFilter({
         )}
       </div>
 
+      <button
+        type="button"
+        onClick={onToggleOnlyDiscount}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-3 py-2 text-[11px] uppercase tracking-[0.12em] transition-colors ${
+          onlyDiscount ? "border-gold bg-gold/10 text-gold" : "border-border text-slate hover:border-gold"
+        }`}
+      >
+        <Tag className="h-3.5 w-3.5" />
+        Con descuento
+      </button>
+
       {/* Precio + orden */}
-      <div className="mt-3">
+      <div className="mt-4">
         <div className="flex items-center justify-between">
           <span className="text-[12px] text-foreground">Precio</span>
           <span className="text-[12px] text-slate">

@@ -51,6 +51,12 @@
       "type": "number",
       "default": 0
     },
+    "discount_percent": {
+      "type": "number"
+    },
+    "discount_color_id": {
+      "type": "string"
+    },
     "colors": {
       "type": "array",
       "items": {

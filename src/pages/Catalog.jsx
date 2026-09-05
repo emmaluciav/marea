@@ -43,6 +43,7 @@ export default function Catalog() {
   const [priceRange, setPriceRange] = useState(null);
   const [sort, setSort] = useState(null);
   const [selColors, setSelColors] = useState([]);
+  const [onlyDiscount, setOnlyDiscount] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -87,7 +88,7 @@ export default function Catalog() {
   const priceActive =
     !!priceRange && (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]);
   const activeCount =
-    (priceActive ? 1 : 0) + (sort ? 1 : 0) + (selColors.length ? 1 : 0);
+    (priceActive ? 1 : 0) + (sort ? 1 : 0) + (selColors.length ? 1 : 0) + (onlyDiscount ? 1 : 0);
 
   // Aplica categoría + filtro + orden/aleatorio.
   const ordered = useMemo(() => {
@@ -100,15 +101,19 @@ export default function Catalog() {
     if (selColors.length) {
       arr = arr.filter((p) => (p.colors || []).some((c) => selColors.includes(c.id)));
     }
+    if (onlyDiscount) {
+      arr = arr.filter((p) => Number(p.discount_percent) > 0);
+    }
     if (sort === "asc") return [...arr].sort((a, b) => Number(a.price) - Number(b.price));
     if (sort === "desc") return [...arr].sort((a, b) => Number(b.price) - Number(a.price));
     return seededShuffle(arr, seed);
-  }, [products, cat, priceRange, selColors, sort, seed]);
+  }, [products, cat, priceRange, selColors, sort, seed, onlyDiscount]);
 
   const handleClear = () => {
     setPriceRange(priceBounds);
     setSort(null);
     setSelColors([]);
+    setOnlyDiscount(false);
   };
 
   // Color forzado por el filtro: el primer color seleccionado que el producto
@@ -167,6 +172,8 @@ export default function Catalog() {
               prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
             )
           }
+          onlyDiscount={onlyDiscount}
+          onToggleOnlyDiscount={() => setOnlyDiscount((v) => !v)}
           onClear={handleClear}
           activeCount={activeCount}
         />

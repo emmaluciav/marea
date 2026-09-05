@@ -7,6 +7,7 @@ import { Check } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { ColorSwatch } from "./ColorSwatch";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { discountInfo } from "@/lib/discount";
 
 export default function ProductCard({ product, index = 0, origin = "all", savedColor = null, selectable = false, selected = false, onToggleSelect, forcedColor = null }) {
   const navigate = useNavigate();
@@ -26,6 +27,10 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
     forcedColorObj && forcedColorObj.photo_indices && forcedColorObj.photo_indices.length
       ? forcedColorObj.photo_indices[0]
       : null;
+
+  // Descuento: aplica si es general o si el color mostrado coincide.
+  const contextColor = forcedColor || (colors.length === 1 ? colors[0].id : null);
+  const disc = discountInfo(product, contextColor);
 
   const open = () => {
     const params = new URLSearchParams();
@@ -63,6 +68,13 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
           imageClassName={outOfStock ? "opacity-70 [&_img]:grayscale" : ""}
           jumpTo={forcedIndex}
         />
+
+        {/* Descuento */}
+        {disc && (
+          <div className="pointer-events-none absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-sm bg-gold px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.12em] text-parchment">
+            {disc.percent}% descuento
+          </div>
+        )}
 
         {/* Out of stock diagonal banner */}
         {outOfStock && (
@@ -144,9 +156,16 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
           </div>
         )}
         <div className="mt-1 flex items-center justify-between">
-          <span className="font-heading text-[13px] text-foreground">
-            ${Number(product.price).toFixed(0)}
-          </span>
+          {disc ? (
+            <span className="flex items-baseline gap-1.5">
+              <span className="font-heading text-[13px] text-foreground">${disc.finalPrice}</span>
+              <span className="font-heading text-[11px] text-slate line-through">${disc.originalPrice}</span>
+            </span>
+          ) : (
+            <span className="font-heading text-[13px] text-foreground">
+              ${Number(product.price).toFixed(0)}
+            </span>
+          )}
           <StatusBadge product={product} />
         </div>
       </div>

@@ -13,6 +13,7 @@ import { CATEGORY_LABELS, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategor
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { discountInfo } from "@/lib/discount";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -105,6 +106,7 @@ export default function ProductDetail() {
   // Un color agotado se muestra como "No disponible"; el producto general
   // sigue usando su etiqueta existente ("Agotado") cuando no hay color elegido.
   const activeColorOut = !!(activeColor && activeColor.availability === "out_of_stock");
+  const disc = discountInfo(product, selectedColorId);
 
   // Orden de recomendaciones según la categoría del producto actual.
   const REC_ORDER = {
@@ -170,7 +172,12 @@ export default function ProductDetail() {
       <section className="split:mx-auto split:max-w-6xl split:px-4 split:pt-16 split:pb-6 lg:max-w-7xl lg:px-8 lg:pt-20 lg:pb-8">
         <div className="split:grid split:grid-cols-2 split:gap-4 lg:gap-6">
           {/* Columna de galería */}
-          <div className={outOfStock ? "opacity-90" : ""}>
+          <div className={`relative ${outOfStock ? "opacity-90" : ""}`}>
+            {disc && (
+              <div className="pointer-events-none absolute left-1/2 top-2 z-30 -translate-x-1/2 rounded-sm bg-gold px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-parchment">
+                {disc.percent}% descuento
+              </div>
+            )}
             {/* Grilla de fotos en 2 columnas — escritorio / tablet horizontal.
                 Todas las fotos se conservan; seleccionar un color solo resalta
                 la foto asignada como la "principal" de ese color. */}
@@ -198,8 +205,15 @@ export default function ProductDetail() {
           <div className="mx-auto max-w-md px-5 pt-6 split:mx-0 split:max-w-none split:px-0 split:pt-0 lg:max-w-xl lg:pt-2">
         <div className="flex items-start justify-between gap-4">
           <h1 className="font-heading text-2xl leading-tight text-foreground">{product.name}</h1>
-          <span className="mt-1 whitespace-nowrap font-heading text-2xl text-foreground">
-            ${Number(product.price).toFixed(0)}
+          <span className="mt-1 flex items-baseline gap-2 whitespace-nowrap font-heading text-2xl text-foreground">
+            {disc ? (
+              <>
+                <span>${disc.finalPrice}</span>
+                <span className="text-base text-slate line-through">${disc.originalPrice}</span>
+              </>
+            ) : (
+              <span>${Number(product.price).toFixed(0)}</span>
+            )}
           </span>
         </div>
 
@@ -292,7 +306,16 @@ export default function ProductDetail() {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-parchment/95 px-5 py-3 backdrop-blur-md">
         <div className="mx-auto flex max-w-md items-center justify-between gap-3">
           <div>
-            <p className="font-heading text-base text-foreground">${Number(product.price).toFixed(0)}</p>
+            <p className="flex items-baseline gap-2 font-heading text-base text-foreground">
+              {disc ? (
+                <>
+                  <span>${disc.finalPrice}</span>
+                  <span className="text-xs text-slate line-through">${disc.originalPrice}</span>
+                </>
+              ) : (
+                <span>${Number(product.price).toFixed(0)}</span>
+              )}
+            </p>
             {activeColorOut ? (
               <span className="text-[11px] uppercase tracking-[0.15em] text-slate">No disponible</span>
             ) : (

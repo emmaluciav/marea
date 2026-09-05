@@ -33,6 +33,9 @@ export default function AdminProductForm() {
   const [units, setUnits] = useState("");
   const [inventory, setInventory] = useState("0");
   const [published, setPublished] = useState(false);
+  const [discountEnabled, setDiscountEnabled] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState("");
+  const [discountColorId, setDiscountColorId] = useState("");
   const [images, setImages] = useState([]);
   const [colors, setColors] = useState([]);
   const [replaceIdx, setReplaceIdx] = useState(null);
@@ -59,6 +62,9 @@ export default function AdminProductForm() {
         setUnits(p.units_remaining != null ? String(p.units_remaining) : "");
         setInventory(p.inventory != null ? String(p.inventory) : "0");
         setPublished(p.published ?? false);
+        setDiscountEnabled(!!p.discount_percent && Number(p.discount_percent) > 0);
+        setDiscountPercent(p.discount_percent != null ? String(p.discount_percent) : "");
+        setDiscountColorId(p.discount_color_id || "");
         setImages(p.images || []);
         setColors(
           (p.colors || []).map((c) => ({
@@ -172,6 +178,11 @@ export default function AdminProductForm() {
       units_remaining: availability === "limited" ? Number(units) || 0 : undefined,
       inventory: Number(inventory) || 0,
       published,
+      discount_percent:
+        discountEnabled && Number(discountPercent) >= 1 && Number(discountPercent) <= 100
+          ? Number(discountPercent)
+          : null,
+      discount_color_id: discountEnabled && discountColorId ? discountColorId : null,
       colors: colors.map((c) => ({
         id: c.id,
         name: c.name,
@@ -392,6 +403,58 @@ export default function AdminProductForm() {
 
         {/* Color */}
         <AdminColorEditor colors={colors} setColors={setColors} images={images} onError={setError} />
+
+        {/* Descuento (opcional) */}
+        <section className="mb-5 space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs uppercase tracking-wider text-slate">Descuento (opcional)</Label>
+            <button
+              type="button"
+              onClick={() => setDiscountEnabled((v) => !v)}
+              className={`relative h-6 w-11 rounded-full transition-colors ${discountEnabled ? "bg-gold" : "bg-border"}`}
+              aria-pressed={discountEnabled}
+            >
+              <span
+                className={`absolute top-0.5 h-5 w-5 rounded-full bg-parchment transition-transform ${discountEnabled ? "translate-x-5" : "translate-x-0.5"}`}
+              />
+            </button>
+          </div>
+          {discountEnabled && (
+            <div className="space-y-3 rounded-sm border border-border px-3 py-3">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] uppercase tracking-wider text-slate">Porcentaje (1–100)</Label>
+                <Input
+                  value={discountPercent}
+                  onChange={(e) => setDiscountPercent(e.target.value)}
+                  type="number"
+                  min="1"
+                  max="100"
+                  className="h-11"
+                  inputMode="numeric"
+                  placeholder="20"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] uppercase tracking-wider text-slate">Aplica a</Label>
+                <select
+                  value={discountColorId}
+                  onChange={(e) => setDiscountColorId(e.target.value)}
+                  className="flex h-11 w-full rounded-md border border-input bg-transparent px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  <option value="">Todo el producto (general)</option>
+                  {colors.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-slate">
+                  Si eliges un color, el descuento solo se muestra al ver ese color.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* Cantidad en inventario (privado) */}
         <div className="mb-5 space-y-1.5">
