@@ -1,5 +1,5 @@
 import React from "react";
-import { Slider } from "@/components/ui/slider";
+import { RangeSlider } from "@/components/marea/RangeSlider";
 import { ColorSwatch } from "@/components/marea/ColorSwatch";
 import { ArrowUp, ArrowDown, X } from "lucide-react";
 
@@ -46,7 +46,7 @@ export default function CatalogFilter({
             ${Math.round(min)} – ${Math.round(max)}
           </span>
         </div>
-        <Slider
+        <RangeSlider
           value={[min, max]}
           min={bMin}
           max={maxSlider}

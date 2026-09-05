@@ -111,6 +111,19 @@ export default function Catalog() {
     setSelColors([]);
   };
 
+  // Color forzado por el filtro: el primer color seleccionado que el producto
+  // tenga (con foto asignada). Hace que la tarjeta muestre esa foto primero.
+  const forcedColorFor = (p) => {
+    if (!selColors.length) return null;
+    const cols = p.colors || [];
+    return (
+      selColors.find((id) => {
+        const c = cols.find((x) => x.id === id);
+        return c && c.photo_indices && c.photo_indices.length;
+      }) || null
+    );
+  };
+
   return (
     <div>
       <BrandCover />
@@ -172,7 +185,13 @@ export default function Catalog() {
         ) : (
           <div className="grid grid-cols-2 gap-x-2 gap-y-4 px-3 pb-12 sm:grid-cols-3 sm:px-4 lg:grid-cols-4">
             {ordered.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} origin={cat} />
+              <ProductCard
+                key={p.id}
+                product={p}
+                index={i}
+                origin={cat}
+                forcedColor={forcedColorFor(p)}
+              />
             ))}
           </div>
         )}

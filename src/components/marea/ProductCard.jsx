@@ -8,7 +8,7 @@ import { useMarea } from "./MareaProvider";
 import { ColorSwatch } from "./ColorSwatch";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
-export default function ProductCard({ product, index = 0, origin = "all", savedColor = null, selectable = false, selected = false, onToggleSelect }) {
+export default function ProductCard({ product, index = 0, origin = "all", savedColor = null, selectable = false, selected = false, onToggleSelect, forcedColor = null }) {
   const navigate = useNavigate();
   const { isSaved, toggleSave } = useMarea();
   const isAdmin = useIsAdmin();
@@ -19,10 +19,19 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
   const images = product.images && product.images.length ? product.images : [];
   const colors = product.colors || [];
 
+  // Si el filtro de color fuerza un color, saltamos a la foto asignada a ese
+  // color (sin reordenar la galería). Se comporta como seleccionar el swatch.
+  const forcedColorObj = forcedColor ? colors.find((c) => c.id === forcedColor) : null;
+  const forcedIndex =
+    forcedColorObj && forcedColorObj.photo_indices && forcedColorObj.photo_indices.length
+      ? forcedColorObj.photo_indices[0]
+      : null;
+
   const open = () => {
     const params = new URLSearchParams();
     params.set("from", origin);
-    if (savedColor) params.set("color", savedColor);
+    const color = forcedColor || savedColor;
+    if (color) params.set("color", color);
     navigate(`/product/${product.id}?${params.toString()}`);
   };
 
@@ -52,6 +61,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
           onImageClick={() => open()}
           className={outOfStock ? "opacity-80" : ""}
           imageClassName={outOfStock ? "opacity-70 [&_img]:grayscale" : ""}
+          jumpTo={forcedIndex}
         />
 
         {/* Out of stock diagonal banner */}
