@@ -12,12 +12,14 @@
  * Requiere Node 18+ (usa fetch global). Sin dependencias externas.
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
 const MANIFEST = path.join(ROOT, "manifest.json");
-const IMG_ROOT = path.join(ROOT, "images");
 
 if (!fs.existsSync(MANIFEST)) {
   console.error("No se encontró manifest.json en " + MANIFEST);
