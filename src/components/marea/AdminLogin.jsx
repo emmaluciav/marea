@@ -31,6 +31,21 @@ export default function AdminLogin({ onClose }) {
       }
       base44.auth.setToken(token);
       sessionStorage.setItem("marea_admin_session", "1");
+      // Verifica la sesión sobre el mismo origen ANTES de propagarla al
+      // contexto (que de otro modo dispararía la redirección a /login). Si el
+      // token no valida aquí, se limpia y se muestra error inline, sin recargar
+      // ni dejar la pantalla en blanco.
+      try {
+        const me = await base44.auth.me();
+        if (!me || me.role !== "admin") throw new Error("not_admin");
+      } catch {
+        try { base44.auth.setToken(null); } catch { /* ignore */ }
+        try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
+        try { localStorage.removeItem("token"); } catch { /* ignore */ }
+        sessionStorage.removeItem("marea_admin_session");
+        setError("La sesión de administrador no pudo validarse. Intenta de nuevo.");
+        return;
+      }
       await checkUserAuth();
       onClose();
     } catch (err) {

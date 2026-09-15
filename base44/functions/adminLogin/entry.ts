@@ -47,11 +47,32 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const appId = secrets.get("BASE44_APP_ID");
-    const apiUrl = req.headers.get("Base44-Api-Url") || "https://base44.app";
+
+    // Deriva el host de la API del mismo origen que usa el frontend para
+    // validar la sesión (me()). El SDK envía X-Origin-URL (URL completa del
+    // frontend) en cada petición; de ahí tomamos el origen de la app. Así el
+    // token se minta sobre el mismo host que después lo valida, evitando que
+    // me() lo rechace y la app quede en blanco.
+    let apiUrl = "";
+    const xOrigin = req.headers.get("X-Origin-URL");
+    if (xOrigin) {
+      try { apiUrl = new URL(xOrigin).origin; } catch { /* ignore */ }
+    }
+    if (!apiUrl) {
+      const headerApiUrl = req.headers.get("Base44-Api-Url");
+      if (headerApiUrl) apiUrl = headerApiUrl;
+    }
+    if (!apiUrl) {
+      try { apiUrl = new URL(req.url).origin; } catch { /* ignore */ }
+    }
+    if (!apiUrl) apiUrl = "https://base44.app";
 
     const loginRes = await fetch(`${apiUrl}/api/apps/${appId}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-App-Id": appId || "",
+      },
       body: JSON.stringify({ email, password: accountPass }),
     });
 
