@@ -7,16 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, X } from "lucide-react";
 
-// Acceso discreto de administrador. El admin entra con su combinación secreta
-// de usuario y contraseña (ADMIN_USERNAME/ADMIN_PASSWORD); por detrás, la
-// función adminLogin valida la combinación e inicia sesión con la cuenta admin
-// oculta de Base44, devolviendo un token de sesión admin real. El correo oculto
-// nunca se muestra ni se pide al admin.
+// Acceso discreto de administrador tipo "puerta secreta": el admin entra con un
+// código secreto (197919). La función adminLogin valida el código e inicia
+// sesión con la cuenta admin oculta de Base44, devolviendo un token admin real.
+// No se pide correo, usuario ni contraseña al admin.
 export default function AdminLogin({ onClose }) {
   const { checkUserAuth } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,41 +23,39 @@ export default function AdminLogin({ onClose }) {
     setError("");
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("adminLogin", { username, password });
+      const res = await base44.functions.invoke("adminLogin", { code });
       const token = res?.data?.access_token || res?.access_token;
       if (!token) {
-        setError("No se pudo obtener la sesión de administrador.");
+        setError("Código incorrecto");
         return;
       }
       base44.auth.setToken(token);
       sessionStorage.setItem("marea_admin_session", "1");
-      // Verifica la sesión sobre el mismo origen ANTES de propagarla al
-      // contexto (que de otro modo dispararía la redirección a /login). Si el
-      // token no valida aquí, se limpia y se muestra error inline, sin recargar
-      // ni dejar la pantalla en blanco.
+      // Valida la sesión admin sobre el mismo origen antes de propagarla al
+      // contexto. Si no valida, se limpia el token a mano (sin logout() del
+      // SDK, que haría window.location.href y dejaría la pantalla en blanco).
       try {
         const me = await base44.auth.me();
         if (!me || me.role !== "admin") throw new Error("not_admin");
       } catch {
-        // Limpieza SIN redirección: logout() del SDK siempre hace
-        // window.location.href = <logoutUrl>, lo que dejaría la pantalla
-        // en blanco. Quitamos el token a mano del storage para que el error
-        // se muestre inline. El header en memoria se sobreescribe en el
-        // siguiente setToken exitoso.
         try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
         try { localStorage.removeItem("token"); } catch { /* ignore */ }
         sessionStorage.removeItem("marea_admin_session");
-        setError("La sesión de administrador no pudo validarse. Intenta de nuevo.");
+        setError("No se pudo abrir el panel. Intenta de nuevo.");
         return;
       }
       await checkUserAuth();
-      // Navegación automática al panel de administración: tras validar la
-      // sesión admin, abre el dashboard sin pasos manuales.
+      // Código correcto → abre el panel automáticamente, sin pasos extra.
       navigate("/admin/inventario");
       onClose();
     } catch (err) {
-      const msg = err?.response?.data?.error || err?.message || "Combinación inválida.";
-      setError(msg);
+      // 401 = código incorrecto. Otros errores (p.ej. falla el mint de la
+      // cuenta oculta) no deben decir "código incorrecto".
+      if (err?.response?.status === 401) {
+        setError("Código incorrecto");
+      } else {
+        setError("No se pudo abrir el panel. Intenta de nuevo.");
+      }
     } finally {
       setLoading(false);
     }
@@ -71,7 +67,7 @@ export default function AdminLogin({ onClose }) {
         <div className="mb-6 flex items-start justify-between">
           <div>
             <h2 className="font-heading text-xl text-foreground">Entrar como administrador</h2>
-            <p className="mt-1 text-xs text-slate">Acceso privado de editor</p>
+            <p className="mt-1 text-xs text-slate">Ingresa el código secreto</p>
           </div>
           <button
             type="button"
@@ -91,32 +87,19 @@ export default function AdminLogin({ onClose }) {
 
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="admin-user" className="text-xs uppercase tracking-wider text-slate">
-              Usuario
+            <Label htmlFor="admin-code" className="text-xs uppercase tracking-wider text-slate">
+              Código
             </Label>
             <Input
-              id="admin-user"
-              type="text"
-              autoComplete="username"
-              autoFocus
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="h-11"
-              placeholder="usuario"
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="admin-pass" className="text-xs uppercase tracking-wider text-slate">
-              Contraseña
-            </Label>
-            <Input
-              id="admin-pass"
+              id="admin-code"
               type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-11"
+              inputMode="numeric"
+              autoComplete="off"
+              autoFocus
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              className="h-11 tracking-[0.3em]"
+              placeholder="••••••"
               required
             />
           </div>
