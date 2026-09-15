@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 
 // Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
@@ -52,16 +51,7 @@ export default function ContactSection({ variant = "bottom", delivery = false })
           Entrega inmediata en productos disponibles.
         </p>
       )}
-      {top && (
-        <div className="mt-9 flex justify-start">
-          <Link
-            to="/empaque"
-            className="inline-flex items-center rounded-none bg-gold px-7 py-3.5 text-[13px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
-          >
-            Ver Tipos de Empaque
-          </Link>
-        </div>
-      )}
+
     </section>
   );
 }
