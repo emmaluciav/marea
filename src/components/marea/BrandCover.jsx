@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadClient } from "@/lib/uploadClient";
 import { Image } from "@/components/ui/image";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -23,7 +24,7 @@ export default function BrandCover() {
   const saveCover = async (croppedFile) => {
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: croppedFile });
+      const { file_url } = await uploadClient.integrations.Core.UploadFile({ file: croppedFile });
       const settings = await base44.entities.Setting.list();
       const existing = settings.find((s) => s.key === "brand_cover");
       if (existing) {
