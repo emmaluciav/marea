@@ -1,0 +1,60 @@
+{
+  "name": "Category",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Identificador \u00fanico de la secci\u00f3n, se guarda en Product.category."
+    },
+    "label": {
+      "type": "string",
+      "description": "Nombre visible de la secci\u00f3n en el cat\u00e1logo y administraci\u00f3n."
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    },
+    "visible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Si es false, la secci\u00f3n no se muestra en el cat\u00e1logo p\u00fablico pero permanece disponible en las pantallas de administraci\u00f3n."
+    },
+    "is_builtin": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "key",
+    "label"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.visible": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

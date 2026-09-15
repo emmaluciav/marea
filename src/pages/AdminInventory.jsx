@@ -7,7 +7,7 @@ import { Image } from "@/components/ui/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isVideoUrl } from "@/lib/media";
-import { CATEGORIES } from "@/lib/mareaCategories";
+import { useCategories } from "@/hooks/useCategories";
 import { ColorSwatch } from "@/components/marea/ColorSwatch";
 
 // Panel de administración (solo admin). Dos pestañas:
@@ -15,7 +15,7 @@ import { ColorSwatch } from "@/components/marea/ColorSwatch";
 //    estado público de disponibilidad).
 //  - Vendidos: historial de ventas (privado, solo registro histórico). No
 //    modifica inventario ni disponibilidad pública.
-const FILTERS = [...CATEGORIES, { id: "empaque", label: "Empaque" }];
+
 
 const dateKey = (iso) => {
   const d = new Date(iso);
@@ -34,6 +34,8 @@ const formatDate = (iso) => {
 export default function AdminInventory() {
   const navigate = useNavigate();
   const isAdmin = useIsAdmin();
+  const { categories } = useCategories();
+  const filters = [...categories, { id: "empaque", label: "Empaque" }];
 
   const [tab, setTab] = useState("inventario");
 
@@ -540,7 +542,7 @@ export default function AdminInventory() {
           </div>
 
           <div className="no-scrollbar mb-4 flex gap-3 overflow-x-auto pb-1">
-            {FILTERS.map((c) => (
+            {filters.map((c) => (
               <button
                 key={c.id}
                 type="button"
@@ -588,7 +590,7 @@ export default function AdminInventory() {
           </div>
 
           <div className="no-scrollbar mb-3 flex gap-3 overflow-x-auto pb-1">
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <button
                 key={c.id}
                 type="button"

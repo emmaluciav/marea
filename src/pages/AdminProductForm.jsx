@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, ArrowLeft, ArrowRight, Plus, Trash2, Pencil } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { CATEGORIES, CATEGORY_LABELS } from "@/lib/mareaCategories";
+import { useCategories } from "@/hooks/useCategories";
 import AdminColorEditor from "@/components/marea/AdminColorEditor";
 import PhotoCropper from "@/components/marea/PhotoCropper";
 import { isVideoFile, isVideoUrl } from "@/lib/media";
@@ -29,6 +29,7 @@ export default function AdminProductForm() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("large_earrings");
+  const { categories } = useCategories();
   const [availability, setAvailability] = useState("available");
   const [units, setUnits] = useState("");
   const [inventory, setInventory] = useState("0");
@@ -350,7 +351,7 @@ export default function AdminProductForm() {
         <div className="mb-5 space-y-1.5">
           <Label className="text-xs uppercase tracking-wider text-slate">Categoría</Label>
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.filter((c) => c.id !== "all").map((c) => (
+            {categories.map((c) => (
               <button
                 key={c.id}
                 type="button"

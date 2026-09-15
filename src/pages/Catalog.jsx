@@ -6,7 +6,10 @@ import CategoryTabs from "@/components/marea/CategoryTabs";
 import CatalogFilter from "@/components/marea/CatalogFilter";
 import ContactSection from "@/components/marea/ContactSection";
 import ProductCard from "@/components/marea/ProductCard";
-import { Loader2, SlidersHorizontal } from "lucide-react";
+import { Loader2, SlidersHorizontal, Plus } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useCategories } from "@/hooks/useCategories";
+import CategoryManager from "@/components/marea/CategoryManager";
 
 // Shuffle determinista por semilla: produce un orden aleatorio estable
 // mientras la semilla no cambie. La semilla se regenera al montar la página
@@ -32,6 +35,11 @@ export default function Catalog() {
 
   // Semilla de aleatoriedad: nueva en cada montaje del catálogo.
   const [seed] = useState(() => Math.floor(Math.random() * 1000000));
+
+  const isAdmin = useIsAdmin();
+  const { categories, reload } = useCategories();
+  const [managerOpen, setManagerOpen] = useState(false);
+  const visibleCats = categories.filter((c) => c.visible);
 
   // Filtro global (persiste al navegar entre categorías).
   const [filterOpen, setFilterOpen] = useState(false);
@@ -137,26 +145,48 @@ export default function Catalog() {
 
       {/* Botón de filtro global — encima de las categorías */}
       <div className="mx-auto max-w-7xl px-4 pt-3">
-        <button
-          type="button"
-          onClick={() => setFilterOpen((o) => !o)}
-          className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] uppercase tracking-[0.15em] transition-colors ${
-            filterOpen || activeCount
-              ? "border-gold text-gold"
-              : "border-border text-slate hover:text-foreground"
-          }`}
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-          Filtro
-          {activeCount > 0 && (
-            <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] text-parchment">
-              {activeCount}
-            </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setFilterOpen((o) => !o)}
+            className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[11px] uppercase tracking-[0.15em] transition-colors ${
+              filterOpen || activeCount
+                ? "border-gold text-gold"
+                : "border-border text-slate hover:text-foreground"
+            }`}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            Filtro
+            {activeCount > 0 && (
+              <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] text-parchment">
+                {activeCount}
+              </span>
+            )}
+          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setManagerOpen((o) => !o)}
+              aria-label="Secciones"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-gold text-parchment transition-transform active:scale-95 ${
+                managerOpen ? "ring-2 ring-gold/30" : ""
+              }`}
+            >
+              <Plus className="h-4 w-4" />
+            </button>
           )}
-        </button>
+        </div>
       </div>
 
-      <CategoryTabs active={cat} />
+      {isAdmin && managerOpen && (
+        <CategoryManager
+          categories={categories}
+          onClose={() => setManagerOpen(false)}
+          onChange={reload}
+        />
+      )}
+
+      <CategoryTabs active={cat} categories={visibleCats} />
 
       {filterOpen && (
         <CatalogFilter

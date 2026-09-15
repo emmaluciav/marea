@@ -9,10 +9,11 @@ import { BookmarkIcon } from "@/components/marea/icons";
 import { StatusBadge } from "@/components/marea/StatusBadge";
 import { useMarea } from "@/components/marea/MareaProvider";
 import { ColorSwatch } from "@/components/marea/ColorSwatch";
-import { CATEGORY_LABELS, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
+import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useCategories } from "@/hooks/useCategories";
 import { discountInfo } from "@/lib/discount";
 
 export default function ProductDetail() {
@@ -23,6 +24,7 @@ export default function ProductDetail() {
   const { isSaved, toggleSave, setSavedColor, getSavedColor } = useMarea();
   const isAdmin = useIsAdmin();
   const { toast } = useToast();
+  const { categories } = useCategories();
 
   const [product, setProduct] = useState(null);
   const [all, setAll] = useState([]);
@@ -97,7 +99,9 @@ export default function ProductDetail() {
       : null;
   const outOfStock = product.availability === "out_of_stock";
   const fromSaved = from === "saved";
-  const fromLabel = fromSaved ? "Volver" : CATEGORY_LABELS[from] || "Ver todo";
+  const labelMap = { all: "Ver todo" };
+  categories.forEach((c) => (labelMap[c.id] = c.label));
+  const fromLabel = fromSaved ? "Volver" : labelMap[from] || "Ver todo";
 
   // Estado mostrado: el del color seleccionado si hay uno; si no, el general.
   const statusProduct = activeColor

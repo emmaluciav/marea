@@ -19,13 +19,7 @@
     },
     "category": {
       "type": "string",
-      "enum": [
-        "large_earrings",
-        "small_earrings",
-        "necklaces",
-        "pulseras",
-        "anillos"
-      ]
+      "description": "Clave de la secci\u00f3n (Category.key). Texto libre para permitir secciones personalizadas."
     },
     "availability": {
       "type": "string",
