@@ -9,7 +9,7 @@ export default function ContactSection({ variant = "bottom", delivery = false })
   return (
     <section
       className={`px-6 text-center ${
-        top ? "py-10" : "border-t border-border/60 bg-secondary/40 py-14"
+        top ? "pb-4 pt-10" : "border-t border-border/60 bg-secondary/40 py-14"
       }`}
     >
       <h2 className="font-heading text-2xl text-foreground">¿Quieres ordenar?</h2>
