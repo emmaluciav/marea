@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import BrandCover from "@/components/marea/BrandCover";
 import CategoryTabs from "@/components/marea/CategoryTabs";
@@ -163,12 +163,6 @@ export default function Catalog() {
               </span>
             )}
           </button>
-          <Link
-            to="/empaque"
-            className="ml-1 inline-flex items-center rounded-none bg-gold px-5 py-1.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
-          >
-            Ver Tipos de Empaque
-          </Link>
           {isAdmin && (
             <button
               type="button"
