@@ -53,12 +53,14 @@ export default function ContactSection({ variant = "bottom", delivery = false })
         </p>
       )}
       {top && (
-        <Link
-          to="/empaque"
-          className="mt-6 inline-flex items-center rounded-full bg-gold px-5 py-2.5 text-[11px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
-        >
-          Ver Tipos de Empaque
-        </Link>
+        <div className="mt-9 flex justify-end">
+          <Link
+            to="/empaque"
+            className="inline-flex items-center rounded-none bg-gold px-7 py-3.5 text-[13px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
+          >
+            Ver Tipos de Empaque
+          </Link>
+        </div>
       )}
     </section>
   );
