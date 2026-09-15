@@ -23,7 +23,7 @@ export default function BrandCover() {
   const saveCover = async (croppedFile) => {
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: croppedFile });
       const settings = await base44.entities.Setting.list();
       const existing = settings.find((s) => s.key === "brand_cover");
       if (existing) {

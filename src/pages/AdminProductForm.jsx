@@ -99,7 +99,7 @@ export default function AdminProductForm() {
     if (!item) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file: croppedFile });
+      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: croppedFile });
       if (item.replaceIdx !== null) {
         setImages((prev) => prev.map((u, i) => (i === item.replaceIdx ? file_url : u)));
       } else {
@@ -131,7 +131,7 @@ export default function AdminProductForm() {
     setUploading(true);
     for (let k = 0; k < vids.length; k++) {
       try {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: vids[k] });
+        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: vids[k] });
         setImages((prev) => {
           if (replaceIdx !== null && k === 0) {
             return prev.map((u, i) => (i === replaceIdx ? file_url : u));
