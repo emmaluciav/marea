@@ -1,0 +1,2276 @@
+{
+  "generated_at": "2026-09-15T02:39:21.611Z",
+  "app": {
+    "name": "Marea",
+    "source_app_id": "6a9105ed8948a36bbe06a37f",
+    "platform": "Base44"
+  },
+  "counts": {
+    "products": 45,
+    "packagings": 2,
+    "images": 158
+  },
+  "categories": [
+    {
+      "key": "large_earrings",
+      "label": "Aretes grandes",
+      "order": 1,
+      "visible": true,
+      "is_builtin": true
+    },
+    {
+      "key": "small_earrings",
+      "label": "Aretes pequeños",
+      "order": 2,
+      "visible": true,
+      "is_builtin": true
+    },
+    {
+      "key": "necklaces",
+      "label": "Collares",
+      "order": 3,
+      "visible": true,
+      "is_builtin": true
+    },
+    {
+      "key": "pulseras",
+      "label": "Pulseras",
+      "order": 4,
+      "visible": true,
+      "is_builtin": true
+    },
+    {
+      "key": "anillos",
+      "label": "Anillos",
+      "order": 5,
+      "visible": true,
+      "is_builtin": true
+    }
+  ],
+  "products": [
+    {
+      "id": "6a9bae250ebc75d6852f98e0",
+      "name": "Aretes Media Flor",
+      "description": "Aretes de diseño floral con tres pétalos formando una media flor, una pieza sencilla y femenina, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 1
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 1
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/63a043d8a_MAREACATALOGO5.jpg",
+          "local_path": "images/products/aretes-media-flor/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/145af598b_15.jpg",
+          "local_path": "images/products/aretes-media-flor-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1f5c4fb5d_IMG_2746.jpg",
+          "local_path": "images/products/aretes-media-flor-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c4ae9b3d4_IMG_2563.jpg",
+          "local_path": "images/products/aretes-media-flor-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba41a3ed9cfba751af4d3",
+      "name": "Collar Amalfi",
+      "description": "Collar largo y sencillo de cadena delgada, con una pequeña piedra dorada en uno de sus extremos y una pieza circular con abertura en el otro, que permite introducir la cadena para ajustarlo y colocarlo de diferentes formas.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/818894ce1_MAREACATALOGO.jpg",
+          "local_path": "images/products/collar-amalfi/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/df011d821_94.jpg",
+          "local_path": "images/products/collar-amalfi-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/822d37ce7_4DB52E92-9E93-4169-BCFC-E3E9FD39F2B5.jpg",
+          "local_path": "images/products/collar-amalfi-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba3c3101de7c6554d2c2c",
+      "name": "Collar Liora",
+      "description": "Collar largo de cadena dorada decorado con pequeñas piedras circulares de diferentes tamaños distribuidas a lo largo de la cadena, creando un diseño delicado y llamativo. Su forma permite llevarlo en diferentes vueltas y acomodar su caída.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            3
+          ],
+          "availability": "out_of_stock",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/79db0d951_91.jpg",
+          "local_path": "images/products/collar-liora/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/fbcf4a730_92.jpg",
+          "local_path": "images/products/collar-liora-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/46b9f6c41_93.jpg",
+          "local_path": "images/products/collar-liora-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/97d18a149_F350B324-BFD1-4F2F-9F75-F4C95A4893C2.jpg",
+          "local_path": "images/products/collar-liora-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba3517d6dbbdb63d6c8ee",
+      "name": "Collar Riviera",
+      "description": "Collar largo de cadena dorada decorado con siete piedras grandes y separadas entre sí a lo largo de la cadena, con un diseño moldeado y uniforme.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c942c318b_89.jpg",
+          "local_path": "images/products/collar-riviera/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/cc2665636_90.jpg",
+          "local_path": "images/products/collar-riviera-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba1aec57320944bc5ef68",
+      "name": "Collar Oviedo",
+      "description": "Collar largo de cadena con una pieza ovalada dorada de acabado ligeramente plano al centro, un diseño sencillo y elegante que cuenta con broche para colocarlo.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/205aa9382_86.jpg",
+          "local_path": "images/products/collar-oviedo/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3387cc87b_87.jpg",
+          "local_path": "images/products/collar-oviedo-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e9f476f5f_88.jpg",
+          "local_path": "images/products/collar-oviedo-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/8914bdf0a_IMG_2754.jpg",
+          "local_path": "images/products/collar-oviedo-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba11a60e993d830f7bb78",
+      "name": "Collar Ronda",
+      "description": "Collar largo de cordón café ajustable, con una pieza dorada de forma orgánica al centro y pequeñas pepitas doradas en los extremos. Su diseño permite regular el largo mediante el mismo cordón para personalizar la caída.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/6ec8c5836_83.jpg",
+          "local_path": "images/products/collar-ronda/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/06415099e_84.jpg",
+          "local_path": "images/products/collar-ronda-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/cfd584a09_85.jpg",
+          "local_path": "images/products/collar-ronda-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/d02948a92_IMG_2733.jpg",
+          "local_path": "images/products/collar-ronda-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/32662137f_IMG_2755.jpg",
+          "local_path": "images/products/collar-ronda-5/05.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba08d7e19781ad3e9480f",
+      "name": "Collar Palermo",
+      "description": "Collar largo de cordón café ajustable, con detalles de nudos en los extremos y una pieza dorada alargada de silueta puntiaguda al centro, acompañada de una pequeña esfera dorada y detalles de cordón que crean una caída relajada.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/9fc79c168_81.jpg",
+          "local_path": "images/products/collar-palermo/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/938ec1a97_82.jpg",
+          "local_path": "images/products/collar-palermo-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9ba03a8a45cb655ef1fa8a",
+      "name": "Collar Amberes",
+      "description": "Collar largo de cadena decorada con pequeñas pepitas doradas, con broche para ajustar su colocación y posibilidad de llevarse en diferentes vueltas alrededor del cuello.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c4466c45f_80.jpg",
+          "local_path": "images/products/collar-amberes/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/12d31d1f5_IMG_2756.jpg",
+          "local_path": "images/products/collar-amberes-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/5b9a8b7b5_IMG_2562.jpg",
+          "local_path": "images/products/collar-amberes-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9fbc2a99b352f7ad840f",
+      "name": "Collar Celia",
+      "description": "Collar corto de cadena fina con una pequeña pieza rectangular de acabado uniforme integrada en la cadena, que puede deslizarse para ajustar su posición, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            2
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/afd1f8746_79.jpg",
+          "local_path": "images/products/collar-celia/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c1e9ac78d_77.jpg",
+          "local_path": "images/products/collar-celia-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/058a4ed84_78.jpg",
+          "local_path": "images/products/collar-celia-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/4df0c36f3_A8EBF0C8-21F5-4E31-A5F9-C31147146A7B.jpg",
+          "local_path": "images/products/collar-celia-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9f2367676948ef27a8e4",
+      "name": "Collar Liria",
+      "description": "Collar corto de cadena fina con un pequeño dije de marco dorado y piedra en tono beige, una pieza delicada y sencilla para complementar días cotidianos.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/dd55722bb_75.jpg",
+          "local_path": "images/products/collar-liria/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/aa8b89b01_76.jpg",
+          "local_path": "images/products/collar-liria-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/858b4dad7_5C4D477C-A1ED-4C43-9A1D-C0C8C75889BC.jpg",
+          "local_path": "images/products/collar-liria-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9dfebf48f293db76ce4a",
+      "name": "Collar Drop",
+      "description": "Collar de largo medio con diseño delicado y broche ajustable, decorado al frente con dos pequeñas piezas en forma de gota de diferentes tamaños y una pieza móvil que permite personalizar su posición, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            2
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e8049a7b2_MAREACATALOGO1.jpg",
+          "local_path": "images/products/collar-drop/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/11bba1843_73.jpg",
+          "local_path": "images/products/collar-drop-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/8bc61a8ca_72.jpg",
+          "local_path": "images/products/collar-drop-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/f80f39006_74.jpg",
+          "local_path": "images/products/collar-drop-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/768aaa55f_IMG_2564.jpg",
+          "local_path": "images/products/collar-drop-5/05.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/0c8370a4e_IMG_2752.jpg",
+          "local_path": "images/products/collar-drop-6/06.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9da9e07396f12961fe2e",
+      "name": "Collar Praga",
+      "description": "Collar corto de diseño minimalista con una cadena ancha y plana de acabado dorado, una pieza sencilla y elegante que se ajusta alrededor del cuello mediante un broche.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/f3342fa4f_70.jpg",
+          "local_path": "images/products/collar-praga/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c832060a8_71.jpg",
+          "local_path": "images/products/collar-praga-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9d3e93204b741956f479",
+      "name": "Collar Lausana",
+      "description": "Collar largo de cadena gruesa y flexible que puede acomodarse y moldearse en diferentes formas y vueltas. Cuenta con una pequeña esfera en cada extremo, disponible en dorado y plateado.",
+      "price": 240,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/9c1801f8b_67.jpg",
+          "local_path": "images/products/collar-lausana/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/860a33f5b_66.jpg",
+          "local_path": "images/products/collar-lausana-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/91f8924a8_69.jpg",
+          "local_path": "images/products/collar-lausana-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/04105c421_3CED1599-BF94-4DA6-B3F1-B1EA77054199.jpg",
+          "local_path": "images/products/collar-lausana-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9cd420ba53f671fd3da0",
+      "name": "Collar Catania",
+      "description": "Collar largo formado por pequeñas piedras en una tira flexible y moldeable, que puede llevarse en diferentes vueltas, nudos o estilos para personalizar la caída. En cada extremo incorpora una pieza de mayor tamaño con el mismo acabado, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/2c3c063fa_63.jpg",
+          "local_path": "images/products/collar-catania/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/98929b0e1_64.jpg",
+          "local_path": "images/products/collar-catania-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1733cd7b7_66.jpg",
+          "local_path": "images/products/collar-catania-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/b6339eb11_IMG_2749.jpg",
+          "local_path": "images/products/collar-catania-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/dba040afb_IMG_2565.jpg",
+          "local_path": "images/products/collar-catania-5/05.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9c6680fc7c5e4e73e325",
+      "name": "Collar Ravenna",
+      "description": "Collar largo y versátil de diseño ajustable, con una pieza móvil que permite unir y acomodar las tiras para llevarlo largo o en doble vuelta alrededor del cuello, creando diferentes formas de uso y caídas.",
+      "price": 240,
+      "category": "necklaces",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/759167d23_60.jpg",
+          "local_path": "images/products/collar-ravenna/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/27f15e552_61.jpg",
+          "local_path": "images/products/collar-ravenna-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/abbcd02e5_62.jpg",
+          "local_path": "images/products/collar-ravenna-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/d5c95f408_IMG_2750.jpg",
+          "local_path": "images/products/collar-ravenna-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9bd23be707456f7a2f61",
+      "name": "Aretes Altea",
+      "description": "Aretes grandes de diseño inspirado en la playa, con un aro alargado decorado con pequeñas piedras en tono café y una pieza circular dorada en la parte superior.",
+      "price": 240,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/58b45656e_59.jpg",
+          "local_path": "images/products/aretes-altea/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c751e4dd6_CEA6BC6C-5340-4E83-B0FD-62C4D10E7147.jpg",
+          "local_path": "images/products/aretes-altea-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9b3ec1c25c64b80afda3",
+      "name": "Aretes Salina",
+      "description": "Aretes pequeños de diseño semicircular formados por pequeñas piedras rectangulares colocadas una junto a otra, creando un medio aro delicado y elegante.",
+      "price": 240,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/540d6c781_56.jpg",
+          "local_path": "images/products/aretes-salina/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/0b93d6b6b_57.jpg",
+          "local_path": "images/products/aretes-salina-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/f99e513ea_58.jpg",
+          "local_path": "images/products/aretes-salina-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/86551712b_E7DFEB21-62E6-471B-A01B-ED8D2C7C3F68.jpg",
+          "local_path": "images/products/aretes-salina-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9a3d459c225f12767ea3",
+      "name": "Aretes Aro",
+      "description": "Aretes pequeños de diseño circular y sencillo, disponibles en dorado y plateado, que se cierran sobre sí mismos al colocarlos en la oreja, creando un aro compacto y casual.",
+      "price": 220,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c780c685e_54.jpg",
+          "local_path": "images/products/aretes-aro/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1b244e806_55.jpg",
+          "local_path": "images/products/aretes-aro-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3bf0d6dbf_FE873916-E5E9-42B4-A394-F9F235076F2C.jpg",
+          "local_path": "images/products/aretes-aro-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b99be908ca27ab6bff44f",
+      "name": "Aretes Siena",
+      "description": "Aretes pequeños de diseño geométrico con una pieza de forma ovalada y ligeramente puntiaguda, combinando una pieza dorada al frente y una plateada detrás, que pueden utilizarse juntas o por separado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "multicolor",
+          "name": "Multicolor",
+          "hex": null,
+          "is_multicolor": true,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c93267c8e_52.jpg",
+          "local_path": "images/products/aretes-siena/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/646a2f0a9_53.jpg",
+          "local_path": "images/products/aretes-siena-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/4f805c999_F5EC881B-56FF-44F3-A74D-589BBACEB2A2.jpg",
+          "local_path": "images/products/aretes-siena-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9929959767727f3f4cfc",
+      "name": "Aretes Viena",
+      "description": "Aretes pequeños de diseño superpuesto con una pieza circular plateada al frente y otra dorada ligeramente más grande detrás, que puede utilizarse junta o por separado para crear diferentes estilos.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "multicolor",
+          "name": "Multicolor",
+          "hex": null,
+          "is_multicolor": true,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3788f83f0_49.jpg",
+          "local_path": "images/products/aretes-viena/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/cc659386b_50.jpg",
+          "local_path": "images/products/aretes-viena-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/f40391db6_51.jpg",
+          "local_path": "images/products/aretes-viena-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/592be8348_26CA07B9-3B80-4F82-9926-8C86B74DBBEA.jpg",
+          "local_path": "images/products/aretes-viena-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b9876abf8257b4d1386c3",
+      "name": "Aretes Pepita",
+      "description": "Aretes pequeños de diseño ovalado y sencillo, con una forma similar a una pequeña pepita, disponibles en dorado y plateado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/2cab1088d_46.jpg",
+          "local_path": "images/products/aretes-pepita/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/67df0e9b8_47.jpg",
+          "local_path": "images/products/aretes-pepita-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/509c01d35_48.jpg",
+          "local_path": "images/products/aretes-pepita-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/eac63d877_9F09F3B3-821D-4FC7-9D71-9B188D829984.jpg",
+          "local_path": "images/products/aretes-pepita-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b97acc16c9e5eb5652d32",
+      "name": "Aretes Matte",
+      "description": "Aretes pequeños de diseño curvo y moldeado, con una silueta casi cuadrada y acabado mate, disponibles en dorado y plateado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/99faf94d4_43.jpg",
+          "local_path": "images/products/aretes-matte/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/0c846e61b_44.jpg",
+          "local_path": "images/products/aretes-matte-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/cc7d9bc23_45.jpg",
+          "local_path": "images/products/aretes-matte-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/61027cc70_AC103AF3-7D9E-46FE-99BE-ABB04CE01949.jpg",
+          "local_path": "images/products/aretes-matte-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b97262cd5993597a6019c",
+      "name": "Aretes Capri",
+      "description": "Aretes súper pequeños con una piedra circular y un delicado soporte, disponibles en dorado y plateado, ideales para un look minimalista y casual.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            2
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/612789317_39.jpg",
+          "local_path": "images/products/aretes-capri/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ebe919439_40.jpg",
+          "local_path": "images/products/aretes-capri-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/fd3239fa4_41.jpg",
+          "local_path": "images/products/aretes-capri-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/75beec214_42.jpg",
+          "local_path": "images/products/aretes-capri-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e436217f6_539E70C4-9320-40F7-BA71-F5A4CA33A6DB.jpg",
+          "local_path": "images/products/aretes-capri-5/05.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b95fb1271083da4be579c",
+      "name": "Aretes Magnolia",
+      "description": "Aretes grandes de diseño floral con dos flores de diferentes tamaños, una de ellas colgando debajo de la otra, disponibles en dorado y plateado.",
+      "price": 240,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/5d749a5f5_38.jpg",
+          "local_path": "images/products/aretes-magnolia/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1bceee4c1_37.jpg",
+          "local_path": "images/products/aretes-magnolia-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/bf0407cd0_IMG_2744.jpg",
+          "local_path": "images/products/aretes-magnolia-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/2ef28de69_IMG_2557.jpg",
+          "local_path": "images/products/aretes-magnolia-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9b957aa25a5e83e2f75044",
+      "name": "Aretes Nola",
+      "description": "Aretes pequeños de diseño geométrico con forma de rombo y acabado uniforme y moldeado, disponibles en dorado y plateado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1a091599e_36.jpg",
+          "local_path": "images/products/aretes-nola/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/4fb3767f2_35.jpg",
+          "local_path": "images/products/aretes-nola-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/426afe238_D9437E81-072D-4C1D-BAE5-8B7B1D3C1760.jpg",
+          "local_path": "images/products/aretes-nola-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9781c3ff901c026b6b7bda",
+      "name": "Aretes Acacia",
+      "description": "Aretes de diseño inspirado en una concha, con una pieza ovalada central rodeada por líneas que siguen su contorno, creando una silueta delicada y llamativa.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/67b837dcb_34.jpg",
+          "local_path": "images/products/aretes-acacia/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e0e6d23bb_4C08AA7D-0BF9-428F-AC9E-B7D68EBC0624.jpg",
+          "local_path": "images/products/aretes-acacia-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a978147b49dc45a33cc2d4b",
+      "name": "Aretes Atena",
+      "description": "Aretes extra grandes de diseño inspirado en alas de mariposa o pétalos, con una silueta amplia, uniforme y acabado arrugado que aporta volumen y elegancia.",
+      "price": 250,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/9dcdc0078_33.jpg",
+          "local_path": "images/products/aretes-atena/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ed639a897_IMG_2740.jpg",
+          "local_path": "images/products/aretes-atena-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/6e0d0c9c3_A4FC7DCD-594C-4189-9BB5-412FAE58D391.jpg",
+          "local_path": "images/products/aretes-atena-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9780f8ccef0c13499c0297",
+      "name": "Aretes Nolia",
+      "description": "Aretes grandes de diseño compuesto por múltiples aros unidos entre sí, creando una pieza de textura marcada y apariencia llamativa, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/492aea083_31.jpg",
+          "local_path": "images/products/aretes-nolia/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/be70c5b20_32.jpg",
+          "local_path": "images/products/aretes-nolia-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e3dc7654c_IMG_2554.jpg",
+          "local_path": "images/products/aretes-nolia-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3e81a2294_IMG_2751.jpg",
+          "local_path": "images/products/aretes-nolia-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977f88b49dc45a33cc297f",
+      "name": "Aretes Donna",
+      "description": "Aretes de diseño circular con forma de pequeñas donas, de acabado uniforme y moldeado, una pieza sencilla y moderna.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/01d00649b_30.jpg",
+          "local_path": "images/products/aretes-donna/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/4c59b497e_52BF374E-B534-427A-8D12-FE23678C7661.jpg",
+          "local_path": "images/products/aretes-donna-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977f4dcc3b5755e5f02a1d",
+      "name": "Aretes Carlo",
+      "description": "Aretes largos de diseño delicado con tres pequeñas esferas doradas unidas por finas cadenas, creando una caída ligera y femenina.",
+      "price": 240,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/c838c2315_29.jpg",
+          "local_path": "images/products/aretes-carlo/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/d7045372a_IMG_2561.jpg",
+          "local_path": "images/products/aretes-carlo-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977ef5dd62d834a810ffc1",
+      "name": "Aretes Lavandel",
+      "description": "Aretes largos de diseño inspirado en una rama, formados por varias piedras en forma de hoja que caen de manera escalonada, creando una silueta delicada y elegante.",
+      "price": 250,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/30ec4a1e2_28.jpg",
+          "local_path": "images/products/aretes-lavandel/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3e5faf0c0_89FAC4D5-1BF1-4C74-A17B-5AD4EF5D5F25.jpg",
+          "local_path": "images/products/aretes-lavandel-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977e9c59f5d1230b185714",
+      "name": "Aretes Panare",
+      "description": "Aretes pequeños y colgantes con una piedra circular y una pieza ovalada ligeramente más grande, creando un diseño delicado y elegante.",
+      "price": 240,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/79fe36f40_27.jpg",
+          "local_path": "images/products/aretes-panare/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/0e25b80ee_BC520165-3F15-400A-8A35-39E32E27D589.jpg",
+          "local_path": "images/products/aretes-panare-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977e5c9f98776cd2b7cd11",
+      "name": "Aretes Alessia",
+      "description": "Aretes pequeños y colgantes de diseño geométrico con una pieza rectangular de piedra y detalles alrededor que crean un efecto de brillo y textura.",
+      "price": 240,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/fd9c25af1_26.jpg",
+          "local_path": "images/products/aretes-alessia/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ee6829959_2A99A359-684A-48FE-BBCD-D2720D52E19D.jpg",
+          "local_path": "images/products/aretes-alessia-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977dfdf9d4df55274e6706",
+      "name": "Aretes Isla",
+      "description": "Aretes pequeños y colgantes con dos piedras de diferentes tamaños, una ligeramente más grande que la otra, creando un diseño delicado y luminoso.",
+      "price": 240,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/d082333bc_25.jpg",
+          "local_path": "images/products/aretes-isla/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/a491c440b_712C3C90-9D05-4E3D-B921-981384EA585A.jpg",
+          "local_path": "images/products/aretes-isla-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977db88d39c0918b7055bd",
+      "name": "Aretes Marbella",
+      "description": "Aretes medianos de diseño inspirado en una gota, con líneas que siguen su silueta y crean un efecto de relieve elegante.",
+      "price": 240,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/553a3e89f_23.jpg",
+          "local_path": "images/products/aretes-marbella/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/0265c3315_24.jpg",
+          "local_path": "images/products/aretes-marbella-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/aca73e88a_IMG_2741.jpg",
+          "local_path": "images/products/aretes-marbella-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/a0d67759a_68294D18-D7B7-4152-8CF6-4899D3BBB22B.jpg",
+          "local_path": "images/products/aretes-marbella-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977d4a57e13de75f43863d",
+      "name": "Aretes Salina",
+      "description": "Aretes largos de diseño estilizado con dos tiras que se entrelazan formando un efecto de nudo y caen verticalmente, disponibles en dorado y plateado.",
+      "price": 240,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/375aade98_21.jpg",
+          "local_path": "images/products/aretes-salina-5/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1a1a1e55e_22.jpg",
+          "local_path": "images/products/aretes-salina-6/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/855a43b65_IMG_2566.jpg",
+          "local_path": "images/products/aretes-salina-7/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1a984fd10_IMG_2738.jpg",
+          "local_path": "images/products/aretes-salina-8/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977c123259cc3c6a33bd05",
+      "name": "Aretes Bora",
+      "description": "Aretes pequeños de diseño orgánico con forma de hoja arrugada y silueta asimétrica, una pieza delicada y casual, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/3597dfe22_19.jpg",
+          "local_path": "images/products/aretes-bora/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/82fe8e032_20.jpg",
+          "local_path": "images/products/aretes-bora-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/6b08bc004_IMG_2553.jpg",
+          "local_path": "images/products/aretes-bora-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/22d90be48_IMG_2743.jpg",
+          "local_path": "images/products/aretes-bora-4/04.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977ba2b8002c4525775a56",
+      "name": "Aretes Calista",
+      "description": "Aretes grandes de diseño geométrico con una estructura formada por un cuadrado y un rectángulo, ambos con una piedra central en tono gris oscuro que aporta brillo y contraste.",
+      "price": 250,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "custom_1788312336277",
+          "name": "#000000",
+          "hex": "#000000",
+          "is_multicolor": false,
+          "photo_indices": [],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/5de222edc_13.jpg",
+          "local_path": "images/products/aretes-calista/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/d69454e48_14.jpg",
+          "local_path": "images/products/aretes-calista-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/5fccea7ea_C14B90E0-6A66-41FF-847C-D1DF55F6ED0E.jpg",
+          "local_path": "images/products/aretes-calista-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a977a8b01a9372aa025eeae",
+      "name": "Aretes Bali",
+      "description": "Aretes de diseño contemporáneo con dos aros arrugados sobrepuestos, uno dorado de menor tamaño al frente y otro plateado ligeramente más grande detrás, creando un efecto bicolor.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "multicolor",
+          "name": "Multicolor",
+          "hex": null,
+          "is_multicolor": true,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/a52186e86_12.jpg",
+          "local_path": "images/products/aretes-bali/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1c5e3d1ae_IMG_2734.jpg",
+          "local_path": "images/products/aretes-bali-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9779e647e1fc408bf8fd6b",
+      "name": "Aretes Arana",
+      "description": "Aretes pequeños de diseño orgánico con forma de aro arrugado, una pieza sencilla y versátil para complementar cualquier look.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/a05960d06_11.jpg",
+          "local_path": "images/products/aretes-arana/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/5a2e7e235_9579142D-2FE4-4F3F-80E5-3D93FB1A7365.jpg",
+          "local_path": "images/products/aretes-arana-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/e3a03c7f0_IMG_2560.jpg",
+          "local_path": "images/products/aretes-arana-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a97796da83375df4f25b09b",
+      "name": "Aretes Altea",
+      "description": "Aretes de diseño inspirado en una concha de mar, con una pieza superior de líneas marcadas y un aro inferior que sigue su silueta, creando una forma estilizada y elegante.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ca61af3bc_10.jpg",
+          "local_path": "images/products/aretes-altea-3/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ab306f9a4_3C0D82F5-C54A-43A8-991F-A0AB6ACD2A2D.jpg",
+          "local_path": "images/products/aretes-altea-4/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a966bf25face25e7be3850f",
+      "name": "Aretes Isela",
+      "description": "Aretes grandes de diseño elegante con forma de aro alargado y acabado arrugado. Disponibles en dorado.",
+      "price": 230,
+      "category": "large_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/149e99bf1_MAREACATALOGO4.jpg",
+          "local_path": "images/products/aretes-isela/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/71fc5d74d_D5FAF977-54E7-49E8-BD59-D4A56771A32B.jpg",
+          "local_path": "images/products/aretes-isela-2/02.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a966a72dcac3385e4a650b5",
+      "name": "Aretes Petálo",
+      "description": "Aretes de diseño floral con pequeños pétalos unidos a un medio aro, creando una silueta delicada, disponible en dorado y plateado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "plateado",
+          "name": "Plateado",
+          "hex": "#BFB9B3",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/baeb7cd22_IMG_1919.jpg",
+          "local_path": "images/products/aretes-petalo/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/693405684_IMG_1920.jpg",
+          "local_path": "images/products/aretes-petalo-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/4fab6561e_IMG_1923.jpg",
+          "local_path": "images/products/aretes-petalo-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ac6598e32_IMG_2745.jpg",
+          "local_path": "images/products/aretes-petalo-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/caf67a496_C15A1022-52F3-40F4-83F2-362145808974.jpg",
+          "local_path": "images/products/aretes-petalo-5/05.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a96695e03e7635d962b7c5d",
+      "name": "Aretes Alor",
+      "description": "Aretes de diseño delicado con dos piezas circulares, una de mayor tamaño en la parte inferior y otra más pequeña en la parte superior, con acabado tipo perla en blanco y dorado o en plateado y dorado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "multicolor",
+          "name": "Multicolor",
+          "hex": null,
+          "is_multicolor": true,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/6548c226c_IMG_1913.jpg",
+          "local_path": "images/products/aretes-alor/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/ff0739542_39e9d6a0-491f-4c98-81d6-0d9be6249f12.jpg",
+          "local_path": "images/products/aretes-alor-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/9062008aa_82CDA452-E889-4248-9A60-9547662B14D2.jpg",
+          "local_path": "images/products/aretes-alor-3/03.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9668f24c722d1e0b1b43d3",
+      "name": "Aretes Catania",
+      "description": "Aretes de diseño geométrico con tres aros pequeños verticales y tres aros horizontales que se entrelazan formando una pieza compacta y moderna, disponible en dorado y bicolor con plateado y dorado.",
+      "price": 230,
+      "category": "small_earrings",
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "discount_percent": null,
+      "discount_color_id": null,
+      "colors": [
+        {
+          "id": "dorado",
+          "name": "Dorado",
+          "hex": "#BBAA78",
+          "is_multicolor": false,
+          "photo_indices": [
+            0
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        },
+        {
+          "id": "multicolor",
+          "name": "Multicolor",
+          "hex": null,
+          "is_multicolor": true,
+          "photo_indices": [
+            1
+          ],
+          "availability": "available",
+          "units_remaining": null,
+          "inventory": 0
+        }
+      ],
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/004fb4895_IMG_1916.jpg",
+          "local_path": "images/products/aretes-catania/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1990ae9af_IMG_1917.jpg",
+          "local_path": "images/products/aretes-catania-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/454018c33_IMG_2748.jpg",
+          "local_path": "images/products/aretes-catania-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/18cbdaa11_IMG_2739.jpg",
+          "local_path": "images/products/aretes-catania-4/04.jpg"
+        }
+      ]
+    }
+  ],
+  "packagings": [
+    {
+      "id": "6a9670ec0649695a99d72ceb",
+      "name": "Empaque Caja Casual",
+      "description": "",
+      "price": 0,
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/fd0a08cf8_IMG_2010.jpg",
+          "local_path": "images/packaging/empaque-caja-casual/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/1635eff2c_IMG_2011.jpg",
+          "local_path": "images/packaging/empaque-caja-casual-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/002e8323c_29013730-431d-4fae-8dd1-1cf0bc07c173.jpg",
+          "local_path": "images/packaging/empaque-caja-casual-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/b9b500077_aeade8f5-621c-4bcf-8581-d1078b9a7817.jpg",
+          "local_path": "images/packaging/empaque-caja-casual-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/dfe15a917_9b5a2dce-0fb5-4345-9982-b88bd61f3f04.jpg",
+          "local_path": "images/packaging/empaque-caja-casual-5/05.jpg"
+        }
+      ]
+    },
+    {
+      "id": "6a9670bbafdf54fc5f9b8d0c",
+      "name": "Empaque Caja de Regalo",
+      "description": "",
+      "price": 0,
+      "availability": "available",
+      "units_remaining": null,
+      "inventory": 0,
+      "published": true,
+      "order": 0,
+      "images": [
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/bebbbae9d_IMG_2008.jpg",
+          "local_path": "images/packaging/empaque-caja-de-regalo/01.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/23fed62f6_IMG_2009.jpg",
+          "local_path": "images/packaging/empaque-caja-de-regalo-2/02.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/debceddba_F401D045-734F-434C-B86A-807E74B8258C.jpg",
+          "local_path": "images/packaging/empaque-caja-de-regalo-3/03.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/53c2b0ebd_aeade8f5-621c-4bcf-8581-d1078b9a7817.jpg",
+          "local_path": "images/packaging/empaque-caja-de-regalo-4/04.jpg"
+        },
+        {
+          "url": "https://base44.app/api/apps/6a9105ed8948a36bbe06a37f/files/mp/public/6a9105ed8948a36bbe06a37f/7f0e4fa90_9b5a2dce-0fb5-4345-9982-b88bd61f3f04.jpg",
+          "local_path": "images/packaging/empaque-caja-de-regalo-5/05.jpg"
+        }
+      ]
+    }
+  ]
+}
