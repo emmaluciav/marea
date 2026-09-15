@@ -58,7 +58,7 @@ export default function Catalog() {
     (async () => {
       try {
         const list = await base44.entities.Product.list("-created_date");
-        if (mounted) setProducts(list.filter((p) => p.published));
+        if (mounted) setProducts(isAdmin ? list : list.filter((p) => p.published));
       } catch {
         /* ignore */
       } finally {
