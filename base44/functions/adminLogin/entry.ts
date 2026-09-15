@@ -46,26 +46,20 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: "Cuenta admin oculta no configurada" }, { status: 500 });
     }
 
-    const appId = secrets.get("BASE44_APP_ID");
+    // appId determinista: el dispatcher de funciones envía "base44-app-id"
+    // en cada invocación. No dependemos de un secret (BASE44_APP_ID) que no
+    // está configurado.
+    const appId = req.headers.get("base44-app-id") || secrets.get("BASE44_APP_ID") || "";
+    if (!appId) {
+      return Response.json({ error: "No se pudo identificar la aplicación" }, { status: 500 });
+    }
 
-    // Deriva el host de la API del mismo origen que usa el frontend para
-    // validar la sesión (me()). El SDK envía X-Origin-URL (URL completa del
-    // frontend) en cada petición; de ahí tomamos el origen de la app. Así el
-    // token se minta sobre el mismo host que después lo valida, evitando que
-    // me() lo rechace y la app quede en blanco.
-    let apiUrl = "";
-    const xOrigin = req.headers.get("X-Origin-URL");
-    if (xOrigin) {
-      try { apiUrl = new URL(xOrigin).origin; } catch { /* ignore */ }
-    }
-    if (!apiUrl) {
-      const headerApiUrl = req.headers.get("Base44-Api-Url");
-      if (headerApiUrl) apiUrl = headerApiUrl;
-    }
-    if (!apiUrl) {
-      try { apiUrl = new URL(req.url).origin; } catch { /* ignore */ }
-    }
-    if (!apiUrl) apiUrl = "https://base44.app";
+    // Origen determinista: el dispatcher envía "base44-api-url" con el origen
+    // público de la app, que es el mismo host que el SDK usa para me() (rutas
+    // relativas). Así el token se minta sobre el mismo host que luego lo
+    // valida. No usamos req.url (es una URL interna del dispatcher) ni
+    // X-Origin-URL (frágil).
+    const apiUrl = req.headers.get("base44-api-url") || new URL(req.url).origin;
 
     const loginRes = await fetch(`${apiUrl}/api/apps/${appId}/auth/login`, {
       method: "POST",

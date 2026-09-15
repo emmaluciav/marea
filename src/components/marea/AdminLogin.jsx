@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import { Loader2, X } from "lucide-react";
 // nunca se muestra ni se pide al admin.
 export default function AdminLogin({ onClose }) {
   const { checkUserAuth } = useAuth();
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -39,11 +41,11 @@ export default function AdminLogin({ onClose }) {
         const me = await base44.auth.me();
         if (!me || me.role !== "admin") throw new Error("not_admin");
       } catch {
-        // setToken(null) is a no-op in the SDK (it returns early on falsy
-        // token), so the invalid token would linger in the axios Authorization
-        // header. logout() without args clears the header AND localStorage
-        // without redirecting — which is exactly what we need here.
-        try { base44.auth.logout(); } catch { /* ignore */ }
+        // Limpieza SIN redirección: logout() del SDK siempre hace
+        // window.location.href = <logoutUrl>, lo que dejaría la pantalla
+        // en blanco. Quitamos el token a mano del storage para que el error
+        // se muestre inline. El header en memoria se sobreescribe en el
+        // siguiente setToken exitoso.
         try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
         try { localStorage.removeItem("token"); } catch { /* ignore */ }
         sessionStorage.removeItem("marea_admin_session");
@@ -51,6 +53,9 @@ export default function AdminLogin({ onClose }) {
         return;
       }
       await checkUserAuth();
+      // Navegación automática al panel de administración: tras validar la
+      // sesión admin, abre el dashboard sin pasos manuales.
+      navigate("/admin/inventario");
       onClose();
     } catch (err) {
       const msg = err?.response?.data?.error || err?.message || "Combinación inválida.";

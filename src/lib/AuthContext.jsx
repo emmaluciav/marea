@@ -102,7 +102,11 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         setUser(null);
         setAuthChecked(true);
-        base44.auth.logout();
+        // Limpieza SIN redirección: logout() del SDK redirige (window.location.href)
+        // y dejaría la pantalla en blanco. Borrar el token del storage basta
+        // para que un visitante sin marca de sesión admin vea el catálogo normal.
+        try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
+        try { localStorage.removeItem("token"); } catch { /* ignore */ }
         return;
       }
       setUser(currentUser);
