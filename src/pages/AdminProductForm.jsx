@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { uploadClient } from "@/lib/uploadClient";
+import { writeClient } from "@/lib/writeClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -198,8 +199,8 @@ export default function AdminProductForm() {
       })),
     };
     try {
-      if (editing) await base44.entities.Product.update(id, payload);
-      else await base44.entities.Product.create(payload);
+      if (editing) await writeClient.entities.Product.update(id, payload);
+      else await writeClient.entities.Product.create(payload);
       navigate("/", { replace: true });
     } catch (err) {
       setError(err.message || "No se pudo guardar el producto.");
@@ -213,7 +214,7 @@ export default function AdminProductForm() {
     if (!window.confirm("¿Eliminar este producto? Se quitará del catálogo público.")) return;
     setSaving(true);
     try {
-      await base44.entities.Product.delete(id);
+      await writeClient.entities.Product.delete(id);
       navigate("/", { replace: true });
     } catch (err) {
       setError(err.message || "No se pudo eliminar el producto.");

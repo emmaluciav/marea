@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { uploadClient } from "@/lib/uploadClient";
+import { writeClient } from "@/lib/writeClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -163,8 +164,8 @@ export default function AdminPackagingForm() {
       published,
     };
     try {
-      if (editing) await base44.entities.Packaging.update(id, payload);
-      else await base44.entities.Packaging.create(payload);
+      if (editing) await writeClient.entities.Packaging.update(id, payload);
+      else await writeClient.entities.Packaging.create(payload);
       navigate("/empaque", { replace: true });
     } catch (err) {
       setError(err.message || "No se pudo guardar el empaque.");
@@ -178,7 +179,7 @@ export default function AdminPackagingForm() {
     if (!window.confirm("¿Eliminar este tipo de empaque?")) return;
     setSaving(true);
     try {
-      await base44.entities.Packaging.delete(id);
+      await writeClient.entities.Packaging.delete(id);
       navigate("/empaque", { replace: true });
     } catch (err) {
       setError(err.message || "No se pudo eliminar el empaque.");

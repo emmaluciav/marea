@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { writeClient } from "@/lib/writeClient";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Loader2, ArrowLeft, Minus, Plus, Search, Check, X, Pencil, Trash2, Banknote, ImageOff } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -101,7 +102,7 @@ export default function AdminInventory() {
     applyLocal(setter, item.id, next);
     setBusy(item.id);
     try {
-      const entity = isPackaging ? base44.entities.Packaging : base44.entities.Product;
+      const entity = isPackaging ? writeClient.entities.Packaging : writeClient.entities.Product;
       await entity.update(item.id, { inventory: next });
     } catch {
       applyLocal(setter, item.id, current);
@@ -130,7 +131,7 @@ export default function AdminInventory() {
     setBusy(rowKey);
     try {
       const updatedColors = cols.map((c) => (c.id === color.id ? { ...c, inventory: next } : c));
-      await base44.entities.Product.update(product.id, { colors: updatedColors });
+      await writeClient.entities.Product.update(product.id, { colors: updatedColors });
     } catch {
       setProducts((prev) =>
         prev.map((p) =>
@@ -289,10 +290,10 @@ export default function AdminInventory() {
     setSavingSale(true);
     try {
       if (formMode === "edit" && editingId) {
-        const updated = await base44.entities.Sale.update(editingId, payload);
+        const updated = await writeClient.entities.Sale.update(editingId, payload);
         setSales((prev) => prev.map((s) => (s.id === editingId ? updated : s)));
       } else {
-        const created = await base44.entities.Sale.create(payload);
+        const created = await writeClient.entities.Sale.create(payload);
         setSales((prev) => [created, ...prev]);
       }
       closeForm();
@@ -308,7 +309,7 @@ export default function AdminInventory() {
     if (!window.confirm("¿Eliminar esta venta?")) return;
     setSavingSale(true);
     try {
-      await base44.entities.Sale.delete(editingId);
+      await writeClient.entities.Sale.delete(editingId);
       setSales((prev) => prev.filter((s) => s.id !== editingId));
       closeForm();
     } catch {

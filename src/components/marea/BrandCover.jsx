@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { uploadClient } from "@/lib/uploadClient";
+import { writeClient } from "@/lib/writeClient";
 import { Image } from "@/components/ui/image";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -28,9 +29,9 @@ export default function BrandCover() {
       const settings = await base44.entities.Setting.list();
       const existing = settings.find((s) => s.key === "brand_cover");
       if (existing) {
-        await base44.entities.Setting.update(existing.id, { value: file_url });
+        await writeClient.entities.Setting.update(existing.id, { value: file_url });
       } else {
-        await base44.entities.Setting.create({ key: "brand_cover", value: file_url });
+        await writeClient.entities.Setting.create({ key: "brand_cover", value: file_url });
       }
       setBrandCover(file_url);
     } catch (err) {

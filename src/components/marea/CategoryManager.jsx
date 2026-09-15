@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { writeClient } from "@/lib/writeClient";
 import { Plus, Eye, EyeOff, X } from "lucide-react";
 
 // Panel de administración de secciones (categorías). Solo lo ve el admin.
@@ -20,7 +20,7 @@ export default function CategoryManager({ categories, onClose, onChange }) {
       : 1;
     setBusy("add");
     try {
-      await base44.entities.Category.create({
+      await writeClient.entities.Category.create({
         key,
         label,
         order,
@@ -37,7 +37,7 @@ export default function CategoryManager({ categories, onClose, onChange }) {
   const toggle = async (c) => {
     setBusy(c.recordId);
     try {
-      await base44.entities.Category.update(c.recordId, { visible: !c.visible });
+      await writeClient.entities.Category.update(c.recordId, { visible: !c.visible });
       onChange?.();
     } finally {
       setBusy(null);
