@@ -39,7 +39,11 @@ export default function AdminLogin({ onClose }) {
         const me = await base44.auth.me();
         if (!me || me.role !== "admin") throw new Error("not_admin");
       } catch {
-        try { base44.auth.setToken(null); } catch { /* ignore */ }
+        // setToken(null) is a no-op in the SDK (it returns early on falsy
+        // token), so the invalid token would linger in the axios Authorization
+        // header. logout() without args clears the header AND localStorage
+        // without redirecting — which is exactly what we need here.
+        try { base44.auth.logout(); } catch { /* ignore */ }
         try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
         try { localStorage.removeItem("token"); } catch { /* ignore */ }
         sessionStorage.removeItem("marea_admin_session");
