@@ -94,6 +94,17 @@ export const AuthProvider = ({ children }) => {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
+      // Sesión admin sin marca de desbloqueo (pestaña cerrada): forzar logout.
+      // La marca vive en sessionStorage, que se borra al cerrar la pestaña pero
+      // persiste al recargar, así recargar mantiene la sesión y cerrar la pestaña no.
+      if (currentUser && currentUser.role === "admin" && !sessionStorage.getItem("marea_admin_session")) {
+        setIsLoadingAuth(false);
+        setIsAuthenticated(false);
+        setUser(null);
+        setAuthChecked(true);
+        base44.auth.logout();
+        return;
+      }
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);

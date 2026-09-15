@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, X } from "lucide-react";
 
-// Acceso discreto de administrador. Usa la autenticación segura integrada de
-// Base44 (loginViaEmailPassword): las credenciales nunca se guardan en la app.
-// Solo una cuenta con rol "admin" entra al modo editor; un inicio de sesión que
-// no sea administrador se rechaza y se cierra la sesión de inmediato.
+// Acceso discreto de administrador. El admin entra con su combinación secreta
+// de usuario y contraseña (ADMIN_USERNAME/ADMIN_PASSWORD); por detrás, la
+// función adminLogin valida la combinación e inicia sesión con la cuenta admin
+// oculta de Base44, devolviendo un token de sesión admin real. El correo oculto
+// nunca se muestra ni se pide al admin.
 export default function AdminLogin({ onClose }) {
   const { checkUserAuth } = useAuth();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,17 +23,19 @@ export default function AdminLogin({ onClose }) {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
-      const me = await base44.auth.me();
-      if (!me || me.role !== "admin") {
-        await base44.auth.logout();
-        setError("Esta cuenta no está autorizada como administrador.");
+      const res = await base44.functions.invoke("adminLogin", { username, password });
+      const token = res?.data?.access_token || res?.access_token;
+      if (!token) {
+        setError("No se pudo obtener la sesión de administrador.");
         return;
       }
+      base44.auth.setToken(token);
+      sessionStorage.setItem("marea_admin_session", "1");
       await checkUserAuth();
       onClose();
     } catch (err) {
-      setError(err.message || "Correo o contraseña inválidos.");
+      const msg = err?.response?.data?.error || err?.message || "Combinación inválida.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -64,18 +67,18 @@ export default function AdminLogin({ onClose }) {
 
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="admin-email" className="text-xs uppercase tracking-wider text-slate">
-              Correo
+            <Label htmlFor="admin-user" className="text-xs uppercase tracking-wider text-slate">
+              Usuario
             </Label>
             <Input
-              id="admin-email"
-              type="email"
-              autoComplete="email"
+              id="admin-user"
+              type="text"
+              autoComplete="username"
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="h-11"
-              placeholder="tu@correo.com"
+              placeholder="usuario"
               required
             />
           </div>

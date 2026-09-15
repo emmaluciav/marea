@@ -15,6 +15,7 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
   };
 
   const exitAdmin = () => {
+    sessionStorage.removeItem("marea_admin_session");
     logout(false);
     onClose();
     navigate("/");
