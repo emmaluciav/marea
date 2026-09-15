@@ -53,7 +53,7 @@ export default function ContactSection({ variant = "bottom", delivery = false })
         </p>
       )}
       {top && (
-        <div className="mt-9 flex justify-end">
+        <div className="mt-9 flex justify-start">
           <Link
             to="/empaque"
             className="inline-flex items-center rounded-none bg-gold px-7 py-3.5 text-[13px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
