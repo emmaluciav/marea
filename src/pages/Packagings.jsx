@@ -22,7 +22,7 @@ export default function Packagings() {
     (async () => {
       try {
         const list = await base44.entities.Packaging.list("-created_date");
-        if (mounted) setItems(list);
+        if (mounted) setItems(list.filter((p) => p.published));
       } catch {
         /* ignore */
       } finally {

@@ -1,13 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/lib/AuthContext";
 import { CATEGORIES } from "@/lib/mareaCategories";
 
 // The menu slides down like a heavy silk curtain, full-screen with large
 // editorial typography for the category names.
 export default function Menu({ isAdmin = false, onClose, onLogin }) {
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const go = (catId) => {
     navigate(catId === "all" ? "/" : `/?cat=${catId}`);
@@ -16,7 +14,6 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
 
   const exitAdmin = () => {
     sessionStorage.removeItem("marea_admin_session");
-    logout(false);
     onClose();
     navigate("/");
   };

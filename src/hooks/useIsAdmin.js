@@ -1,8 +1,11 @@
 import { useAuth } from "@/lib/AuthContext";
 
-// Admin mode is active only for an authenticated user whose role is "admin".
-// Public visitors are never authenticated, so they never see admin controls.
+// Modo administrador: se activa con el código secreto (puerta secreta frontend).
+// La marca vive en sessionStorage: persiste al recargar, se borra al cerrar la
+// pestaña o con "Salir del modo administrador".
 export function useIsAdmin() {
   const { isAuthenticated, user } = useAuth();
-  return Boolean(isAuthenticated && user && user.role === "admin");
+  const unlocked =
+    typeof window !== "undefined" && sessionStorage.getItem("marea_admin_session") === "1";
+  return Boolean(unlocked || (isAuthenticated && user && user.role === "admin"));
 }

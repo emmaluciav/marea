@@ -1,63 +1,31 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useAuth } from "@/lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, X } from "lucide-react";
+import { X } from "lucide-react";
 
-// Acceso discreto de administrador tipo "puerta secreta": el admin entra con un
-// código secreto (197919). La función adminLogin valida el código e inicia
-// sesión con la cuenta admin oculta de Base44, devolviendo un token admin real.
-// No se pide correo, usuario ni contraseña al admin.
+// Puerta secreta del admin (easter egg tipo juego): un solo campo. Si el
+// código es 197919, se desbloquea el panel /admin/inventario inmediatamente,
+// sin email, usuario, contraseña ni segundo login. Todo es frontend: no hay
+// backend, Secrets ni cuentas de Base44. La marca de desbloqueo vive en
+// sessionStorage (persiste al recargar, se borra al cerrar la pestaña o con
+// "Salir del modo administrador").
+const SECRET_CODE = "197919";
+
 export default function AdminLogin({ onClose }) {
-  const { checkUserAuth } = useAuth();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await base44.functions.invoke("adminLogin", { code });
-      const token = res?.data?.access_token || res?.access_token;
-      if (!token) {
-        setError("Código incorrecto");
-        return;
-      }
-      base44.auth.setToken(token);
+    if (code === SECRET_CODE) {
       sessionStorage.setItem("marea_admin_session", "1");
-      // Valida la sesión admin sobre el mismo origen antes de propagarla al
-      // contexto. Si no valida, se limpia el token a mano (sin logout() del
-      // SDK, que haría window.location.href y dejaría la pantalla en blanco).
-      try {
-        const me = await base44.auth.me();
-        if (!me || me.role !== "admin") throw new Error("not_admin");
-      } catch {
-        try { localStorage.removeItem("base44_access_token"); } catch { /* ignore */ }
-        try { localStorage.removeItem("token"); } catch { /* ignore */ }
-        sessionStorage.removeItem("marea_admin_session");
-        setError("No se pudo abrir el panel. Intenta de nuevo.");
-        return;
-      }
-      await checkUserAuth();
-      // Código correcto → abre el panel automáticamente, sin pasos extra.
       navigate("/admin/inventario");
       onClose();
-    } catch (err) {
-      // 401 = código incorrecto. Otros errores (p.ej. falla el mint de la
-      // cuenta oculta) no deben decir "código incorrecto".
-      if (err?.response?.status === 401) {
-        setError("Código incorrecto");
-      } else {
-        setError("No se pudo abrir el panel. Intenta de nuevo.");
-      }
-    } finally {
-      setLoading(false);
+    } else {
+      setError("Código incorrecto");
     }
   };
 
@@ -103,14 +71,8 @@ export default function AdminLogin({ onClose }) {
               required
             />
           </div>
-          <Button type="submit" disabled={loading} className="h-11 w-full bg-obsidian text-parchment">
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verificando…
-              </>
-            ) : (
-              "Entrar"
-            )}
+          <Button type="submit" className="h-11 w-full bg-obsidian text-parchment">
+            Entrar
           </Button>
         </form>
       </div>
