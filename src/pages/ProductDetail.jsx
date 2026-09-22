@@ -106,7 +106,24 @@ export default function ProductDetail() {
     product.variant_photos[selectedSizeId][activeColor.id] != null
       ? product.variant_photos[selectedSizeId][activeColor.id]
       : null;
-  const targetIndex = variantTargetIndex != null ? variantTargetIndex : colorTargetIndex;
+  // Si hay talla pero NO color, saltar a la primera foto asignada para esa
+  // talla (recorriendo los colores en orden, la primera asignación que exista).
+  const sizeOnlyTargetIndex =
+    selectedSizeId && !activeColor && product.variant_photos && product.variant_photos[selectedSizeId]
+      ? (() => {
+          const row = product.variant_photos[selectedSizeId];
+          for (const c of colors) {
+            if (row[c.id] != null) return row[c.id];
+          }
+          return null;
+        })()
+      : null;
+  const targetIndex =
+    variantTargetIndex != null
+      ? variantTargetIndex
+      : sizeOnlyTargetIndex != null
+      ? sizeOnlyTargetIndex
+      : colorTargetIndex;
   const outOfStock = product.availability === "out_of_stock";
   const fromSaved = from === "saved";
   const labelMap = { all: "Ver todo" };
