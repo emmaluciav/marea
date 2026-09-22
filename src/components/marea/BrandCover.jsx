@@ -4,7 +4,7 @@ import { writeClient } from "@/lib/writeClient";
 import { Image } from "@/components/ui/image";
 import { useMarea, applyAccentColor } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import SwipeGallery from "./SwipeGallery";
+import BrandCoverCarousel from "./BrandCoverCarousel";
 import BrandCoverManager from "./BrandCoverManager";
 import AccentColorEditor from "./AccentColorEditor";
 import { Plus, Pencil } from "lucide-react";
@@ -40,7 +40,7 @@ export default function BrandCover() {
   return (
     <div className="relative mx-auto w-full max-w-7xl" style={{ aspectRatio: aspectStr }}>
       {isCarousel ? (
-        <SwipeGallery images={covers} aspect={aspectStr} className="h-full w-full" />
+        <BrandCoverCarousel images={covers} aspect={aspectStr} className="h-full w-full" />
       ) : (
         <Image src={covers[0]} alt="MAREA" fittingType="fill" className="h-full w-full" />
       )}
