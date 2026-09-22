@@ -9,6 +9,43 @@ export const DEFAULT_COVER =
   "https://media.base44.com/images/public/6a9105ed8948a36bbe06a37f/62a751727_generated_f877364f.png";
 const SAVED_KEY = "marea_saved";
 
+// Tokens MAREA que usan el rosa de acento. Cambiarlos a la vez actualiza todo
+// (botones, iconos, líneas, highlights) que use bg-gold / text-gold / bg-primary.
+const ACCENT_TOKENS = ["--primary", "--accent", "--ring", "--gold", "--chart-1", "--admin-dot-hover"];
+
+function hexToHslChannels(hex) {
+  let h = (hex || "").replace("#", "");
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  if (h.length !== 6) return null;
+  const r = parseInt(h.slice(0, 2), 16) / 255;
+  const g = parseInt(h.slice(2, 4), 16) / 255;
+  const b = parseInt(h.slice(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let hue = 0;
+  let sat = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: hue = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: hue = (b - r) / d + 2; break;
+      default: hue = (r - g) / d + 4;
+    }
+    hue *= 60;
+  }
+  return `${Math.round(hue)} ${Math.round(sat * 100)}% ${Math.round(l * 100)}%`;
+}
+
+// Aplica un hex de acento sobreescribiendo los tokens CSS en :root.
+export function applyAccentColor(hex) {
+  const channels = hexToHslChannels(hex);
+  if (!channels) return;
+  const root = document.documentElement;
+  ACCENT_TOKENS.forEach((t) => root.style.setProperty(t, channels));
+}
+
 // Migra el formato viejo (arreglo de strings) al nuevo (arreglo de
 // { id, color }) de forma transparente.
 function loadSaved() {
@@ -29,7 +66,8 @@ function loadSaved() {
 
 export function MareaProvider({ children }) {
   const [savedItems, setSavedItems] = useState(loadSaved);
-  const [brandCover, setBrandCover] = useState(DEFAULT_COVER);
+  const [brandCovers, setBrandCovers] = useState([DEFAULT_COVER]);
+  const [accentColor, setAccentColor] = useState(null);
 
   useEffect(() => {
     try {
@@ -44,10 +82,27 @@ export function MareaProvider({ children }) {
     (async () => {
       try {
         const settings = await base44.entities.Setting.list();
-        const cover = settings.find((s) => s.key === "brand_cover");
-        if (cover && cover.value && mounted) setBrandCover(cover.value);
+        if (!mounted) return;
+        // Portada: preferir arreglo (carrusel), luego portada única, luego default.
+        const coversSetting = settings.find((s) => s.key === "brand_covers");
+        const single = settings.find((s) => s.key === "brand_cover");
+        let covers = null;
+        if (coversSetting && coversSetting.value) {
+          try { covers = JSON.parse(coversSetting.value); } catch { /* ignore */ }
+        }
+        if (!Array.isArray(covers) || !covers.length) {
+          if (single && single.value) covers = [single.value];
+        }
+        if (Array.isArray(covers) && covers.length) setBrandCovers(covers);
+
+        // Color de acento global.
+        const accent = settings.find((s) => s.key === "marea_accent_color");
+        if (accent && accent.value) {
+          setAccentColor(accent.value);
+          applyAccentColor(accent.value);
+        }
       } catch {
-        /* keep default cover */
+        /* keep defaults */
       }
     })();
     return () => {
@@ -57,19 +112,32 @@ export function MareaProvider({ children }) {
 
   const savedIds = savedItems.map((s) => s.id);
 
-  const isSaved = useCallback((id) => savedIds.includes(id), [savedIds]);
+  // Variant-aware: con color, verifica la variante exacta; sin color, cualquiera.
+  const isSaved = useCallback((id, colorId = null) => {
+    if (colorId === null || colorId === undefined) return savedItems.some((s) => s.id === id);
+    return savedItems.some((s) => s.id === id && s.color === colorId);
+  }, [savedItems]);
 
-  // Guarda (o quita) un producto. El color seleccionado se recuerda junto con él.
+  // Con color: alterna esa variante exacta (permite guardar Oro y Plata por
+  // separado). Sin color: si existe cualquier entrada del producto las quita
+  // todas; si no, guarda una entrada sin color.
   const toggleSave = useCallback((id, color = null) => {
     setSavedItems((prev) => {
-      if (prev.some((s) => s.id === id)) return prev.filter((s) => s.id !== id);
-      return [...prev, { id, color }];
+      if (color !== null && color !== undefined) {
+        const exact = prev.some((s) => s.id === id && s.color === color);
+        if (exact) return prev.filter((s) => !(s.id === id && s.color === color));
+        return [...prev, { id, color }];
+      }
+      const any = prev.some((s) => s.id === id);
+      if (any) return prev.filter((s) => s.id !== id);
+      return [...prev, { id, color: null }];
     });
   }, []);
 
-  // Actualiza el color de un producto ya guardado (sin tocar el guardado en sí).
   const setSavedColor = useCallback((id, color) => {
-    setSavedItems((prev) => (prev.some((s) => s.id === id) ? prev.map((s) => (s.id === id ? { ...s, color } : s)) : prev));
+    setSavedItems((prev) =>
+      prev.some((s) => s.id === id) ? prev.map((s) => (s.id === id ? { ...s, color } : s)) : prev
+    );
   }, []);
 
   const getSavedColor = useCallback(
@@ -90,8 +158,11 @@ export function MareaProvider({ children }) {
         toggleSave,
         setSavedColor,
         getSavedColor,
-        brandCover,
-        setBrandCover,
+        brandCover: brandCovers[0],
+        brandCovers,
+        setBrandCovers,
+        accentColor,
+        setAccentColor,
       }}
     >
       {children}

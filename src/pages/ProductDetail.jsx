@@ -21,7 +21,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const from = searchParams.get("from") || "all";
-  const { isSaved, toggleSave, setSavedColor, getSavedColor } = useMarea();
+  const { isSaved, toggleSave, getSavedColor } = useMarea();
   const isAdmin = useIsAdmin();
   const { toast } = useToast();
   const { categories } = useCategories();
@@ -86,7 +86,7 @@ export default function ProductDetail() {
     );
   }
 
-  const saved = isSaved(product.id);
+  const saved = isSaved(product.id, selectedColorId);
   // La galería SIEMPRE conserva todas las fotos originales en su orden.
   // Seleccionar un color solo "salta" a la primera foto asignada a ese color.
   const galleryImages = product.images && product.images.length ? product.images : [];
@@ -136,7 +136,6 @@ export default function ProductDetail() {
 
   const handleSelectColor = (colorId) => {
     setSelectedColorId(colorId);
-    if (isSaved(product.id)) setSavedColor(product.id, colorId);
   };
 
   const handleSave = () => {
@@ -208,7 +207,7 @@ export default function ProductDetail() {
           {/* Columna de información */}
           <div className="mx-auto max-w-md px-5 pt-6 split:mx-0 split:max-w-none split:px-0 split:pt-0 lg:max-w-xl lg:pt-2">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="font-heading text-2xl leading-tight text-foreground">{product.name}</h1>
+          <h1 className="font-heading text-2xl leading-tight text-foreground" translate="no">{product.name}</h1>
           <span className="mt-1 flex items-baseline gap-2 whitespace-nowrap font-heading text-2xl text-foreground">
             {disc ? (
               <>

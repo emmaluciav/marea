@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { isVideoUrl } from "@/lib/media";
 import { useCategories } from "@/hooks/useCategories";
 import { ColorSwatch } from "@/components/marea/ColorSwatch";
+import SwipeToDelete from "@/components/marea/SwipeToDelete";
 
 // Panel de administración (solo admin). Dos pestañas:
 //  - Inventario interno: stock privado de productos y empaques (sin tocar el
@@ -62,6 +63,7 @@ export default function AdminInventory() {
   const [packQty, setPackQty] = useState("0");
   const [savingSale, setSavingSale] = useState(false);
   const [saleColorId, setSaleColorId] = useState("");
+  const [confirmId, setConfirmId] = useState(null);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -319,6 +321,16 @@ export default function AdminInventory() {
     }
   };
 
+  const deleteSaleById = async (id) => {
+    if (!id) return;
+    try {
+      await writeClient.entities.Sale.delete(id);
+      setSales((prev) => prev.filter((s) => s.id !== id));
+    } catch {
+      /* ignore */
+    }
+  };
+
   // Agrupar ventas por fecha, de la más reciente a la más antigua.
   const groupsMap = {};
   sales.forEach((s) => {
@@ -451,40 +463,44 @@ export default function AdminInventory() {
     const exists = Boolean(prod);
     const img = s.color_image || s.product_image || (prod && prod.images && prod.images[0]);
     return (
-      <li key={s.id} className="flex items-center gap-3 py-3">
-        <Thumb src={img} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-foreground">{s.product_name}</p>
-          {!exists && (
-            <p className="text-[10px] uppercase tracking-[0.15em] text-gold">Publicación eliminada</p>
-          )}
-          {s.color_id && (
-            <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate">
-              <ColorSwatch
-                color={{ id: s.color_id, name: s.color_name, hex: s.color_hex, is_multicolor: s.color_is_multicolor }}
-                size="h-3 w-3"
-                bare
-              />
-              <span>{s.color_name}</span>
-            </p>
-          )}
-          <p className="text-[11px] text-slate">
-            {s.packaging_name ? `${s.packaging_name} · ${s.packaging_quantity} usados` : "Sin empaque"}
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => startEdit(s)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-gold transition-colors hover:bg-secondary active:scale-95"
-            aria-label="Editar venta"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
-            {s.quantity}
-          </span>
-        </div>
+      <li key={s.id} className="border-b border-border">
+        <SwipeToDelete onRequestDelete={() => setConfirmId(s.id)}>
+          <div className="flex items-center gap-3 bg-parchment py-3">
+            <Thumb src={img} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-foreground" translate="no">{s.product_name}</p>
+              {!exists && (
+                <p className="text-[10px] uppercase tracking-[0.15em] text-gold">Publicación eliminada</p>
+              )}
+              {s.color_id && (
+                <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate">
+                  <ColorSwatch
+                    color={{ id: s.color_id, name: s.color_name, hex: s.color_hex, is_multicolor: s.color_is_multicolor }}
+                    size="h-3 w-3"
+                    bare
+                  />
+                  <span>{s.color_name}</span>
+                </p>
+              )}
+              <p className="text-[11px] text-slate">
+                {s.packaging_name ? `${s.packaging_name} · ${s.packaging_quantity} usados` : "Sin empaque"}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => startEdit(s)}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-gold transition-colors hover:bg-secondary active:scale-95"
+                aria-label="Editar venta"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+              <span className="min-w-[2rem] text-center font-heading text-base tabular-nums text-foreground">
+                {s.quantity}
+              </span>
+            </div>
+          </div>
+        </SwipeToDelete>
       </li>
     );
   };
@@ -525,6 +541,30 @@ export default function AdminInventory() {
           ))}
         </div>
       </header>
+
+      {confirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-obsidian/40 px-6">
+          <div className="w-full max-w-sm rounded-sm bg-parchment p-5 text-center shadow-xl">
+            <p className="font-heading text-base text-foreground">¿Seguro que quieres eliminar esta venta?</p>
+            <div className="mt-5 flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmId(null)}
+                className="rounded-full border border-border px-5 py-2 text-xs uppercase tracking-wider text-foreground"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => { deleteSaleById(confirmId); setConfirmId(null); }}
+                className="rounded-full bg-destructive px-5 py-2 text-xs uppercase tracking-wider text-parchment"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {tab === "inventario" ? (
         <div className="mx-auto max-w-3xl px-4 py-6 pb-20">
@@ -839,7 +879,7 @@ export default function AdminInventory() {
                   <p className="mb-2 text-[11px] uppercase tracking-[0.18em] text-slate">
                     {formatDate(groupsMap[k][0].created_date)}
                   </p>
-                  <ul className="divide-y divide-border">{groupsMap[k].map(renderSaleRow)}</ul>
+                  <ul>{groupsMap[k].map(renderSaleRow)}</ul>
                 </div>
               ))}
             </div>

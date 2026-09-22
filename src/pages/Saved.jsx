@@ -9,10 +9,13 @@ import { useToast } from "@/components/ui/use-toast";
 const IG_HANDLE = "mareaaccesoriosmx";
 const WA_NUMBER = "526442600650";
 
+const variantKey = (id, color) => `${id}:${color || "none"}`;
+
 export default function Saved() {
-  const { savedIds, getSavedColor } = useMarea();
+  const { savedItems } = useMarea();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Selección por variante: arreglo de { id, color }.
   const [selected, setSelected] = useState([]);
   const { toast } = useToast();
 
@@ -33,39 +36,48 @@ export default function Saved() {
     };
   }, []);
 
-  const saved = products.filter((p) => savedIds.includes(p.id));
+  const productMap = {};
+  products.forEach((p) => {
+    productMap[p.id] = p;
+  });
 
-  // Mantiene la selección válida aunque se quite un producto de guardados.
-  const validSelected = selected.filter((id) => savedIds.includes(id));
-  const toggleSelect = (id) => {
+  // Un guardado por variante: la misma pieza con dos colores = dos renglones,
+  // cada uno con la foto asignada a su color.
+  const saved = savedItems
+    .map((item) => ({ item, product: productMap[item.id] }))
+    .filter((x) => x.product);
+
+  const isSel = (item) => selected.some((s) => s.id === item.id && s.color === item.color);
+  const toggleSelect = (item) => {
     setSelected((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.some((s) => s.id === item.id && s.color === item.color)
+        ? prev.filter((s) => !(s.id === item.id && s.color === item.color))
+        : [...prev, { id: item.id, color: item.color }]
     );
   };
 
-  const selectedProducts = saved.filter((p) => validSelected.includes(p.id));
-  // Construye el enlace de un producto abriendo con el color guardado activo.
-  const productLink = (p) => {
-    const colorId = getSavedColor(p.id);
-    if (!colorId) return `${window.location.origin}/product/${p.id}`;
-    return `${window.location.origin}/product/${p.id}?color=${encodeURIComponent(colorId)}`;
+  const selectedItems = saved.filter((s) => isSel(s.item));
+
+  // Enlace directo al producto con el color guardado preservado.
+  const productLink = (p, color) => {
+    const base = `${window.location.origin}/product/${p.id}`;
+    return color ? `${base}?color=${encodeURIComponent(color)}` : base;
   };
 
-  // Línea por producto: nombre, color (si lo recuerda) y enlace con ese color.
-  const productLine = (p) => {
-    const colorId = getSavedColor(p.id);
-    const colorName = colorId ? (p.colors || []).find((c) => c.id === colorId)?.name : null;
-    return `• ${p.name}${colorName ? `\nColor: ${colorName}` : ""}\n${productLink(p)}`;
+  const productLine = (product, color) => {
+    const colorName = color ? (product.colors || []).find((c) => c.id === color)?.name : null;
+    return `• ${product.name}${colorName ? `\nColor: ${colorName}` : ""}\n${productLink(product, color)}`;
   };
 
   const buildMessage = () =>
-    `Hola, me interesan estos productos:\n${selectedProducts.map(productLine).join("\n")}`;
-
-  // Solo productos + enlaces, sin el saludo — para compartir donde quieran.
-  const buildProductsOnly = () => selectedProducts.map(productLine).join("\n");
+    `Hola, me interesan estos productos:\n${selectedItems
+      .map((s) => productLine(s.product, s.item.color))
+      .join("\n")}`;
+  const buildProductsOnly = () =>
+    selectedItems.map((s) => productLine(s.product, s.item.color)).join("\n");
 
   const sendWhatsApp = () => {
-    if (!selectedProducts.length) return;
+    if (!selectedItems.length) return;
     window.open(
       `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildMessage())}`,
       "_blank"
@@ -73,7 +85,7 @@ export default function Saved() {
   };
 
   const sendInstagram = async () => {
-    if (!selectedProducts.length) return;
+    if (!selectedItems.length) return;
     const msg = buildMessage();
     try {
       await navigator.clipboard.writeText(msg);
@@ -88,7 +100,7 @@ export default function Saved() {
   };
 
   const copyProducts = async () => {
-    if (!selectedProducts.length) return;
+    if (!selectedItems.length) return;
     try {
       await navigator.clipboard.writeText(buildProductsOnly());
       toast({
@@ -103,14 +115,14 @@ export default function Saved() {
     }
   };
 
-  const hasSelection = selectedProducts.length > 0;
+  const hasSelection = selectedItems.length > 0;
 
   return (
     <div className={`pt-4 ${hasSelection ? "pb-48" : "pb-12"}`}>
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-6 flex items-center gap-2">
           <BookmarkIcon filled className="h-5 w-5 text-obsidian" />
-          <h1 className="font-heading text-2xl text-foreground">Guardados</h1>
+          <h1 className="font-heading text-2xl text-foreground" translate="no">Guardados</h1>
           <span className="ml-1 text-sm text-slate">{saved.length}</span>
         </div>
 
@@ -140,16 +152,16 @@ export default function Saved() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:grid-cols-3 lg:grid-cols-4">
-            {saved.map((p, i) => (
+            {saved.map(({ item, product }, i) => (
               <ProductCard
-                key={p.id}
-                product={p}
+                key={variantKey(item.id, item.color)}
+                product={product}
                 index={i}
                 origin="saved"
-                savedColor={getSavedColor(p.id)}
+                savedColor={item.color}
                 selectable
-                selected={validSelected.includes(p.id)}
-                onToggleSelect={() => toggleSelect(p.id)}
+                selected={isSel(item)}
+                onToggleSelect={() => toggleSelect(item)}
               />
             ))}
           </div>
@@ -160,7 +172,7 @@ export default function Saved() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-parchment/95 px-4 py-3 backdrop-blur-md">
           <div className="mx-auto max-w-7xl">
             <p className="mb-2 text-center text-xs text-slate">
-              {selectedProducts.length} producto{selectedProducts.length === 1 ? "" : "s"} seleccionado{selectedProducts.length === 1 ? "" : "s"}
+              {selectedItems.length} producto{selectedItems.length === 1 ? "" : "s"} seleccionado{selectedItems.length === 1 ? "" : "s"}
             </p>
             <div className="flex flex-col gap-2">
               <button

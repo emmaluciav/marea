@@ -15,21 +15,22 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
   const isAdmin = useIsAdmin();
   const [pulse, setPulse] = useState(false);
 
-  const saved = isSaved(product.id);
   const outOfStock = product.availability === "out_of_stock";
   const images = product.images && product.images.length ? product.images : [];
   const colors = product.colors || [];
 
-  // Si el filtro de color fuerza un color, saltamos a la foto asignada a ese
-  // color (sin reordenar la galería). Se comporta como seleccionar el swatch.
-  const forcedColorObj = forcedColor ? colors.find((c) => c.id === forcedColor) : null;
-  const forcedIndex =
-    forcedColorObj && forcedColorObj.photo_indices && forcedColorObj.photo_indices.length
-      ? forcedColorObj.photo_indices[0]
+  // Color en contexto: el forzado por el filtro, o el color guardado, o el
+  // único color del producto. Sirve para saltar a la foto asignada y para el
+  // estado de guardado por variante.
+  const displayColor = forcedColor || savedColor || null;
+  const displayColorObj = displayColor ? colors.find((c) => c.id === displayColor) : null;
+  const displayIndex =
+    displayColorObj && displayColorObj.photo_indices && displayColorObj.photo_indices.length
+      ? displayColorObj.photo_indices[0]
       : null;
 
-  // Descuento: aplica si es general o si el color mostrado coincide.
-  const contextColor = forcedColor || (colors.length === 1 ? colors[0].id : null);
+  const saved = isSaved(product.id, displayColor);
+  const contextColor = displayColor || (colors.length === 1 ? colors[0].id : null);
   const disc = discountInfo(product, contextColor);
 
   const open = () => {
@@ -42,7 +43,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
 
   const handleSave = (e) => {
     e.stopPropagation();
-    toggleSave(product.id);
+    toggleSave(product.id, displayColor);
     if (!saved) {
       setPulse(true);
       setTimeout(() => setPulse(false), 450);
@@ -66,7 +67,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
           onImageClick={() => open()}
           className={outOfStock ? "opacity-80" : ""}
           imageClassName={outOfStock ? "opacity-70 [&_img]:grayscale" : ""}
-          jumpTo={forcedIndex}
+          jumpTo={displayIndex}
         />
 
         {/* Descuento */}
@@ -140,7 +141,7 @@ export default function ProductCard({ product, index = 0, origin = "all", savedC
       </div>
 
       <div className="mt-2 px-0.5">
-        <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground">
+        <h3 className="truncate font-body text-[13px] font-medium leading-tight text-foreground" translate="no">
           {product.name}
         </h3>
         {colors.length > 0 && (

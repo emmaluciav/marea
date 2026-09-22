@@ -1,76 +1,85 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { uploadClient } from "@/lib/uploadClient";
 import { writeClient } from "@/lib/writeClient";
 import { Image } from "@/components/ui/image";
-import { useMarea } from "./MareaProvider";
+import { useMarea, applyAccentColor } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import PhotoCropper from "./PhotoCropper";
+import SwipeGallery from "./SwipeGallery";
+import BrandCoverManager from "./BrandCoverManager";
+import AccentColorEditor from "./AccentColorEditor";
+import { Plus, Pencil } from "lucide-react";
 
-// Full-bleed brand cover. En modo administrador, al cambiar la portada se abre
-// primero el recortador de foto para ajustar zoom y posición antes de subir.
+// Full-bleed brand cover. 1 imagen = portada fija; 2 o más = carrusel.
+// En modo administrador: + gestiona las imágenes (agregar/quitar/reordenar/
+// reemplazar) y el lápiz cambia el color de acento rosa de MAREA globalmente.
 export default function BrandCover() {
-  const { brandCover, setBrandCover } = useMarea();
+  const { brandCovers, setBrandCovers, accentColor, setAccentColor } = useMarea();
   const isAdmin = useIsAdmin();
-  const fileRef = useRef(null);
-  const [uploading, setUploading] = useState(false);
-  const [cropFile, setCropFile] = useState(null);
+  const [managerOpen, setManagerOpen] = useState(false);
+  const [accentOpen, setAccentOpen] = useState(false);
 
-  const onPick = (e) => {
-    const file = e.target.files?.[0];
-    if (file) setCropFile(file);
-    if (fileRef.current) fileRef.current.value = "";
-  };
+  const covers = brandCovers && brandCovers.length ? brandCovers : [];
+  const isCarousel = covers.length > 1;
 
-  const saveCover = async (croppedFile) => {
-    setUploading(true);
+  const saveAccent = async (hex) => {
     try {
-      const { file_url } = await uploadClient.integrations.Core.UploadFile({ file: croppedFile });
       const settings = await base44.entities.Setting.list();
-      const existing = settings.find((s) => s.key === "brand_cover");
-      if (existing) {
-        await writeClient.entities.Setting.update(existing.id, { value: file_url });
-      } else {
-        await writeClient.entities.Setting.create({ key: "brand_cover", value: file_url });
-      }
-      setBrandCover(file_url);
-    } catch (err) {
-      // ignore — keep current cover
-    } finally {
-      setUploading(false);
-      setCropFile(null);
+      const existing = settings.find((s) => s.key === "marea_accent_color");
+      if (existing) await writeClient.entities.Setting.update(existing.id, { value: hex });
+      else await writeClient.entities.Setting.create({ key: "marea_accent_color", value: hex });
+      applyAccentColor(hex);
+      setAccentColor(hex);
+    } catch {
+      /* ignore */
     }
+    setAccentOpen(false);
   };
 
   return (
     <div className="relative mx-auto w-full max-w-7xl" style={{ aspectRatio: "21 / 9" }}>
-      <Image src={brandCover} alt="MAREA" fittingType="fill" className="h-full w-full" />
+      {isCarousel ? (
+        <SwipeGallery images={covers} aspect="21 / 9" className="h-full w-full" />
+      ) : (
+        <Image src={covers[0]} alt="MAREA" fittingType="fill" className="h-full w-full" />
+      )}
 
       {/* Subtle vignette for editorial depth */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-parchment/30" />
 
       {isAdmin && (
-        <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2">
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={onPick}
-          />
+        <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
           <button
             type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="inline-flex items-center gap-2 rounded-full bg-obsidian/80 px-4 py-2 text-[11px] uppercase tracking-[0.15em] text-parchment backdrop-blur-sm transition-opacity disabled:opacity-50"
+            onClick={() => setManagerOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-obsidian/80 px-4 py-2 text-[11px] uppercase tracking-[0.15em] text-parchment backdrop-blur-sm transition-opacity"
           >
-            {uploading ? "Subiendo…" : "Cambiar portada"}
+            <Plus className="h-3.5 w-3.5" />
+            Portada
+          </button>
+          <button
+            type="button"
+            onClick={() => setAccentOpen(true)}
+            aria-label="Color de acento"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-obsidian/80 text-parchment backdrop-blur-sm transition-opacity"
+          >
+            <Pencil className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      {cropFile && (
-        <PhotoCropper file={cropFile} aspect={21 / 9} onSave={saveCover} onCancel={() => setCropFile(null)} />
+      {managerOpen && (
+        <BrandCoverManager
+          covers={covers}
+          onClose={() => setManagerOpen(false)}
+          onChange={setBrandCovers}
+        />
+      )}
+      {accentOpen && (
+        <AccentColorEditor
+          currentHex={accentColor}
+          onSave={saveAccent}
+          onClose={() => setAccentOpen(false)}
+        />
       )}
     </div>
   );
