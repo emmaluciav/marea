@@ -73,6 +73,7 @@ export function MareaProvider({ children }) {
   const [brandLogo, setBrandLogo] = useState(null);
   const [brandCoverRatio, setBrandCoverRatio] = useState(null);
   const [adminAccessImage, setAdminAccessImage] = useState(null);
+  const [contactBlock, setContactBlock] = useState(null);
 
   useEffect(() => {
     try {
@@ -126,6 +127,12 @@ export function MareaProvider({ children }) {
         // Imagen mini de acceso administrador (reemplaza "Entrar como admin").
         const accessImg = settings.find((s) => s.key === "admin_access_image");
         if (accessImg && accessImg.value) setAdminAccessImage(accessImg.value);
+
+        // Bloque de contacto editable (renglones, estilos, enlaces).
+        const cb = settings.find((s) => s.key === "contact_block");
+        if (cb && cb.value) {
+          try { setContactBlock(JSON.parse(cb.value)); } catch { /* ignore */ }
+        }
 
         // Proporción de la portada (ancho/alto en cm → ratio).
         const ratio = settings.find((s) => s.key === "brand_cover_ratio");
@@ -207,6 +214,8 @@ export function MareaProvider({ children }) {
         setBrandCoverRatio,
         adminAccessImage,
         setAdminAccessImage,
+        contactBlock,
+        setContactBlock,
       }}
     >
       {children}

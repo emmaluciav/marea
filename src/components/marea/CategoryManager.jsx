@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { writeClient } from "@/lib/writeClient";
-import { Plus, Eye, EyeOff, X } from "lucide-react";
+import { Plus, Eye, EyeOff, Trash2, X } from "lucide-react";
 
 // Panel de administración de secciones (categorías). Solo lo ve el admin.
-// - Agregar: crea una nueva sección visible (aparece en catálogo y admin).
-// - Eliminar: oculta la sección (visible=false). Desaparece del catálogo
-//   público pero permanece disponible en las pantallas de administración,
-//   por si hay productos que ya la usan.
+// - Agregar: crea una nueva sección visible.
+// - Ocultar/Mostrar: alterna la visibilidad (visible).
+// - Eliminar: borra la sección definitivamente (no solo la oculta).
 export default function CategoryManager({ categories, onClose, onChange }) {
   const [name, setName] = useState("");
-  const [busy, setBusy] = useState(null); // recordId en toggle | "add" | null
+  const [busy, setBusy] = useState(null); // recordId | "add" | null
+  const [confirmId, setConfirmId] = useState(null);
 
   const add = async () => {
     const label = name.trim();
@@ -41,6 +41,17 @@ export default function CategoryManager({ categories, onClose, onChange }) {
       onChange?.();
     } finally {
       setBusy(null);
+    }
+  };
+
+  const remove = async (c) => {
+    setBusy(c.recordId);
+    try {
+      await writeClient.entities.Category.delete(c.recordId);
+      onChange?.();
+    } finally {
+      setBusy(null);
+      setConfirmId(null);
     }
   };
 
@@ -85,6 +96,36 @@ export default function CategoryManager({ categories, onClose, onChange }) {
                   <EyeOff className="h-3.5 w-3.5" />
                 )}
               </button>
+              {confirmId === c.id ? (
+                <span className="ml-1 flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => remove(c)}
+                    disabled={!!busy}
+                    className="text-[9px] uppercase tracking-wider text-destructive disabled:opacity-40"
+                  >
+                    Sí
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmId(null)}
+                    className="text-[9px] uppercase tracking-wider text-slate"
+                  >
+                    No
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmId(c.id)}
+                  disabled={!!busy || !c.recordId}
+                  aria-label="Eliminar sección"
+                  title="Eliminar sección"
+                  className="ml-0.5 text-slate transition-colors hover:text-destructive disabled:opacity-40"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -109,8 +150,8 @@ export default function CategoryManager({ categories, onClose, onChange }) {
         </div>
 
         <p className="mt-2 text-[10px] leading-relaxed text-slate">
-          Al eliminar una sección deja de verse en el catálogo, pero permanece
-          disponible en las pantallas de administración.
+          El ojo oculta/muestra una sección en el catálogo. La papelera la
+          elimina definitivamente.
         </p>
       </div>
     </div>

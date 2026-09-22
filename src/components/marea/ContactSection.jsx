@@ -5,27 +5,99 @@ import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Pencil } from "lucide-react";
 import PackagingWidgetEditor from "./PackagingWidgetEditor";
+import ContactBlockEditor from "./ContactBlockEditor";
 
-// Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
-// al final del catálogo. Incluye Instagram, WhatsApp y la ubicación.
-const DEFAULT_PW = {
-  text: "Ver Tipos de Empaque",
-  textColor: "#FFFFFF",
-  bgColor: "#DB949B",
-  position: "left",
-  corners: "rounded",
+export const DEFAULT_CONTACT_BLOCK = {
+  instagramUrl: INSTAGRAM_URL,
+  whatsappUrl: WHATSAPP_URL,
+  gap: 8,
+  rows: [
+    { id: "r1", text: "¿Quieres ordenar?", font: "heading", size: 24, color: "#1a1a1c", align: "center" },
+    { id: "r2", text: "Escríbenos por Instagram", font: "body", size: 14, color: "#6b6965", align: "center" },
+    { id: "r3", text: "@mareaaccesoriosmx", font: "heading", size: 18, color: "#DB949B", isLink: true, link: "instagram", align: "center" },
+    { id: "r4", text: "Ir a Instagram", font: "heading", size: 12, color: "#FFFFFF", uppercase: true, tracking: 0.18, align: "center", isLink: true, link: "instagram", isButton: true, bg: "#1a1a1c", hasBorder: false, borderRadius: 2, paddingX: 20, paddingY: 16, width: 224 },
+    { id: "r5", text: "También puedes contactarnos por WhatsApp", font: "body", size: 12, color: "#6b6965", align: "center" },
+    { id: "r6", text: "Ir a WhatsApp", font: "heading", size: 12, color: "#1a1a1c", uppercase: true, tracking: 0.18, align: "center", isLink: true, link: "whatsapp", isButton: true, hasBorder: true, borderColor: "#e7e5e9", borderWidth: 1, borderRadius: 2, paddingX: 20, paddingY: 16, width: 224 },
+    { id: "r7", text: "Ciudad Obregón, Sonora", font: "body", size: 11, color: "#6b6965", uppercase: true, tracking: 0.2, align: "center" },
+    { id: "r8", text: "Entrega inmediata en productos disponibles.", font: "body", size: 11, color: "#9a9893", align: "center", deliveryOnly: true },
+  ],
 };
 
+const FONT_MAP = {
+  heading: "var(--font-heading)",
+  body: "var(--font-body)",
+  display: "var(--font-display)",
+};
+
+// Bloque de contacto editable por el admin (Setting "contact_block").
+// Se usa arriba (bajo la portada) y al final del catálogo; al persistirse,
+// cualquier cambio se refleja en ambas ubicaciones automáticamente.
 export default function ContactSection({ variant = "bottom", delivery = false }) {
   const top = variant === "top";
-  const { packagingWidget, setPackagingWidget } = useMarea();
+  const { contactBlock, setContactBlock, packagingWidget, setPackagingWidget } = useMarea();
   const isAdmin = useIsAdmin();
   const [editorOpen, setEditorOpen] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
 
-  const pw = { ...DEFAULT_PW, ...(packagingWidget || {}) };
+  const block = { ...DEFAULT_CONTACT_BLOCK, ...(contactBlock || {}) };
+  const rows = (block.rows || []).filter((r) => !r.deliveryOnly || top || delivery);
+
+  const linkUrl = (row) => {
+    if (row.link === "instagram") return block.instagramUrl || INSTAGRAM_URL;
+    if (row.link === "whatsapp") return block.whatsappUrl || WHATSAPP_URL;
+    if (row.link === "empaque") return "/empaque";
+    if (row.link === "custom") return row.url || "#";
+    return "#";
+  };
+
+  const renderRow = (row) => {
+    const style = {
+      fontFamily: FONT_MAP[row.font] || FONT_MAP.body,
+      fontSize: `${row.size || 14}px`,
+      color: row.color || "#1a1a1c",
+      fontWeight: row.bold ? 600 : 400,
+      textTransform: row.uppercase ? "uppercase" : "none",
+      letterSpacing: row.tracking ? `${row.tracking}em` : undefined,
+    };
+    const isLink = row.isLink && row.link && row.link !== "none";
+    const url = linkUrl(row);
+
+    if (row.isButton) {
+      const btnStyle = {
+        ...style,
+        background: row.bg || undefined,
+        border: row.hasBorder ? `${row.borderWidth || 1}px solid ${row.borderColor || "#e7e5e9"}` : "none",
+        borderRadius: `${row.borderRadius || 0}px`,
+        padding: `${row.paddingY || 10}px ${row.paddingX || 20}px`,
+        width: row.width ? `${row.width}px` : undefined,
+        textDecoration: row.underline ? "underline" : "none",
+      };
+      const inner = isLink ? (
+        <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center transition-opacity active:opacity-80" style={btnStyle}>
+          {row.text}
+        </a>
+      ) : (
+        <span className="inline-flex items-center justify-center" style={btnStyle}>{row.text}</span>
+      );
+      return <div key={row.id} style={{ textAlign: row.align || "center", width: "100%" }}>{inner}</div>;
+    }
+
+    if (isLink) {
+      return (
+        <div key={row.id} style={{ textAlign: row.align || "center", width: "100%" }}>
+          <a href={url} target="_blank" rel="noopener noreferrer" style={{ ...style, textDecoration: row.underline ? "underline" : "none" }} className="inline-block hover:opacity-80">
+            {row.text}
+          </a>
+        </div>
+      );
+    }
+
+    return <p key={row.id} style={{ ...style, textAlign: row.align || "center" }}>{row.text}</p>;
+  };
+
+  const pw = { text: "Ver Tipos de Empaque", textColor: "#FFFFFF", bgColor: "#DB949B", position: "left", corners: "rounded", ...(packagingWidget || {}) };
   const radius = pw.corners === "square" ? "rounded-none" : "rounded-md";
-  const justify =
-    pw.position === "center" ? "center" : pw.position === "right" ? "flex-end" : "flex-start";
+  const justify = pw.position === "center" ? "center" : pw.position === "right" ? "flex-end" : "flex-start";
 
   return (
     <section
@@ -33,46 +105,24 @@ export default function ContactSection({ variant = "bottom", delivery = false })
         top ? "pb-1 pt-10" : "border-t border-border/60 bg-secondary/40 py-14"
       }`}
     >
-      <h2 className="font-heading text-2xl text-foreground">¿Quieres ordenar?</h2>
-      <p className="mt-2 text-sm text-slate">Escríbenos por Instagram</p>
-      <a
-        href={INSTAGRAM_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-1 inline-block font-heading text-lg text-gold underline-offset-4 hover:underline"
-      >
-        @mareaaccesoriosmx
-      </a>
+      {isAdmin && (
+        <div className="mb-3 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setEditorOpen(true)}
+            aria-label="Editar bloque de contacto"
+            title="Editar bloque de contacto"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-slate transition-colors hover:text-foreground"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
-      <div className="mt-7 flex flex-col items-center gap-3">
-        <a
-          href={INSTAGRAM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-11 w-56 items-center justify-center rounded-sm bg-obsidian text-[12px] uppercase tracking-[0.18em] text-parchment transition-opacity active:opacity-80"
-        >
-          Ir a Instagram
-        </a>
-        <p className="text-xs text-slate">También puedes contactarnos por WhatsApp</p>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-11 w-56 items-center justify-center rounded-sm border border-border text-[12px] uppercase tracking-[0.18em] text-foreground transition-colors hover:border-gold hover:text-gold"
-        >
-          Ir a WhatsApp
-        </a>
+      <div className="flex flex-col items-center" style={{ gap: `${block.gap || 8}px` }}>
+        {rows.map(renderRow)}
       </div>
 
-      <p className="mt-7 text-[11px] uppercase tracking-[0.2em] text-slate">
-        Ciudad Obregón, Sonora
-      </p>
-
-      {(top || delivery) && (
-        <p className="mt-2 text-[11px] text-slate/70">
-          Entrega inmediata en productos disponibles.
-        </p>
-      )}
       {top && (
         <div className="mt-9 flex items-center gap-2" style={{ justifyContent: justify }}>
           <Link
@@ -85,7 +135,7 @@ export default function ContactSection({ variant = "bottom", delivery = false })
           {isAdmin && (
             <button
               type="button"
-              onClick={() => setEditorOpen(true)}
+              onClick={() => setPwOpen(true)}
               aria-label="Editar widget de empaques"
               className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-slate transition-colors hover:text-foreground"
             >
@@ -96,10 +146,17 @@ export default function ContactSection({ variant = "bottom", delivery = false })
       )}
 
       {editorOpen && (
+        <ContactBlockEditor
+          current={contactBlock}
+          onSave={setContactBlock}
+          onClose={() => setEditorOpen(false)}
+        />
+      )}
+      {pwOpen && (
         <PackagingWidgetEditor
           current={packagingWidget}
           onSave={setPackagingWidget}
-          onClose={() => setEditorOpen(false)}
+          onClose={() => setPwOpen(false)}
         />
       )}
     </section>
