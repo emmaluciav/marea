@@ -74,6 +74,7 @@ export function MareaProvider({ children }) {
   const [brandCoverRatio, setBrandCoverRatio] = useState(null);
   const [adminAccessImage, setAdminAccessImage] = useState(null);
   const [contactBlock, setContactBlock] = useState(null);
+  const [brandCoverMode, setBrandCoverMode] = useState("slow");
 
   useEffect(() => {
     try {
@@ -142,6 +143,10 @@ export function MareaProvider({ children }) {
             if (parsed && parsed.w && parsed.h) setBrandCoverRatio(parsed);
           } catch { /* ignore */ }
         }
+
+        // Modo del carrusel de portada: static | slow | continuous.
+        const mode = settings.find((s) => s.key === "brand_cover_mode");
+        if (mode && mode.value) setBrandCoverMode(mode.value);
       } catch {
         /* keep defaults */
       }
@@ -212,6 +217,8 @@ export function MareaProvider({ children }) {
         setBrandLogo,
         brandCoverRatio,
         setBrandCoverRatio,
+        brandCoverMode,
+        setBrandCoverMode,
         adminAccessImage,
         setAdminAccessImage,
         contactBlock,

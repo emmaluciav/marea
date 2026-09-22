@@ -8,7 +8,7 @@ import PhotoCropper from "./PhotoCropper";
 
 // Gestor admin de la portada: varias imágenes => carrusel. Permite agregar,
 // reemplazar, reordenar y eliminar. 1 imagen = portada fija (sin carrusel).
-export default function BrandCoverManager({ covers, onClose, onChange, ratio, onRatioChange }) {
+export default function BrandCoverManager({ covers, onClose, onChange, ratio, onRatioChange, mode = "slow", onModeChange }) {
   const [list, setList] = useState(covers && covers.length ? covers : []);
   const [busy, setBusy] = useState(false);
   const [cropFile, setCropFile] = useState(null);
@@ -16,6 +16,24 @@ export default function BrandCoverManager({ covers, onClose, onChange, ratio, on
   const [w, setW] = useState(ratio ? String(ratio.w) : "21");
   const [h, setH] = useState(ratio ? String(ratio.h) : "9");
   const fileRef = useRef(null);
+
+  const MODES = [
+    { id: "static", label: "Estático", hint: "El usuario desliza para ver las imágenes." },
+    { id: "slow", label: "Lento", hint: "Auto-avance lento con pausas, en bucle." },
+    { id: "continuous", label: "Continuo", hint: "Carrusel sin parar, siempre girando." },
+  ];
+
+  const persistMode = async (m) => {
+    onModeChange?.(m);
+    try {
+      const settings = await base44.entities.Setting.list();
+      const existing = settings.find((s) => s.key === "brand_cover_mode");
+      if (existing) await writeClient.entities.Setting.update(existing.id, { value: m });
+      else await writeClient.entities.Setting.create({ key: "brand_cover_mode", value: m });
+    } catch {
+      /* ignore */
+    }
+  };
 
   const persist = async (next) => {
     setBusy(true);
@@ -190,6 +208,31 @@ export default function BrandCoverManager({ covers, onClose, onChange, ratio, on
             </button>
           </div>
         </div>
+
+        {/* Modo del carrusel (solo aplica con 2+ imágenes) */}
+        {list.length > 1 && (
+          <div className="mt-5 rounded-sm border border-border p-3">
+            <p className="text-xs uppercase tracking-wider text-slate">Modo del carrusel</p>
+            <div className="mt-2 flex flex-col gap-2">
+              {MODES.map((m) => {
+                const active = (mode || "slow") === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => persistMode(m.id)}
+                    className={`flex items-center justify-between rounded-sm border px-3 py-2 text-left transition-colors ${
+                      active ? "border-gold bg-gold/10" : "border-border hover:border-gold/60"
+                    }`}
+                  >
+                    <span className="text-sm text-foreground">{m.label}</span>
+                    <span className="text-[11px] text-slate">{m.hint}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <button
           onClick={addPick}

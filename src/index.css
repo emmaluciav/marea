@@ -126,6 +126,11 @@
     animation: marea-curtain 450ms cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
+  @keyframes marea-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
   @keyframes marea-pulse-heart {
     0% { transform: scale(1); }
     40% { transform: scale(1.28); }
