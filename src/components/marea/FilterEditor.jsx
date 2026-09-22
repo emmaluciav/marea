@@ -5,14 +5,17 @@ import { base44 } from "@/api/base44Client";
 import { writeClient } from "@/lib/writeClient";
 
 // Editor admin de los filtros del catálogo: activar/desactivar cada filtro y,
-// para Color, curar las opciones (nombre + hex + multicolor) con orden.
-// La config se persiste en Setting "catalog_filters" y se aplica en vivo.
+// para Color y Talla, curar las opciones (con orden). La config se persiste en
+// Setting "catalog_filters" y se aplica en vivo en el catálogo público.
 const FILTER_META = [
   { key: "discount", label: "Descuentos" },
   { key: "price", label: "Precio" },
   { key: "sort", label: "Orden" },
   { key: "color", label: "Color" },
+  { key: "size", label: "Talla" },
 ];
+
+const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL"];
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
@@ -33,6 +36,10 @@ function normalize(current) {
           }))
         : [],
     },
+    size: {
+      visible: base?.size?.visible !== false,
+      options: Array.isArray(base?.size?.options) ? [...base.size.options] : [...DEFAULT_SIZES],
+    },
   };
 }
 
@@ -43,6 +50,7 @@ export default function FilterEditor({ current, onSave, onClose }) {
   const toggleVis = (key) =>
     setCfg((prev) => ({ ...prev, [key]: { ...prev[key], visible: !prev[key].visible } }));
 
+  // --- Color options ---
   const addColor = () =>
     setCfg((prev) => ({
       ...prev,
@@ -73,6 +81,28 @@ export default function FilterEditor({ current, onSave, onClose }) {
       },
     }));
 
+  // --- Size options ---
+  const addSize = () =>
+    setCfg((prev) => ({ ...prev, size: { ...prev.size, options: [...prev.size.options, ""] } }));
+  const removeSize = (i) =>
+    setCfg((prev) => ({
+      ...prev,
+      size: { ...prev.size, options: prev.size.options.filter((_, k) => k !== i) },
+    }));
+  const moveSize = (i, dir) =>
+    setCfg((prev) => {
+      const opts = [...prev.size.options];
+      const j = i + dir;
+      if (j < 0 || j >= opts.length) return prev;
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+      return { ...prev, size: { ...prev.size, options: opts } };
+    });
+  const updateSize = (i, value) =>
+    setCfg((prev) => ({
+      ...prev,
+      size: { ...prev.size, options: prev.size.options.map((o, k) => (k === i ? value : o)) },
+    }));
+
   const save = async () => {
     setBusy(true);
     try {
@@ -101,7 +131,7 @@ export default function FilterEditor({ current, onSave, onClose }) {
         </div>
 
         <p className="mb-4 text-xs text-slate">
-          Activa o desactiva cada filtro. Para Color, gestiona las opciones que verá el cliente.
+          Activa o desactiva cada filtro. Para Color y Talla, gestiona las opciones que verá el cliente.
         </p>
 
         <div className="space-y-3">
@@ -170,6 +200,54 @@ export default function FilterEditor({ current, onSave, onClose }) {
                     className="mt-1 inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1.5 text-[11px] uppercase tracking-wider text-parchment"
                   >
                     <Plus className="h-3.5 w-3.5" /> Agregar color
+                  </button>
+                </div>
+              )}
+
+              {f.key === "size" && cfg.size.visible && (
+                <div className="mt-3 space-y-2">
+                  {cfg.size.options.map((s, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                      <input
+                        value={s}
+                        onChange={(e) => updateSize(i, e.target.value)}
+                        placeholder="Ej. M"
+                        className="min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 py-1.5 text-sm uppercase"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => moveSize(i, -1)}
+                        disabled={i === 0}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border text-foreground disabled:opacity-40"
+                        aria-label="Subir"
+                      >
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveSize(i, 1)}
+                        disabled={i === cfg.size.options.length - 1}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border text-foreground disabled:opacity-40"
+                        aria-label="Bajar"
+                      >
+                        <ArrowDown className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeSize(i)}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-destructive text-destructive"
+                        aria-label="Eliminar"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addSize}
+                    className="mt-1 inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1.5 text-[11px] uppercase tracking-wider text-parchment"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Agregar talla
                   </button>
                 </div>
               )}

@@ -41,6 +41,8 @@ export default function AdminProductForm() {
   const [discountColorId, setDiscountColorId] = useState("");
   const [images, setImages] = useState([]);
   const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [sizeOptions, setSizeOptions] = useState(["XS", "S", "M", "L", "XL"]);
   const [replaceIdx, setReplaceIdx] = useState(null);
   const [cropQueue, setCropQueue] = useState([]);
   const [cropIndex, setCropIndex] = useState(-1);
@@ -76,6 +78,7 @@ export default function AdminProductForm() {
             units_remaining: c.units_remaining != null ? String(c.units_remaining) : "",
           }))
         );
+        setSizes(p.sizes || []);
       } catch (e) {
         setError("No se pudo cargar el producto.");
       } finally {
@@ -86,6 +89,29 @@ export default function AdminProductForm() {
       mounted = false;
     };
   }, [id, editing, isAdmin, navigate]);
+
+  // Opciones de talla curadas por el admin en el editor de filtros.
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const settings = await base44.entities.Setting.list();
+        if (!mounted) return;
+        const cf = settings.find((s) => s.key === "catalog_filters");
+        if (cf && cf.value) {
+          const parsed = JSON.parse(cf.value);
+          if (parsed?.size?.options && Array.isArray(parsed.size.options) && parsed.size.options.length) {
+            setSizeOptions(parsed.size.options);
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const removeImage = (idx) => setImages((prev) => prev.filter((_, i) => i !== idx));
 
@@ -197,6 +223,7 @@ export default function AdminProductForm() {
         availability: c.availability || "available",
         units_remaining: c.availability === "limited" ? Number(c.units_remaining) || 0 : null,
       })),
+      sizes: sizes.filter(Boolean),
     };
     try {
       if (editing) await writeClient.entities.Product.update(id, payload);
@@ -408,6 +435,29 @@ export default function AdminProductForm() {
 
         {/* Color */}
         <AdminColorEditor colors={colors} setColors={setColors} images={images} onError={setError} />
+
+        {/* Talla */}
+        <section className="mb-5 space-y-2">
+          <Label className="text-xs uppercase tracking-wider text-slate">Talla (opcional)</Label>
+          <div className="flex flex-wrap gap-2">
+            {sizeOptions.map((s) => {
+              const on = sizes.includes(s);
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSizes((prev) => (on ? prev.filter((x) => x !== s) : [...prev, s]))}
+                  className={`min-w-[2rem] rounded-sm border px-3 py-2 text-xs uppercase tracking-wider transition-colors ${
+                    on ? "border-obsidian bg-obsidian text-parchment" : "border-border text-slate hover:border-gold"
+                  }`}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-slate">Selecciona las tallas disponibles. Gestiona las opciones en el editor de filtros.</p>
+        </section>
 
         {/* Descuento (opcional) */}
         <section className="mb-5 space-y-2">

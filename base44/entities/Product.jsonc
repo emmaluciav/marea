@@ -51,6 +51,13 @@
     "discount_color_id": {
       "type": "string"
     },
+    "sizes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
     "colors": {
       "type": "array",
       "items": {

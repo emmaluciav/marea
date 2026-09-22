@@ -5,7 +5,7 @@ import { ArrowUp, ArrowDown, X, Tag } from "lucide-react";
 
 // Panel de filtro global del catálogo. El estado lo controla el catálogo;
 // `visible` (desde el editor admin) decide qué filtros se muestran.
-const DEFAULT_VISIBLE = { discount: true, price: true, sort: true, color: true };
+const DEFAULT_VISIBLE = { discount: true, price: true, sort: true, color: true, size: true };
 
 export default function CatalogFilter({
   visible = DEFAULT_VISIBLE,
@@ -17,6 +17,9 @@ export default function CatalogFilter({
   colors,
   selectedColors,
   onToggleColor,
+  sizes,
+  selectedSizes,
+  onToggleSize,
   onClear,
   activeCount,
   onlyDiscount,
@@ -122,6 +125,29 @@ export default function CatalogFilter({
                   className="rounded-sm"
                 >
                   <ColorSwatch color={c} size="h-6 w-6" selected={sel} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {vis.size && sizes && sizes.length > 0 && (
+        <div className="mt-4">
+          <span className="text-[12px] text-foreground">Talla</span>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {sizes.map((s) => {
+              const sel = selectedSizes.includes(s);
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => onToggleSize(s)}
+                  className={`min-w-[2rem] rounded-sm border px-2.5 py-1 text-[11px] uppercase tracking-wider transition-colors ${
+                    sel ? "border-gold bg-gold text-parchment" : "border-border text-slate hover:border-gold"
+                  }`}
+                >
+                  {s}
                 </button>
               );
             })}

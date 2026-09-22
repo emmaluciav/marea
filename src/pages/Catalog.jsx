@@ -55,6 +55,7 @@ export default function Catalog() {
   const [priceRange, setPriceRange] = useState(null);
   const [sort, setSort] = useState(null);
   const [selColors, setSelColors] = useState([]);
+  const [selSizes, setSelSizes] = useState([]);
   const [onlyDiscount, setOnlyDiscount] = useState(false);
 
   useEffect(() => {
@@ -104,6 +105,7 @@ export default function Catalog() {
     price: fv.price?.visible !== false,
     sort: fv.sort?.visible !== false,
     color: fv.color?.visible !== false,
+    size: fv.size?.visible !== false,
   };
   // Sin configuración guardada => auto-derivar colores de los productos (conducta actual).
   // Con configuración guardada => usar las opciones curadas (vacío => no renderiza color).
@@ -112,6 +114,18 @@ export default function Catalog() {
       ? allColors
       : Array.isArray(filterConfig.color?.options)
       ? filterConfig.color.options
+      : [];
+
+  const allSizes = useMemo(() => {
+    const set = new Set();
+    products.forEach((p) => (p.sizes || []).forEach((s) => set.add(s)));
+    return Array.from(set);
+  }, [products]);
+  const sizeOptions =
+    filterConfig == null
+      ? allSizes
+      : Array.isArray(filterConfig.size?.options)
+      ? filterConfig.size.options
       : [];
 
   // Coincidencia de color por hex (primario) o nombre, para opciones curadas y auto.
@@ -129,7 +143,8 @@ export default function Catalog() {
     (vis.discount && onlyDiscount ? 1 : 0) +
     (vis.price && priceActive ? 1 : 0) +
     (vis.sort && sort ? 1 : 0) +
-    (vis.color && selColors.length ? 1 : 0);
+    (vis.color && selColors.length ? 1 : 0) +
+    (vis.size && selSizes.length ? 1 : 0);
 
   // Aplica categoría + filtro + orden/aleatorio.
   const ordered = useMemo(() => {
@@ -144,18 +159,22 @@ export default function Catalog() {
         (p.colors || []).some((c) => selColors.some((o) => colorMatches(c, o)))
       );
     }
+    if (vis.size && selSizes.length) {
+      arr = arr.filter((p) => (p.sizes || []).some((s) => selSizes.includes(s)));
+    }
     if (vis.discount && onlyDiscount) {
       arr = arr.filter((p) => Number(p.discount_percent) > 0);
     }
     if (vis.sort && sort === "asc") return [...arr].sort((a, b) => Number(a.price) - Number(b.price));
     if (vis.sort && sort === "desc") return [...arr].sort((a, b) => Number(b.price) - Number(a.price));
     return seededShuffle(arr, seed);
-  }, [products, cat, priceRange, selColors, sort, seed, onlyDiscount, filterConfig]);
+  }, [products, cat, priceRange, selColors, selSizes, sort, seed, onlyDiscount, filterConfig]);
 
   const handleClear = () => {
     setPriceRange(priceBounds);
     setSort(null);
     setSelColors([]);
+    setSelSizes([]);
     setOnlyDiscount(false);
   };
 
@@ -259,6 +278,13 @@ export default function Catalog() {
           }
           onlyDiscount={onlyDiscount}
           onToggleOnlyDiscount={() => setOnlyDiscount((v) => !v)}
+          sizes={sizeOptions}
+          selectedSizes={selSizes}
+          onToggleSize={(s) =>
+            setSelSizes((prev) =>
+              prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+            )
+          }
           onClear={handleClear}
           activeCount={activeCount}
         />
