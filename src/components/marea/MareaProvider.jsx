@@ -66,15 +66,15 @@ function loadSaved() {
 
 export function MareaProvider({ children }) {
   const [savedItems, setSavedItems] = useState(loadSaved);
-  const [brandCovers, setBrandCovers] = useState([DEFAULT_COVER]);
+  const [brandCoverRows, setBrandCoverRows] = useState([
+    { images: [DEFAULT_COVER], ratio: { w: 21, h: 9 }, mode: "slow" },
+  ]);
   const [accentColor, setAccentColor] = useState(null);
   const [packagingWidget, setPackagingWidget] = useState(null);
   const [filterConfig, setFilterConfig] = useState(null);
   const [brandLogo, setBrandLogo] = useState(null);
-  const [brandCoverRatio, setBrandCoverRatio] = useState(null);
   const [adminAccessImage, setAdminAccessImage] = useState(null);
   const [contactBlock, setContactBlock] = useState(null);
-  const [brandCoverMode, setBrandCoverMode] = useState("slow");
 
   useEffect(() => {
     try {
@@ -90,17 +90,43 @@ export function MareaProvider({ children }) {
       try {
         const settings = await base44.entities.Setting.list();
         if (!mounted) return;
-        // Portada: preferir arreglo (carrusel), luego portada única, luego default.
-        const coversSetting = settings.find((s) => s.key === "brand_covers");
-        const single = settings.find((s) => s.key === "brand_cover");
-        let covers = null;
-        if (coversSetting && coversSetting.value) {
-          try { covers = JSON.parse(coversSetting.value); } catch { /* ignore */ }
+        // Portada: filas de carrusel (cada una con imágenes, ratio y modo).
+        const rowsSetting = settings.find((s) => s.key === "brand_cover_rows");
+        let rows = null;
+        if (rowsSetting && rowsSetting.value) {
+          try { rows = JSON.parse(rowsSetting.value); } catch { /* ignore */ }
         }
-        if (!Array.isArray(covers) || !covers.length) {
-          if (single && single.value) covers = [single.value];
+        if (!Array.isArray(rows) || !rows.length) {
+          // Migración desde formato legacy (una sola portada).
+          const coversSetting = settings.find((s) => s.key === "brand_covers");
+          const single = settings.find((s) => s.key === "brand_cover");
+          let covers = null;
+          if (coversSetting && coversSetting.value) {
+            try { covers = JSON.parse(coversSetting.value); } catch { /* ignore */ }
+          }
+          if (!Array.isArray(covers) || !covers.length) {
+            if (single && single.value) covers = [single.value];
+          }
+          if (!Array.isArray(covers) || !covers.length) covers = [DEFAULT_COVER];
+          let ratio = null;
+          const ratioSet = settings.find((s) => s.key === "brand_cover_ratio");
+          if (ratioSet && ratioSet.value) {
+            try { const p = JSON.parse(ratioSet.value); if (p && p.w && p.h) ratio = p; } catch { /* ignore */ }
+          }
+          let mode = "slow";
+          const modeSet = settings.find((s) => s.key === "brand_cover_mode");
+          if (modeSet && modeSet.value) mode = modeSet.value;
+          rows = [{ images: covers, ratio: ratio || { w: 21, h: 9 }, mode }];
         }
-        if (Array.isArray(covers) && covers.length) setBrandCovers(covers);
+        if (Array.isArray(rows) && rows.length) {
+          setBrandCoverRows(
+            rows.map((r) => ({
+              images: Array.isArray(r.images) ? r.images : [],
+              ratio: r.ratio && r.ratio.w && r.ratio.h ? r.ratio : { w: 21, h: 9 },
+              mode: r.mode || "slow",
+            }))
+          );
+        }
 
         // Color de acento global.
         const accent = settings.find((s) => s.key === "marea_accent_color");
@@ -134,19 +160,6 @@ export function MareaProvider({ children }) {
         if (cb && cb.value) {
           try { setContactBlock(JSON.parse(cb.value)); } catch { /* ignore */ }
         }
-
-        // Proporción de la portada (ancho/alto en cm → ratio).
-        const ratio = settings.find((s) => s.key === "brand_cover_ratio");
-        if (ratio && ratio.value) {
-          try {
-            const parsed = JSON.parse(ratio.value);
-            if (parsed && parsed.w && parsed.h) setBrandCoverRatio(parsed);
-          } catch { /* ignore */ }
-        }
-
-        // Modo del carrusel de portada: static | slow | continuous.
-        const mode = settings.find((s) => s.key === "brand_cover_mode");
-        if (mode && mode.value) setBrandCoverMode(mode.value);
       } catch {
         /* keep defaults */
       }
@@ -204,9 +217,8 @@ export function MareaProvider({ children }) {
         toggleSave,
         setSavedColor,
         getSavedColor,
-        brandCover: brandCovers[0],
-        brandCovers,
-        setBrandCovers,
+        brandCoverRows,
+        setBrandCoverRows,
         accentColor,
         setAccentColor,
         packagingWidget,
@@ -215,10 +227,6 @@ export function MareaProvider({ children }) {
         setFilterConfig,
         brandLogo,
         setBrandLogo,
-        brandCoverRatio,
-        setBrandCoverRatio,
-        brandCoverMode,
-        setBrandCoverMode,
         adminAccessImage,
         setAdminAccessImage,
         contactBlock,
