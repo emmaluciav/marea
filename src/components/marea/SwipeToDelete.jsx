@@ -11,12 +11,13 @@ export default function SwipeToDelete({ children, onRequestDelete, revealWidth =
   const openRef = useRef(false);
   useEffect(() => { openRef.current = open; }, [open]);
 
-  const begin = (clientX) => {
-    drag.current = { active: true, startX: clientX, startDx: openRef.current ? -revealWidth : 0 };
+  const begin = (clientX, pt) => {
+    drag.current = { active: true, startX: clientX, startDx: openRef.current ? -revealWidth : 0, moved: false, pt };
   };
   const move = (clientX) => {
     if (!drag.current.active) return;
     let delta = clientX - drag.current.startX + drag.current.startDx;
+    if (Math.abs(delta) > 5) drag.current.moved = true;
     if (delta > 0) delta = delta * 0.25;
     if (delta < -revealWidth - 30) delta = -revealWidth - 30;
     setDx(delta);
@@ -56,15 +57,25 @@ export default function SwipeToDelete({ children, onRequestDelete, revealWidth =
         <Trash2 className="h-4 w-4" />
       </button>
       <div
-        onTouchStart={(e) => begin(e.touches[0].clientX)}
+        onTouchStart={(e) => begin(e.touches[0].clientX, "touch")}
         onTouchMove={(e) => move(e.touches[0].clientX)}
         onTouchEnd={end}
-        onPointerDown={(e) => { if (e.pointerType !== "touch") begin(e.clientX); }}
+        onPointerDown={(e) => { if (e.pointerType !== "touch") begin(e.clientX, e.pointerType); }}
+        onClick={() => {
+          // Click-to-reveal en escritorio (no-touch). En móvil se usa el swipe.
+          if (drag.current.moved) { drag.current.moved = false; return; }
+          if (drag.current.pt === "touch") return;
+          setOpen((o) => {
+            const next = !o;
+            setDx(next ? -revealWidth : 0);
+            return next;
+          });
+        }}
         style={{
           transform: `translateX(${dx}px)`,
           transition: drag.current.active ? "none" : "transform 200ms ease",
         }}
-        className="relative bg-parchment"
+        className="relative cursor-pointer bg-parchment"
       >
         {children}
       </div>

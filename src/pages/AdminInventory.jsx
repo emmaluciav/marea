@@ -489,7 +489,7 @@ export default function AdminInventory() {
             <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={() => startEdit(s)}
+                onClick={(e) => { e.stopPropagation(); startEdit(s); }}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-gold transition-colors hover:bg-secondary active:scale-95"
                 aria-label="Editar venta"
               >
