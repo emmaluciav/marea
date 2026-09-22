@@ -11,6 +11,7 @@ import { Loader2, ArrowLeft, ArrowRight, Plus, Trash2, Pencil } from "lucide-rea
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useCategories } from "@/hooks/useCategories";
 import AdminColorEditor from "@/components/marea/AdminColorEditor";
+import AdminVariantMatrix from "@/components/marea/AdminVariantMatrix";
 import PhotoCropper from "@/components/marea/PhotoCropper";
 import { isVideoFile, isVideoUrl } from "@/lib/media";
 
@@ -43,6 +44,7 @@ export default function AdminProductForm() {
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [sizeOptions, setSizeOptions] = useState(["XS", "S", "M", "L", "XL"]);
+  const [variantPhotos, setVariantPhotos] = useState({});
   const [replaceIdx, setReplaceIdx] = useState(null);
   const [cropQueue, setCropQueue] = useState([]);
   const [cropIndex, setCropIndex] = useState(-1);
@@ -79,6 +81,7 @@ export default function AdminProductForm() {
           }))
         );
         setSizes(p.sizes || []);
+        setVariantPhotos(p.variant_photos || {});
       } catch (e) {
         setError("No se pudo cargar el producto.");
       } finally {
@@ -224,6 +227,21 @@ export default function AdminProductForm() {
         units_remaining: c.availability === "limited" ? Number(c.units_remaining) || 0 : null,
       })),
       sizes: sizes.filter(Boolean),
+      variant_photos: (() => {
+        const clean = {};
+        sizes.forEach((s) => {
+          const row = variantPhotos[s];
+          if (row && typeof row === "object") {
+            const cleanRow = {};
+            colors.forEach((c) => {
+              const idx = row[c.id];
+              if (idx != null && idx >= 0 && idx < images.length) cleanRow[c.id] = idx;
+            });
+            if (Object.keys(cleanRow).length) clean[s] = cleanRow;
+          }
+        });
+        return clean;
+      })(),
     };
     try {
       if (editing) await writeClient.entities.Product.update(id, payload);
@@ -458,6 +476,15 @@ export default function AdminProductForm() {
           </div>
           <p className="text-[11px] text-slate">Selecciona las tallas disponibles. Gestiona las opciones en el editor de filtros.</p>
         </section>
+
+        {/* Matriz Talla + Color (solo si hay tallas y colores) */}
+        <AdminVariantMatrix
+          sizes={sizes}
+          colors={colors}
+          images={images}
+          variantPhotos={variantPhotos}
+          setVariantPhotos={setVariantPhotos}
+        />
 
         {/* Descuento (opcional) */}
         <section className="mb-5 space-y-2">

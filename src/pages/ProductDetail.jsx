@@ -31,6 +31,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [pulse, setPulse] = useState(false);
   const [selectedColorId, setSelectedColorId] = useState(() => searchParams.get("color"));
+  const [selectedSizeId, setSelectedSizeId] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -91,12 +92,20 @@ export default function ProductDetail() {
   // Seleccionar un color solo "salta" a la primera foto asignada a ese color.
   const galleryImages = product.images && product.images.length ? product.images : [];
   const colors = product.colors || [];
+  const sizes = product.sizes || [];
   const activeColor = selectedColorId ? colors.find((c) => c.id === selectedColorId) : null;
   // Índice de la primera foto asignada al color seleccionado (atajo a esa foto).
   const colorTargetIndex =
     activeColor && activeColor.photo_indices && activeColor.photo_indices.length
       ? activeColor.photo_indices[0]
       : null;
+  // Si hay talla + color, saltar a la foto asignada a esa combinación exacta.
+  const variantTargetIndex =
+    selectedSizeId && activeColor && product.variant_photos && product.variant_photos[selectedSizeId] &&
+    product.variant_photos[selectedSizeId][activeColor.id] != null
+      ? product.variant_photos[selectedSizeId][activeColor.id]
+      : null;
+  const targetIndex = variantTargetIndex != null ? variantTargetIndex : colorTargetIndex;
   const outOfStock = product.availability === "out_of_stock";
   const fromSaved = from === "saved";
   const labelMap = { all: "Ver todo" };
@@ -187,11 +196,11 @@ export default function ProductDetail() {
             <div className="hidden split-grid:grid split-grid:grid-cols-2 split-grid:gap-2">
               {galleryImages.map((src, i) =>
                 isVideoUrl(src) ? (
-                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === colorTargetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
+                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === targetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
                     <video src={src} autoPlay loop muted playsInline className="h-full w-full object-cover" />
                   </div>
                 ) : (
-                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === colorTargetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
+                  <div key={i} className={`relative overflow-hidden ring-offset-2 ${i === targetIndex ? "ring-2 ring-gold" : ""}`} style={{ aspectRatio: "10 / 11" }}>
                     <Image src={src} alt={product.name} fittingType="fill" className="h-full w-full" />
                   </div>
                 )
@@ -200,7 +209,7 @@ export default function ProductDetail() {
             {/* Swipe — móvil vertical y teléfono horizontal.
                 Seleccionar un color salta a la foto asignada sin filtrar. */}
             <div className="split-grid:hidden">
-              <SwipeGallery images={galleryImages} aspect="10 / 11" className="mx-auto max-w-xl" jumpTo={colorTargetIndex} />
+              <SwipeGallery images={galleryImages} aspect="10 / 11" className="mx-auto max-w-xl" jumpTo={targetIndex} />
             </div>
           </div>
 
@@ -235,6 +244,30 @@ export default function ProductDetail() {
             </span>
           )}
         </div>
+
+        {/* Talla */}
+        {sizes.length > 0 && (
+          <div className="mt-3 flex items-center gap-3">
+            <span className="text-[13px] uppercase tracking-[0.15em] text-foreground/60">Talla</span>
+            <div className="flex items-center gap-2">
+              {sizes.map((s) => {
+                const sel = s === selectedSizeId;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSelectedSizeId(sel ? null : s)}
+                    className={`min-w-[2rem] rounded-sm border px-2.5 py-1 text-[13px] uppercase tracking-wider transition-colors ${
+                      sel ? "border-obsidian bg-obsidian text-parchment" : "border-border text-foreground hover:border-gold"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Color */}
         {colors.length > 0 && (

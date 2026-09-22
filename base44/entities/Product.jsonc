@@ -58,6 +58,17 @@
       },
       "default": []
     },
+    "variant_photos": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "number"
+        }
+      },
+      "default": {},
+      "description": "Mapa talla -> color_id -> \u00edndice de foto. Define la foto representativa de cada combinaci\u00f3n talla+color."
+    },
     "colors": {
       "type": "array",
       "items": {
