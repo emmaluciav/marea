@@ -7,6 +7,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES } from "@/lib/mareaCategories";
 import AdminLogin from "./AdminLogin";
 import LogoEditor from "./LogoEditor";
+import SaveHint from "./SaveHint";
 import Menu from "./Menu";
 
 export default function TopNav() {
@@ -123,6 +124,10 @@ export default function TopNav() {
         </div>
         </div>
       </header>
+
+      {isHome && (
+        <SaveHint message="Guarda tus favoritos en guardados" className="top-16 right-3" />
+      )}
 
       {menuOpen && (
         <Menu

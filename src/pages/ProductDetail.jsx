@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useCategories } from "@/hooks/useCategories";
 import { discountInfo } from "@/lib/discount";
+import SaveHint from "@/components/marea/SaveHint";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -180,6 +181,8 @@ export default function ProductDetail() {
       >
         <BookmarkIcon filled={saved} pulsing={pulse} className={`h-4 w-4 ${saved ? "text-gold" : "text-obsidian/60"}`} />
       </button>
+
+      <SaveHint message="Guarda este producto en guardados" className="right-3 top-16" />
 
       <section className="split:mx-auto split:max-w-6xl split:px-4 split:pt-16 split:pb-6 lg:max-w-7xl lg:px-8 lg:pt-20 lg:pb-8">
         <div className="split:grid split:grid-cols-2 split:gap-4 lg:gap-6">

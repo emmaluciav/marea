@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CATEGORIES } from "@/lib/mareaCategories";
+import { useCategories } from "@/hooks/useCategories";
+import { useMarea } from "./MareaProvider";
+import { Pencil } from "lucide-react";
+import SettingImageEditor from "./SettingImageEditor";
 
 // The menu slides down like a heavy silk curtain, full-screen with large
 // editorial typography for the category names.
+// Las secciones se toman automáticamente de las categorías activas (BD).
 export default function Menu({ isAdmin = false, onClose, onLogin }) {
   const navigate = useNavigate();
+  const { categories } = useCategories();
+  const { adminAccessImage, setAdminAccessImage } = useMarea();
+  const [editOpen, setEditOpen] = useState(false);
 
   const go = (catId) => {
     navigate(catId === "all" ? "/" : `/?cat=${catId}`);
@@ -17,6 +24,13 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
     onClose();
     navigate("/");
   };
+
+  const visibleCats = categories
+    .filter((c) => c.visible)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  const menuCats = [{ id: "all", label: "Ver todo" }, ...visibleCats];
+
+  const accessImg = adminAccessImage;
 
   return (
     <div className="fixed inset-0 z-50 bg-parchment curtain-in flex flex-col">
@@ -34,7 +48,7 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
       </div>
 
       <nav className="flex flex-1 flex-col justify-center gap-2 px-7">
-        {CATEGORIES.map((c, i) => (
+        {menuCats.map((c, i) => (
           <button
             key={c.id}
             type="button"
@@ -49,23 +63,60 @@ export default function Menu({ isAdmin = false, onClose, onLogin }) {
 
       <div className="px-7 pb-10">
         {isAdmin ? (
-          <button
-            type="button"
-            onClick={exitAdmin}
-            className="text-xs uppercase tracking-[0.2em] text-slate underline-offset-4 hover:underline"
-          >
-            Salir del modo administrador
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={exitAdmin}
+              className="text-xs uppercase tracking-[0.2em] text-slate underline-offset-4 hover:underline"
+            >
+              Salir del modo administrador
+            </button>
+            <div className="flex items-center gap-2">
+              {accessImg ? (
+                <img src={accessImg} alt="" className="h-4 w-4 object-contain opacity-60" />
+              ) : (
+                <span className="block h-2.5 w-2.5 rounded-full bg-slate/40" />
+              )}
+              <button
+                type="button"
+                onClick={() => setEditOpen(true)}
+                aria-label="Editar imagen de acceso"
+                title="Editar imagen de acceso"
+                className="text-slate hover:text-foreground"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
         ) : (
           <button
             type="button"
             onClick={onLogin}
-            className="text-[10px] uppercase tracking-[0.2em] text-slate/50 hover:text-slate"
+            aria-label="."
+            className="flex items-center"
           >
-            Entrar como administrador
+            {accessImg ? (
+              <img
+                src={accessImg}
+                alt=""
+                className="h-4 w-4 object-contain opacity-70 transition-opacity hover:opacity-100"
+              />
+            ) : (
+              <span className="block h-2.5 w-2.5 rounded-full bg-slate/40 transition-colors hover:bg-gold" />
+            )}
           </button>
         )}
       </div>
+
+      {editOpen && (
+        <SettingImageEditor
+          settingKey="admin_access_image"
+          title="Imagen de acceso administrador"
+          current={adminAccessImage}
+          onSave={setAdminAccessImage}
+          onClose={() => setEditOpen(false)}
+        />
+      )}
     </div>
   );
 }

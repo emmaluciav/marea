@@ -72,6 +72,7 @@ export function MareaProvider({ children }) {
   const [filterConfig, setFilterConfig] = useState(null);
   const [brandLogo, setBrandLogo] = useState(null);
   const [brandCoverRatio, setBrandCoverRatio] = useState(null);
+  const [adminAccessImage, setAdminAccessImage] = useState(null);
 
   useEffect(() => {
     try {
@@ -121,6 +122,10 @@ export function MareaProvider({ children }) {
         // Logo del encabezado.
         const logo = settings.find((s) => s.key === "brand_logo");
         if (logo && logo.value) setBrandLogo(logo.value);
+
+        // Imagen mini de acceso administrador (reemplaza "Entrar como admin").
+        const accessImg = settings.find((s) => s.key === "admin_access_image");
+        if (accessImg && accessImg.value) setAdminAccessImage(accessImg.value);
 
         // Proporción de la portada (ancho/alto en cm → ratio).
         const ratio = settings.find((s) => s.key === "brand_cover_ratio");
@@ -200,6 +205,8 @@ export function MareaProvider({ children }) {
         setBrandLogo,
         brandCoverRatio,
         setBrandCoverRatio,
+        adminAccessImage,
+        setAdminAccessImage,
       }}
     >
       {children}
