@@ -148,6 +148,13 @@ export default function AdminInventory() {
   };
 
   const showEmpaque = cat === "empaque";
+  // Total de unidades físicas en inventario (suma de los conteos manuales):
+  // productos multicolor se suman por color; el resto usa el inventario global.
+  const totalInventory = products.reduce((sum, p) => {
+    const cols = p.colors || [];
+    if (cols.length > 1) return sum + cols.reduce((a, c) => a + (Number(c.inventory) || 0), 0);
+    return sum + (Number(p.inventory) || 0);
+  }, 0);
   // Construye las filas de inventario. Los productos con varios colores se
   // desglosan en una fila por color (con su propia foto asignada e
   // inventario independiente). Los productos de un solo color o sin colores,
@@ -570,6 +577,7 @@ export default function AdminInventory() {
         <div className="mx-auto max-w-3xl px-4 py-6 pb-20">
           <p className="mb-3 text-xs uppercase tracking-wider text-slate">
             Inventario interno · {invUnits.length} {showEmpaque ? "empaques" : "productos"}
+            {!showEmpaque && ` · total ${totalInventory} productos`}
           </p>
 
           <div className="relative mb-3">
