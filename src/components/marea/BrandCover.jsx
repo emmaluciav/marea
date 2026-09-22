@@ -13,13 +13,15 @@ import { Plus, Pencil } from "lucide-react";
 // En modo administrador: + gestiona las imágenes (agregar/quitar/reordenar/
 // reemplazar) y el lápiz cambia el color de acento rosa de MAREA globalmente.
 export default function BrandCover() {
-  const { brandCovers, setBrandCovers, accentColor, setAccentColor } = useMarea();
+  const { brandCovers, setBrandCovers, accentColor, setAccentColor, brandCoverRatio, setBrandCoverRatio } = useMarea();
   const isAdmin = useIsAdmin();
   const [managerOpen, setManagerOpen] = useState(false);
   const [accentOpen, setAccentOpen] = useState(false);
 
   const covers = brandCovers && brandCovers.length ? brandCovers : [];
   const isCarousel = covers.length > 1;
+  const ratio = brandCoverRatio || { w: 21, h: 9 };
+  const aspectStr = `${ratio.w} / ${ratio.h}`;
 
   const saveAccent = async (hex) => {
     try {
@@ -36,9 +38,9 @@ export default function BrandCover() {
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-7xl" style={{ aspectRatio: "21 / 9" }}>
+    <div className="relative mx-auto w-full max-w-7xl" style={{ aspectRatio: aspectStr }}>
       {isCarousel ? (
-        <SwipeGallery images={covers} aspect="21 / 9" className="h-full w-full" />
+        <SwipeGallery images={covers} aspect={aspectStr} className="h-full w-full" />
       ) : (
         <Image src={covers[0]} alt="MAREA" fittingType="fill" className="h-full w-full" />
       )}
@@ -72,6 +74,8 @@ export default function BrandCover() {
           covers={covers}
           onClose={() => setManagerOpen(false)}
           onChange={setBrandCovers}
+          ratio={ratio}
+          onRatioChange={setBrandCoverRatio}
         />
       )}
       {accentOpen && (

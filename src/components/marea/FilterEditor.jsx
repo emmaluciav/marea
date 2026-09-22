@@ -19,32 +19,35 @@ const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL"];
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-function normalize(current) {
+function normalize(current, autoColors = [], autoSizes = []) {
   const base = current && typeof current === "object" ? current : {};
+  const colorOpts = Array.isArray(base?.color?.options)
+    ? base.color.options.map((o) => ({
+        id: o.id || uid(),
+        name: o.name || "",
+        hex: o.hex || "#DB949B",
+        is_multicolor: !!o.is_multicolor,
+      }))
+    : (autoColors || []).map((c) => ({
+        id: c.id || uid(),
+        name: c.name || "",
+        hex: c.hex || "#DB949B",
+        is_multicolor: !!c.is_multicolor,
+      }));
+  const sizeOpts = Array.isArray(base?.size?.options)
+    ? [...base.size.options]
+    : (autoSizes && autoSizes.length ? [...autoSizes] : [...DEFAULT_SIZES]);
   return {
     discount: { visible: base?.discount?.visible !== false },
     price: { visible: base?.price?.visible !== false },
     sort: { visible: base?.sort?.visible !== false },
-    color: {
-      visible: base?.color?.visible !== false,
-      options: Array.isArray(base?.color?.options)
-        ? base.color.options.map((o) => ({
-            id: o.id || uid(),
-            name: o.name || "",
-            hex: o.hex || "#DB949B",
-            is_multicolor: !!o.is_multicolor,
-          }))
-        : [],
-    },
-    size: {
-      visible: base?.size?.visible !== false,
-      options: Array.isArray(base?.size?.options) ? [...base.size.options] : [...DEFAULT_SIZES],
-    },
+    color: { visible: base?.color?.visible !== false, options: colorOpts },
+    size: { visible: base?.size?.visible !== false, options: sizeOpts },
   };
 }
 
-export default function FilterEditor({ current, onSave, onClose }) {
-  const [cfg, setCfg] = useState(() => normalize(current));
+export default function FilterEditor({ current, onSave, onClose, autoColors = [], autoSizes = [] }) {
+  const [cfg, setCfg] = useState(() => normalize(current, autoColors, autoSizes));
   const [busy, setBusy] = useState(false);
 
   const toggleVis = (key) =>

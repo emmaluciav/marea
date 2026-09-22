@@ -254,6 +254,8 @@ export default function Catalog() {
           current={filterConfig}
           onSave={setFilterConfig}
           onClose={() => setFilterEditorOpen(false)}
+          autoColors={allColors}
+          autoSizes={allSizes}
         />
       )}
 

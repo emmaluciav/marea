@@ -70,6 +70,8 @@ export function MareaProvider({ children }) {
   const [accentColor, setAccentColor] = useState(null);
   const [packagingWidget, setPackagingWidget] = useState(null);
   const [filterConfig, setFilterConfig] = useState(null);
+  const [brandLogo, setBrandLogo] = useState(null);
+  const [brandCoverRatio, setBrandCoverRatio] = useState(null);
 
   useEffect(() => {
     try {
@@ -114,6 +116,19 @@ export function MareaProvider({ children }) {
         const cf = settings.find((s) => s.key === "catalog_filters");
         if (cf && cf.value) {
           try { setFilterConfig(JSON.parse(cf.value)); } catch { /* ignore */ }
+        }
+
+        // Logo del encabezado.
+        const logo = settings.find((s) => s.key === "brand_logo");
+        if (logo && logo.value) setBrandLogo(logo.value);
+
+        // Proporción de la portada (ancho/alto en cm → ratio).
+        const ratio = settings.find((s) => s.key === "brand_cover_ratio");
+        if (ratio && ratio.value) {
+          try {
+            const parsed = JSON.parse(ratio.value);
+            if (parsed && parsed.w && parsed.h) setBrandCoverRatio(parsed);
+          } catch { /* ignore */ }
         }
       } catch {
         /* keep defaults */
@@ -181,6 +196,10 @@ export function MareaProvider({ children }) {
         setPackagingWidget,
         filterConfig,
         setFilterConfig,
+        brandLogo,
+        setBrandLogo,
+        brandCoverRatio,
+        setBrandCoverRatio,
       }}
     >
       {children}

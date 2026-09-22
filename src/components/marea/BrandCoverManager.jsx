@@ -8,11 +8,13 @@ import PhotoCropper from "./PhotoCropper";
 
 // Gestor admin de la portada: varias imágenes => carrusel. Permite agregar,
 // reemplazar, reordenar y eliminar. 1 imagen = portada fija (sin carrusel).
-export default function BrandCoverManager({ covers, onClose, onChange }) {
+export default function BrandCoverManager({ covers, onClose, onChange, ratio, onRatioChange }) {
   const [list, setList] = useState(covers && covers.length ? covers : []);
   const [busy, setBusy] = useState(false);
   const [cropFile, setCropFile] = useState(null);
   const [replaceIndex, setReplaceIndex] = useState(null);
+  const [w, setW] = useState(ratio ? String(ratio.w) : "21");
+  const [h, setH] = useState(ratio ? String(ratio.h) : "9");
   const fileRef = useRef(null);
 
   const persist = async (next) => {
@@ -75,6 +77,29 @@ export default function BrandCoverManager({ covers, onClose, onChange }) {
     await persist(next);
   };
 
+  const persistRatio = async (rw, rh) => {
+    setBusy(true);
+    try {
+      const value = JSON.stringify({ w: rw, h: rh });
+      const settings = await base44.entities.Setting.list();
+      const existing = settings.find((s) => s.key === "brand_cover_ratio");
+      if (existing) await writeClient.entities.Setting.update(existing.id, { value });
+      else await writeClient.entities.Setting.create({ key: "brand_cover_ratio", value });
+      onRatioChange?.({ w: rw, h: rh });
+    } catch {
+      /* ignore */
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const saveRatio = () => {
+    const rw = Number(w) || 21;
+    const rh = Number(h) || 9;
+    if (rw <= 0 || rh <= 0) return;
+    persistRatio(rw, rh);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-obsidian/40 px-4 py-8">
       <div className="my-auto w-full max-w-lg rounded-sm bg-parchment p-5 shadow-xl">
@@ -129,6 +154,43 @@ export default function BrandCoverManager({ covers, onClose, onChange }) {
           ))}
         </div>
 
+        {/* Dimensiones de la portada */}
+        <div className="mt-5 rounded-sm border border-border p-3">
+          <p className="text-xs uppercase tracking-wider text-slate">Dimensiones de la portada</p>
+          <p className="mt-1 text-[11px] text-slate">Proporción físico (cm). La imagen no se deforma.</p>
+          <div className="mt-3 flex items-end gap-3">
+            <div className="space-y-1">
+              <label className="text-[11px] uppercase text-slate">Ancho (cm)</label>
+              <input
+                value={w}
+                onChange={(e) => setW(e.target.value)}
+                type="number"
+                min="1"
+                className="h-10 w-24 rounded-md border border-input bg-transparent px-3 text-sm"
+              />
+            </div>
+            <span className="pb-2 text-slate">×</span>
+            <div className="space-y-1">
+              <label className="text-[11px] uppercase text-slate">Alto (cm)</label>
+              <input
+                value={h}
+                onChange={(e) => setH(e.target.value)}
+                type="number"
+                min="1"
+                className="h-10 w-24 rounded-md border border-input bg-transparent px-3 text-sm"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={saveRatio}
+              disabled={busy}
+              className="ml-auto inline-flex items-center gap-2 rounded-full bg-gold px-4 py-2 text-xs uppercase tracking-wider text-parchment disabled:opacity-50"
+            >
+              {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null} Guardar
+            </button>
+          </div>
+        </div>
+
         <button
           onClick={addPick}
           disabled={busy}
@@ -144,7 +206,7 @@ export default function BrandCoverManager({ covers, onClose, onChange }) {
       {cropFile && (
         <PhotoCropper
           file={cropFile}
-          aspect={21 / 9}
+          aspect={(Number(w) || 21) / (Number(h) || 9)}
           onSave={onCropSave}
           onCancel={() => { setCropFile(null); setReplaceIndex(null); }}
         />

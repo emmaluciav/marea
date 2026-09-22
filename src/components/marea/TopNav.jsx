@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BookmarkIcon } from "./icons";
-import { ArrowLeft, ClipboardList } from "lucide-react";
+import { ArrowLeft, ClipboardList, Pencil } from "lucide-react";
 import { useMarea } from "./MareaProvider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { CATEGORIES } from "@/lib/mareaCategories";
 import AdminLogin from "./AdminLogin";
+import LogoEditor from "./LogoEditor";
 import Menu from "./Menu";
 
 export default function TopNav() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { savedCount } = useMarea();
+  const { savedCount, brandLogo, setBrandLogo } = useMarea();
   const isAdmin = useIsAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false);
 
   const isHome = location.pathname === "/";
   const isSavedPage = location.pathname === "/saved";
@@ -26,11 +28,24 @@ export default function TopNav() {
     <>
       <header className="fixed inset-x-0 top-0 z-30 border-b border-border/60 bg-white">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">
-        <img
-          src="https://cdn.phototourl.com/free/2026-08-28-aafc3b10-71bd-4dd3-9d1e-eb1a811109ac.png"
-          alt="MAREA"
-          className="pointer-events-none absolute left-1/2 h-14 -translate-x-1/2 object-contain"
-        />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <img
+            src={brandLogo || "https://cdn.phototourl.com/free/2026-08-28-aafc3b10-71bd-4dd3-9d1e-eb1a811109ac.png"}
+            alt="MAREA"
+            className="pointer-events-none h-14 object-contain"
+          />
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setLogoEditorOpen(true)}
+              aria-label="Editar logo"
+              title="Editar logo"
+              className="absolute -right-7 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-obsidian/80 text-parchment shadow-sm transition-transform active:scale-95"
+            >
+              <Pencil className="h-3 w-3" />
+            </button>
+          )}
+        </div>
         {/* Left: discreet admin entry (home only) OR back arrow */}
         <div className="flex items-center gap-2">
           {isAdmin && (
@@ -120,6 +135,13 @@ export default function TopNav() {
         />
       )}
       {loginOpen && <AdminLogin onClose={() => setLoginOpen(false)} />}
+      {logoEditorOpen && (
+        <LogoEditor
+          currentLogo={brandLogo}
+          onSave={setBrandLogo}
+          onClose={() => setLogoEditorOpen(false)}
+        />
+      )}
     </>
   );
 }
