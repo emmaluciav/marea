@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/mareaCategories";
+import { useMarea } from "./MareaProvider";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Pencil } from "lucide-react";
+import PackagingWidgetEditor from "./PackagingWidgetEditor";
 
 // Bloque de información de pedido. Se usa tanto arriba (bajo la portada) como
 // al final del catálogo. Incluye Instagram, WhatsApp y la ubicación.
+const DEFAULT_PW = {
+  text: "Ver Tipos de Empaque",
+  textColor: "#FFFFFF",
+  bgColor: "#DB949B",
+  position: "left",
+  corners: "rounded",
+};
+
 export default function ContactSection({ variant = "bottom", delivery = false }) {
   const top = variant === "top";
+  const { packagingWidget, setPackagingWidget } = useMarea();
+  const isAdmin = useIsAdmin();
+  const [editorOpen, setEditorOpen] = useState(false);
+
+  const pw = { ...DEFAULT_PW, ...(packagingWidget || {}) };
+  const radius = pw.corners === "square" ? "rounded-none" : "rounded-md";
+  const justify =
+    pw.position === "center" ? "center" : pw.position === "right" ? "flex-end" : "flex-start";
+
   return (
     <section
       className={`px-6 text-center ${
@@ -53,14 +74,33 @@ export default function ContactSection({ variant = "bottom", delivery = false })
         </p>
       )}
       {top && (
-        <div className="mt-9 flex justify-start">
+        <div className="mt-9 flex items-center gap-2" style={{ justifyContent: justify }}>
           <Link
             to="/empaque"
-            className="inline-flex items-center rounded-md bg-gold px-5 py-2.5 text-[12px] uppercase tracking-[0.18em] text-parchment shadow-sm transition-transform hover:scale-[1.02] active:scale-95"
+            style={{ background: pw.bgColor, color: pw.textColor }}
+            className={`inline-flex items-center px-5 py-2.5 text-[12px] uppercase tracking-[0.18em] shadow-sm transition-transform hover:scale-[1.02] active:scale-95 ${radius}`}
           >
-            Ver Tipos de Empaque
+            {pw.text || "Ver Tipos de Empaque"}
           </Link>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setEditorOpen(true)}
+              aria-label="Editar widget de empaques"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-slate transition-colors hover:text-foreground"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
         </div>
+      )}
+
+      {editorOpen && (
+        <PackagingWidgetEditor
+          current={packagingWidget}
+          onSave={setPackagingWidget}
+          onClose={() => setEditorOpen(false)}
+        />
       )}
     </section>
   );

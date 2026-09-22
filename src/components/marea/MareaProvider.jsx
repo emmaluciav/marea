@@ -68,6 +68,7 @@ export function MareaProvider({ children }) {
   const [savedItems, setSavedItems] = useState(loadSaved);
   const [brandCovers, setBrandCovers] = useState([DEFAULT_COVER]);
   const [accentColor, setAccentColor] = useState(null);
+  const [packagingWidget, setPackagingWidget] = useState(null);
 
   useEffect(() => {
     try {
@@ -100,6 +101,12 @@ export function MareaProvider({ children }) {
         if (accent && accent.value) {
           setAccentColor(accent.value);
           applyAccentColor(accent.value);
+        }
+
+        // Widget "Ver Tipos de Empaque" (texto, colores, posición, esquinas).
+        const pw = settings.find((s) => s.key === "packaging_widget");
+        if (pw && pw.value) {
+          try { setPackagingWidget(JSON.parse(pw.value)); } catch { /* ignore */ }
         }
       } catch {
         /* keep defaults */
@@ -163,6 +170,8 @@ export function MareaProvider({ children }) {
         setBrandCovers,
         accentColor,
         setAccentColor,
+        packagingWidget,
+        setPackagingWidget,
       }}
     >
       {children}
