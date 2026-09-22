@@ -6,10 +6,12 @@ import CategoryTabs from "@/components/marea/CategoryTabs";
 import CatalogFilter from "@/components/marea/CatalogFilter";
 import ContactSection from "@/components/marea/ContactSection";
 import ProductCard from "@/components/marea/ProductCard";
-import { Loader2, SlidersHorizontal, Plus } from "lucide-react";
+import { Loader2, SlidersHorizontal, Plus, Settings2 } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useCategories } from "@/hooks/useCategories";
 import CategoryManager from "@/components/marea/CategoryManager";
+import FilterEditor from "@/components/marea/FilterEditor";
+import { useMarea } from "@/components/marea/MareaProvider";
 
 // Shuffle determinista por semilla: produce un orden aleatorio estable
 // mientras la semilla no cambie. La semilla se regenera al montar la página
@@ -39,6 +41,8 @@ export default function Catalog() {
   const isAdmin = useIsAdmin();
   const { categories, reload } = useCategories();
   const [managerOpen, setManagerOpen] = useState(false);
+  const [filterEditorOpen, setFilterEditorOpen] = useState(false);
+  const { filterConfig, setFilterConfig } = useMarea();
   const visibleCats = categories.filter((c) => c.visible);
 
   // Filtro global (persiste al navegar entre categorías).
@@ -93,29 +97,60 @@ export default function Catalog() {
     return Array.from(map.values());
   }, [products]);
 
+  // Configuración de filtros del admin: visibilidad + opciones de color curadas.
+  const fv = filterConfig || {};
+  const vis = {
+    discount: fv.discount?.visible !== false,
+    price: fv.price?.visible !== false,
+    sort: fv.sort?.visible !== false,
+    color: fv.color?.visible !== false,
+  };
+  // Sin configuración guardada => auto-derivar colores de los productos (conducta actual).
+  // Con configuración guardada => usar las opciones curadas (vacío => no renderiza color).
+  const colorOptions =
+    filterConfig == null
+      ? allColors
+      : Array.isArray(filterConfig.color?.options)
+      ? filterConfig.color.options
+      : [];
+
+  // Coincidencia de color por hex (primario) o nombre, para opciones curadas y auto.
+  const colorMatches = (pc, opt) => {
+    if (!opt) return false;
+    const oh = (opt.hex || "").toLowerCase();
+    const ph = (pc.hex || "").toLowerCase();
+    if (oh && oh === ph) return true;
+    return (opt.name || "").toLowerCase() === (pc.name || "").toLowerCase();
+  };
+
   const priceActive =
     !!priceRange && (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]);
   const activeCount =
-    (priceActive ? 1 : 0) + (sort ? 1 : 0) + (selColors.length ? 1 : 0) + (onlyDiscount ? 1 : 0);
+    (vis.discount && onlyDiscount ? 1 : 0) +
+    (vis.price && priceActive ? 1 : 0) +
+    (vis.sort && sort ? 1 : 0) +
+    (vis.color && selColors.length ? 1 : 0);
 
   // Aplica categoría + filtro + orden/aleatorio.
   const ordered = useMemo(() => {
     let arr = cat === "all" ? products : products.filter((p) => p.category === cat);
-    if (priceRange) {
+    if (vis.price && priceRange) {
       arr = arr.filter(
         (p) => Number(p.price) >= priceRange[0] && Number(p.price) <= priceRange[1]
       );
     }
-    if (selColors.length) {
-      arr = arr.filter((p) => (p.colors || []).some((c) => selColors.includes(c.id)));
+    if (vis.color && selColors.length) {
+      arr = arr.filter((p) =>
+        (p.colors || []).some((c) => selColors.some((o) => colorMatches(c, o)))
+      );
     }
-    if (onlyDiscount) {
+    if (vis.discount && onlyDiscount) {
       arr = arr.filter((p) => Number(p.discount_percent) > 0);
     }
-    if (sort === "asc") return [...arr].sort((a, b) => Number(a.price) - Number(b.price));
-    if (sort === "desc") return [...arr].sort((a, b) => Number(b.price) - Number(a.price));
+    if (vis.sort && sort === "asc") return [...arr].sort((a, b) => Number(a.price) - Number(b.price));
+    if (vis.sort && sort === "desc") return [...arr].sort((a, b) => Number(b.price) - Number(a.price));
     return seededShuffle(arr, seed);
-  }, [products, cat, priceRange, selColors, sort, seed, onlyDiscount]);
+  }, [products, cat, priceRange, selColors, sort, seed, onlyDiscount, filterConfig]);
 
   const handleClear = () => {
     setPriceRange(priceBounds);
@@ -127,14 +162,13 @@ export default function Catalog() {
   // Color forzado por el filtro: el primer color seleccionado que el producto
   // tenga (con foto asignada). Hace que la tarjeta muestre esa foto primero.
   const forcedColorFor = (p) => {
-    if (!selColors.length) return null;
+    if (!selColors.length || !vis.color) return null;
     const cols = p.colors || [];
-    return (
-      selColors.find((id) => {
-        const c = cols.find((x) => x.id === id);
-        return c && c.photo_indices && c.photo_indices.length;
-      }) || null
-    );
+    for (const o of selColors) {
+      const c = cols.find((x) => colorMatches(x, o));
+      if (c && c.photo_indices && c.photo_indices.length) return c.id;
+    }
+    return null;
   };
 
   return (
@@ -175,6 +209,16 @@ export default function Catalog() {
               <Plus className="h-4 w-4" />
             </button>
           )}
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setFilterEditorOpen(true)}
+              aria-label="Editor de filtros"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-slate transition-colors hover:text-foreground"
+            >
+              <Settings2 className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -186,20 +230,31 @@ export default function Catalog() {
         />
       )}
 
+      {isAdmin && filterEditorOpen && (
+        <FilterEditor
+          current={filterConfig}
+          onSave={setFilterConfig}
+          onClose={() => setFilterEditorOpen(false)}
+        />
+      )}
+
       <CategoryTabs active={cat} categories={visibleCats} />
 
       {filterOpen && (
         <CatalogFilter
+          visible={vis}
           priceBounds={priceBounds}
           priceRange={priceRange || priceBounds}
           onPriceChange={setPriceRange}
           sort={sort}
           onSortChange={setSort}
-          colors={allColors}
-          selectedColors={selColors}
-          onToggleColor={(id) =>
+          colors={colorOptions}
+          selectedColors={selColors.map((o) => o.id)}
+          onToggleColor={(option) =>
             setSelColors((prev) =>
-              prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+              prev.some((o) => o.id === option.id)
+                ? prev.filter((o) => o.id !== option.id)
+                : [...prev, option]
             )
           }
           onlyDiscount={onlyDiscount}

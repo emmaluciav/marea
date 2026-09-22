@@ -69,6 +69,7 @@ export function MareaProvider({ children }) {
   const [brandCovers, setBrandCovers] = useState([DEFAULT_COVER]);
   const [accentColor, setAccentColor] = useState(null);
   const [packagingWidget, setPackagingWidget] = useState(null);
+  const [filterConfig, setFilterConfig] = useState(null);
 
   useEffect(() => {
     try {
@@ -107,6 +108,12 @@ export function MareaProvider({ children }) {
         const pw = settings.find((s) => s.key === "packaging_widget");
         if (pw && pw.value) {
           try { setPackagingWidget(JSON.parse(pw.value)); } catch { /* ignore */ }
+        }
+
+        // Configuración de filtros del catálogo (visibilidad + opciones de color).
+        const cf = settings.find((s) => s.key === "catalog_filters");
+        if (cf && cf.value) {
+          try { setFilterConfig(JSON.parse(cf.value)); } catch { /* ignore */ }
         }
       } catch {
         /* keep defaults */
@@ -172,6 +179,8 @@ export function MareaProvider({ children }) {
         setAccentColor,
         packagingWidget,
         setPackagingWidget,
+        filterConfig,
+        setFilterConfig,
       }}
     >
       {children}
