@@ -106,14 +106,21 @@ export default function ProductDetail() {
     product.variant_photos[selectedSizeId][activeColor.id] != null
       ? product.variant_photos[selectedSizeId][activeColor.id]
       : null;
-  // Si hay talla pero NO color, saltar a la primera foto asignada para esa
-  // talla (recorriendo los colores en orden, la primera asignación que exista).
+  // Si hay talla pero NO color, saltar a la foto asignada a esa talla.
+  // Primero se revisa size_photos (asignación directa por talla, sin colores).
+  // Si no existe, se recorre variant_photos en orden de colores (productos con
+  // colores donde el cliente aún no ha elegido color) tomando la primera.
   const sizeOnlyTargetIndex =
-    selectedSizeId && !activeColor && product.variant_photos && product.variant_photos[selectedSizeId]
+    selectedSizeId && !activeColor
       ? (() => {
-          const row = product.variant_photos[selectedSizeId];
-          for (const c of colors) {
-            if (row[c.id] != null) return row[c.id];
+          if (product.size_photos && product.size_photos[selectedSizeId] != null) {
+            return product.size_photos[selectedSizeId];
+          }
+          if (product.variant_photos && product.variant_photos[selectedSizeId]) {
+            const row = product.variant_photos[selectedSizeId];
+            for (const c of colors) {
+              if (row[c.id] != null) return row[c.id];
+            }
           }
           return null;
         })()

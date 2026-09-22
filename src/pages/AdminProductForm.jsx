@@ -45,6 +45,7 @@ export default function AdminProductForm() {
   const [sizes, setSizes] = useState([]);
   const [sizeOptions, setSizeOptions] = useState(["XS", "S", "M", "L", "XL"]);
   const [variantPhotos, setVariantPhotos] = useState({});
+  const [sizePhotos, setSizePhotos] = useState({});
   const [replaceIdx, setReplaceIdx] = useState(null);
   const [cropQueue, setCropQueue] = useState([]);
   const [cropIndex, setCropIndex] = useState(-1);
@@ -82,6 +83,7 @@ export default function AdminProductForm() {
         );
         setSizes(p.sizes || []);
         setVariantPhotos(p.variant_photos || {});
+        setSizePhotos(p.size_photos || {});
       } catch (e) {
         setError("No se pudo cargar el producto.");
       } finally {
@@ -239,6 +241,14 @@ export default function AdminProductForm() {
             });
             if (Object.keys(cleanRow).length) clean[s] = cleanRow;
           }
+        });
+        return clean;
+      })(),
+      size_photos: (() => {
+        const clean = {};
+        sizes.forEach((s) => {
+          const idx = sizePhotos[s];
+          if (idx != null && idx >= 0 && idx < images.length) clean[s] = idx;
         });
         return clean;
       })(),
@@ -484,6 +494,8 @@ export default function AdminProductForm() {
           images={images}
           variantPhotos={variantPhotos}
           setVariantPhotos={setVariantPhotos}
+          sizePhotos={sizePhotos}
+          setSizePhotos={setSizePhotos}
         />
 
         {/* Descuento (opcional) */}

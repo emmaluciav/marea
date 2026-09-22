@@ -67,7 +67,15 @@
         }
       },
       "default": {},
-      "description": "Mapa talla -> color_id -> \u00edndice de foto. Define la foto representativa de cada combinaci\u00f3n talla+color."
+      "description": "Mapa talla -> color_id -> \u00edndice de foto. Define la foto representativa de cada combinaci\u00f3n talla+color. Se usa cuando el producto tiene tallas Y colores."
+    },
+    "size_photos": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      },
+      "default": {},
+      "description": "Mapa talla -> \u00edndice de foto. Define la foto representativa de cada talla cuando el producto NO tiene colores."
     },
     "colors": {
       "type": "array",
