@@ -126,7 +126,7 @@ export default function TopNav() {
       </header>
 
       {isHome && (
-        <SaveHint message="Guarda tus favoritos en guardados" className="top-16 right-3" />
+        <SaveHint message="Guarda tus favoritos en guardados" tailRight={54} className="top-16 right-3" />
       )}
 
       {menuOpen && (

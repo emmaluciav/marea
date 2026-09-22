@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 // Burbuja de primera visita que apunta (con un piquito) hacia el icono de
 // guardados. Rosa MAREA, esquinas suaves y aireada. Se muestra solo la
 // primera vez (localStorage) y se quita con la X.
-export default function SaveHint({ message, className, storageKey = "marea_save_hint_seen" }) {
+export default function SaveHint({ message, className, storageKey = "marea_save_hint_seen", tailRight = 12 }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -31,7 +31,10 @@ export default function SaveHint({ message, className, storageKey = "marea_save_
     <div className={cn("fixed z-40", className)}>
       <div className="relative max-w-[15.5rem] rounded-2xl bg-gold px-4 py-3 shadow-lg reveal">
         {/* Piquito hacia arriba, alineado bajo el icono de guardados */}
-        <span className="absolute -top-1.5 right-3 h-3 w-3 rotate-45 rounded-[2px] bg-gold" />
+        <span
+          className="absolute -top-1.5 h-3 w-3 rotate-45 rounded-[2px] bg-gold"
+          style={{ right: `${tailRight}px` }}
+        />
         <div className="flex items-start gap-2.5">
           <span className="text-[11px] leading-snug tracking-wide text-parchment">
             {message}
